@@ -5,9 +5,10 @@ abstract class CommentRepo {
   Future<AmityComment> getCommentByIdFromDb(String commentId);
 
   Future<AmityComment> createComment(CreateCommentRequest request);
-  Future<List<AmityComment>> queryComment(GetCommentRequest request);
+  Future<PageListData<List<AmityComment>, String>> queryComment(GetCommentRequest request);
   Future<PageListData<List<AmityComment>, String>> queryCommentPagingData(
       GetCommentRequest request);
+  Stream<List<AmityComment>> listenComments(RequestBuilder<GetCommentRequest> request);
 
   Future<AmityComment> getComment(String commentId);
   Future<AmityComment> updateComment(

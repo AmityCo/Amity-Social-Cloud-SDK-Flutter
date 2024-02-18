@@ -1,3 +1,5 @@
+import 'package:amity_sdk/src/core/model/api_request/get_comment_request.dart';
+import 'package:amity_sdk/src/core/utils/live_collection.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
@@ -5,7 +7,7 @@ class CommentDbAdapterImpl extends CommentDbAdapter {
   final DBClient dbClient;
 
   CommentDbAdapterImpl({required this.dbClient});
-  late Box box;
+  late Box<CommentHiveEntity> box;
   Future<CommentDbAdapterImpl> init() async {
     Hive.registerAdapter(CommentHiveEntityAdapter(), override: true);
     box = await Hive.openBox<CommentHiveEntity>('comment_db');
@@ -46,5 +48,15 @@ class CommentDbAdapterImpl extends CommentDbAdapter {
     }
 
     return;
+  }
+
+  @override
+  Stream<List<CommentHiveEntity>> listenCommentEntities(
+      RequestBuilder<GetCommentRequest> request) {
+    return box.watch().map((event) =>
+      box.values
+        .where((comment) => comment.isMatchingFilter(request.call()))
+        .toList()
+    );
   }
 }

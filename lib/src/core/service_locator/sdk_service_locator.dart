@@ -13,6 +13,7 @@ import 'package:amity_sdk/src/data/data_source/remote/api_interface/stream_api_i
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/stream_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/stream_repo_impl.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/stream_composer_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
@@ -519,8 +520,8 @@ class SdkServiceLocator {
         CommentGetUseCase(
             commentRepo: serviceLocator(),
             commentComposerUsecase: serviceLocator()));
-    serviceLocator.registerLazySingleton<CommentQueryUsecase>(() =>
-        CommentQueryUsecase(
+    serviceLocator.registerLazySingleton<CommentQueryUseCase>(() =>
+        CommentQueryUseCase(
             commentRepo: serviceLocator(),
             commentComposerUsecase: serviceLocator()));
 
@@ -677,6 +678,10 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<PostObserveUseCase>(() =>
         PostObserveUseCase(
             postRepo: serviceLocator(), postComposerUsecase: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<CommentObserveUseCase>(() =>
+        CommentObserveUseCase(
+            commentRepo: serviceLocator(), commentComposerUsecase: serviceLocator()));
 
     serviceLocator.registerLazySingleton<StreamHasLocalUseCase>(
         () => StreamHasLocalUseCase(streamRepo: serviceLocator()));

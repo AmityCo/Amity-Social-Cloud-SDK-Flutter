@@ -123,4 +123,32 @@ extension CommentHiveEntityExtension on CommentHiveEntity {
       ..attachments = attachments
       ..target = amityCommentTarget;
   }
+
+  bool isMatchingFilter(GetCommentRequest request) {
+    return isMatchingReferenceType(request.referenceType) &&
+        isMatchingReferenceId(request.referenceId) &&
+        isMatchingIsDeleted(request.isDeleted) &&
+        isMatchingParentId(parentId, request.filterByParentId);
+  }
+
+  bool isMatchingReferenceType(String referenceType) {
+    return this.referenceType == referenceType;
+  }
+
+  bool isMatchingReferenceId(String referenceId) {
+    return this.referenceId == referenceId;
+  }
+
+  bool isMatchingIsDeleted(bool? isDeleted) {
+    return this.isDeleted == isDeleted;
+  }
+
+  bool isMatchingParentId(String? parentId, bool? filterByParentId) {
+    if (filterByParentId == true) {
+      return parentId == parentId;
+    } else {
+      return true;
+    }
+  }
+  
 }
