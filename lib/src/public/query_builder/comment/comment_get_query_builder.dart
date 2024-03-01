@@ -25,8 +25,7 @@ class AmityCommentQueryBuilder {
   late String _referenceType;
   late String _referenceId;
 
-  String? _parentId;
-  bool? _isFilterByParentId;
+  String? _parentId = null;
   bool? _isDeleted;
   AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
 
@@ -60,7 +59,6 @@ class AmityCommentQueryBuilder {
   }
 
   AmityCommentQueryBuilder filterById(bool isFilterByParentId) {
-    _isFilterByParentId = isFilterByParentId;
     return this;
   }
 
@@ -82,10 +80,9 @@ class AmityCommentQueryBuilder {
 
     if (_parentId != null) {
       getCommentRequest.parentId = _parentId;
-    }
-
-    if (_isFilterByParentId != null) {
-      getCommentRequest.filterByParentId = _isFilterByParentId;
+      getCommentRequest.filterByParentId = true;
+    } else {
+      getCommentRequest.filterByParentId = false;
     }
 
     getCommentRequest.isDeleted = _isDeleted ?? true ? null : false;
@@ -118,10 +115,9 @@ class AmityCommentQueryBuilder {
 
     if (_parentId != null) {
       getCommentRequest.parentId = _parentId;
-    }
-
-    if (_isFilterByParentId != null) {
-      getCommentRequest.filterByParentId = _isFilterByParentId;
+      getCommentRequest.filterByParentId =  true;
+    } else {
+      getCommentRequest.filterByParentId = false;
     }
 
     getCommentRequest.isDeleted = _isDeleted ?? true ? null : false;

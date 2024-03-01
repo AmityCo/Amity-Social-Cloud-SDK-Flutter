@@ -128,7 +128,7 @@ extension CommentHiveEntityExtension on CommentHiveEntity {
     return isMatchingReferenceType(request.referenceType) &&
         isMatchingReferenceId(request.referenceId) &&
         isMatchingIsDeleted(request.isDeleted) &&
-        isMatchingParentId(parentId, request.filterByParentId);
+        isMatchingParentId(request.parentId, request.filterByParentId);
   }
 
   bool isMatchingReferenceType(String referenceType) {
@@ -145,9 +145,9 @@ extension CommentHiveEntityExtension on CommentHiveEntity {
 
   bool isMatchingParentId(String? parentId, bool? filterByParentId) {
     if (filterByParentId == true) {
-      return parentId == parentId;
+      return this.parentId == parentId;
     } else {
-      return true;
+      return this.parentId == null;
     }
   }
   
