@@ -1,10 +1,11 @@
+import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:hive/hive.dart';
 
 part 'community_hive_entity_9.g.dart';
 
 @HiveType(typeId: 9)
-class CommunityHiveEntity extends HiveObject {
-  String? communityId;
+class CommunityHiveEntity extends EkoObject {
+  String communityId;
   String? path;
   String? channelId;
   String? userId;
@@ -24,5 +25,15 @@ class CommunityHiveEntity extends HiveObject {
   DateTime? editedAt;
   List<String>? categoryIds;
   List<String>? tags;
+
+  CommunityHiveEntity(
+    {
+      this.communityId = ''
+    });
+  
+  @override
+  String? getId() {
+    return communityId;
+  }
 
 }

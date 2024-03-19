@@ -4,6 +4,7 @@ import 'package:amity_sdk/src/domain/domain.dart';
 abstract class CommunityRepo {
   Future<PageListData<List<AmityCommunity>, String>> getCommunityQuery(
       GetCommunityRequest request);
+  Stream<List<AmityCommunity>> listenCommunity(RequestBuilder<GetCommunityRequest> request);
   Future<List<AmityCommunity>> getRecommendedCommunity(OptionsRequest request);
   Future<List<AmityCommunity>> getTopTrendingCommunity(OptionsRequest request);
   Future<AmityCommunity> createCommunity(CreateCommunityRequest request);
