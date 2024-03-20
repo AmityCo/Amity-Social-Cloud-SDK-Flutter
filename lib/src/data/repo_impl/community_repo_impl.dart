@@ -7,10 +7,8 @@ import 'package:amity_sdk/src/core/mapper/community_model_mapper.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 
-class CommunityRepoImpl extends CommunityRepo
-  with AmityObjectRepository<CommunityHiveEntity, AmityCommunity>  {
+class CommunityRepoImpl extends CommunityRepo {
   final CommunityApiInterface communityApiInterface;
 
   //Db Adapter
