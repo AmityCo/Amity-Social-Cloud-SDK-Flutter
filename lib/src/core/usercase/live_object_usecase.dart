@@ -35,13 +35,13 @@ abstract class LiveObjectUseCase<Entity extends EkoObject, PublicModel> {
 
     obtainObject.then(
       (value) {
+        if (value != null) {
+          // If there is a cache value, publish it to the stream
+          // as an initial value of the live object
+          publishComposeModelToStream(value, controller);
+        }
         createRepository().observe(objectId).stream.listen((event) {
-          var compose = composeModel(event);
-          if (compose != null) {
-            controller.add(compose);
-          } else {
-            controller.add(event);
-          }
+          publishComposeModelToStream(event, controller);
         });
       },
     ).onError((error, stackTrace) {
@@ -69,4 +69,10 @@ abstract class LiveObjectUseCase<Entity extends EkoObject, PublicModel> {
     }
     return isValid;
   }
+
+  void publishComposeModelToStream(PublicModel object, StreamController<PublicModel> controller) {
+    var compose = composeModel(object) ?? object;
+    controller.add(compose);
+  }
+
 }
