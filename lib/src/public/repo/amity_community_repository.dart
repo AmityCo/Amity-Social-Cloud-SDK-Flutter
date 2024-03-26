@@ -62,6 +62,7 @@ class AmityCommunityRepository {
   id: community.get
   */
   /// Get Community with Community Id
+  @Deprecated("Use AmitySocialClient.newCommunityRepository().live.getCommunity(communityId) instead")
   Future<AmityCommunity> getCommunity(String communityId) {
     return serviceLocator<CommunityGetUseCase>().get(communityId);
   }
