@@ -36,7 +36,7 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   }
   
   @override
-  Future deleteCommunityEntitiesByTargetId(String? targetId) async {
+  Future deleteCommunityEntities() async {
     box.values.toList()
         .forEach((element) {
       box.delete(element.communityId);
