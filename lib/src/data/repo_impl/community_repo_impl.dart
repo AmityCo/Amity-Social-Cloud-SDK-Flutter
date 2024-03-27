@@ -150,7 +150,7 @@ class CommunityRepoImpl extends CommunityRepo {
       GetCommunityRequest request) async {
     if (request.options?.token == null) {
       await communityDbAdapter
-          .deleteCommunityEntitiesByTargetId(request.filter);
+          .deleteCommunityEntities();
     }
     final data = await communityApiInterface.getCommunityQuery(request);
     final amityCommunity = await saveCommunity(data);
@@ -190,7 +190,7 @@ class CommunityRepoImpl extends CommunityRepo {
 
       if (req.sortBy == AmityPostSortOption.LAST_CREATED.apiKey) {
         list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
-      } else {
+      } else if (req.sortBy == AmityPostSortOption.FIRST_CREATED.apiKey) {
         list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * 1);
       }
 
