@@ -5,6 +5,7 @@ import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/tombstone_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/tombstone_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/tombstone_repo_impl.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/reaction_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/tombstone_repo.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
@@ -18,6 +19,8 @@ import 'package:amity_sdk/src/domain/usecase/community/category/community_get_ca
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/post/post_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/stream/stream_get_local_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/stream/stream_has_local_usecase.dart';
 import 'package:amity_sdk/src/functions/stream_function.dart';
@@ -511,6 +514,17 @@ class SdkServiceLocator {
               reactionRepo: serviceLocator(),
               userRepo: serviceLocator(),
             ));
+    serviceLocator
+        .registerLazySingleton<ReactionQueryUsecase>(() => ReactionQueryUsecase(
+              reactionRepo: serviceLocator(),
+              userRepo: serviceLocator(),
+              reactionComposerUsecase: serviceLocator(),
+            ));
+    serviceLocator
+        .registerLazySingleton<ReactionComposerUsecase>(() => ReactionComposerUsecase(
+              reactionRepo: serviceLocator(),
+              userRepo: serviceLocator(),
+            ));
 
     serviceLocator.registerLazySingleton<CommentCreateUseCase>(() =>
         CommentCreateUseCase(
@@ -682,6 +696,12 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<CommentObserveUseCase>(() =>
         CommentObserveUseCase(
             commentRepo: serviceLocator(), commentComposerUsecase: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<ReactionObserveUseCase>(() =>
+        ReactionObserveUseCase(
+            reactionRepo: serviceLocator(),
+            reactionComposerUsecase: serviceLocator(),
+        ));
 
     serviceLocator.registerLazySingleton<StreamHasLocalUseCase>(
         () => StreamHasLocalUseCase(streamRepo: serviceLocator()));
