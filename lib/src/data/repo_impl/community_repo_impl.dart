@@ -228,4 +228,10 @@ class CommunityRepoImpl extends CommunityRepo {
   Future<CommunityHiveEntity?> queryFromCache(String objectId) async {
     return communityDbAdapter.getCommunityEntity(objectId);
   }
+    
+  @override
+  int getPostCount(String targetId, String feedType) {
+    var feed =  communityFeedDbAdapter.getCommunityFeedByFeedType(targetId, feedType);
+    return feed.postCount ?? 0;
+  }
 }

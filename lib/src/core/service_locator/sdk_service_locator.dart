@@ -494,6 +494,10 @@ class SdkServiceLocator {
               communityRepo: serviceLocator(),
               communityComposerUsecase: serviceLocator(),
             ));
+    serviceLocator.registerLazySingleton<CommunityPostCountUseCase>(
+        () => CommunityPostCountUseCase(
+              communityRepo: serviceLocator(),
+            ));
     serviceLocator.registerLazySingleton<CommunityGetTrendingUseCase>(
         () => CommunityGetTrendingUseCase(
               communityRepo: serviceLocator(),
