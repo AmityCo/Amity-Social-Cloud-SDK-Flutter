@@ -6,6 +6,7 @@ class AmityPost {
   AmityPost({required this.postId});
 
   String? postId;
+  String? mid;
   AmityPostTargetType? targetType;
   AmityPostTarget? target; //composer
   String? parentPostId;
@@ -34,8 +35,14 @@ class AmityPost {
   DateTime? editedAt;
   DateTime? updatedAt;
   String? path;
+  int? reach;
+  int? impression;
 
   Map<String, dynamic>? hashFlag;
+
+  AmityPostAnalytics analytics() {
+    return AmityPostAnalytics(mid!);
+  }
 
   @override
   String toString() {
