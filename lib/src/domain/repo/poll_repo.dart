@@ -1,8 +1,10 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 
 /// Abs layer for Poll Repo
-abstract class PollRepo {
+abstract class PollRepo extends AmityObjectRepository<PollHiveEntity, AmityPoll> {
   /// Get poll with pollId from Db
   Future<AmityPoll> getPollByIdFromDb(String pollId);
 

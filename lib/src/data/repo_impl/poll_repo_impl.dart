@@ -10,7 +10,7 @@ import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 import 'package:amity_sdk/src/domain/repo/poll_repo.dart';
 
 /// Poll Repo Impl
-class PollRepoImpl extends PollRepo with AmityObjectRepository<PollHiveEntity, AmityPoll> {
+class PollRepoImpl extends PollRepo {
  
   @override
   bool isChildObjectType() {

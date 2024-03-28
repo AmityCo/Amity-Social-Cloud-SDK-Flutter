@@ -12,8 +12,7 @@ import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/core/mapper/comment_model_mapper.dart';
 
 /// Comment Repo Impl
-class CommentRepoImpl extends CommentRepo
-  with AmityObjectRepository<CommentHiveEntity, AmityComment> {
+class CommentRepoImpl extends CommentRepo {
   /// Comment API interface
   final CommentApiInterface commentApiInterface;
 
