@@ -25,6 +25,9 @@ class CommunityHiveEntity extends EkoObject {
   DateTime? editedAt;
   List<String>? categoryIds;
   List<String>? tags;
+  // Special timestamp for sorting displayName when query with live collection
+  // Should be remove when do queryStream.
+  DateTime? queryTimestamp;
 
   CommunityHiveEntity(
     {

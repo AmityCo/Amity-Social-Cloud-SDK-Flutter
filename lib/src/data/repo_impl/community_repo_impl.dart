@@ -74,7 +74,7 @@ class CommunityRepoImpl extends CommunityRepo {
   }
 
   Future<List<AmityCommunity>> saveCommunity(
-      CreateCommunityResponse data) async {
+      CreateCommunityResponse data, {bool isQuery = false}) async {
     //Convert to File Hive Entity
     //we have save the file first, since every object depends on file
     List<FileHiveEntity> fileHiveEntities =
@@ -126,6 +126,9 @@ class CommunityRepoImpl extends CommunityRepo {
 
     //Save the Community  Entity
     for (var e in communityHiveEnties) {
+      if (isQuery) {
+        e.queryTimestamp = DateTime.now();
+      }
       await communityDbAdapter.saveCommunityEntity(e);
     }
 
@@ -153,7 +156,7 @@ class CommunityRepoImpl extends CommunityRepo {
           .deleteCommunityEntities();
     }
     final data = await communityApiInterface.getCommunityQuery(request);
-    final amityCommunity = await saveCommunity(data);
+    final amityCommunity = await saveCommunity(data, isQuery: true);
     return PageListData(amityCommunity, data.paging?.next ?? '');
   }
 
@@ -184,14 +187,24 @@ class CommunityRepoImpl extends CommunityRepo {
     return communityDbAdapter.listenCommunityEntities(request).map((event) {
       final req = request.call();
       final List<AmityCommunity> list = [];
-      for (var element in event) {
-        list.add(element.convertToAmityCommunity());
+      
+      if (req.sortBy == AmityCommunitySortOption.LAST_CREATED.apiKey) {
+        event.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
+      } else if (req.sortBy == AmityCommunitySortOption.FIRST_CREATED.apiKey) {
+        event.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * 1);
+      } else {
+        // For displayName sorting we need to let the order be same with BE
+        event.sort((a, b) {
+          if (a.queryTimestamp != null && b.queryTimestamp != null) {
+            return a.queryTimestamp!.compareTo(b.queryTimestamp!);
+          }
+
+          return 0;
+        });
       }
 
-      if (req.sortBy == AmityPostSortOption.LAST_CREATED.apiKey) {
-        list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
-      } else if (req.sortBy == AmityPostSortOption.FIRST_CREATED.apiKey) {
-        list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * 1);
+      for (var element in event) {
+        list.add(element.convertToAmityCommunity());
       }
 
       return list;
@@ -228,7 +241,7 @@ class CommunityRepoImpl extends CommunityRepo {
   Future<CommunityHiveEntity?> queryFromCache(String objectId) async {
     return communityDbAdapter.getCommunityEntity(objectId);
   }
-    
+
   @override
   int getPostCount(String targetId, String feedType) {
     var feed =  communityFeedDbAdapter.getCommunityFeedByFeedType(targetId, feedType);

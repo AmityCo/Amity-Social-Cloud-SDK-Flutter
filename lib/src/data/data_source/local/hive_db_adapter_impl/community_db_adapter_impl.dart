@@ -20,6 +20,11 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
 
   @override
   Future saveCommunityEntity(CommunityHiveEntity entity) async {
+    final cachedEntity = getCommunityEntity(entity.communityId);    
+    if (cachedEntity != null) {
+      // If cache exist we update queryTimestamp
+      entity.queryTimestamp = cachedEntity.queryTimestamp;
+    }
     await box.put(entity.communityId, entity);
   }
 
