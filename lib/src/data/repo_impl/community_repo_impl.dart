@@ -187,7 +187,7 @@ class CommunityRepoImpl extends CommunityRepo {
     return communityDbAdapter.listenCommunityEntities(request).map((event) {
       final req = request.call();
       final List<AmityCommunity> list = [];
-      
+     
       if (req.sortBy == AmityCommunitySortOption.LAST_CREATED.apiKey) {
         event.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
       } else if (req.sortBy == AmityCommunitySortOption.FIRST_CREATED.apiKey) {

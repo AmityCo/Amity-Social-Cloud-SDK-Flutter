@@ -1,3 +1,4 @@
+import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:hive/hive.dart';
 
@@ -37,6 +38,42 @@ class CommunityHiveEntity extends EkoObject {
   @override
   String? getId() {
     return communityId;
+  }
+
+
+  bool isMatchingFilter(GetCommunityRequest request) {
+    return isMatchingCategoryId(request.categoryId) &&
+        isMatchingMembershipStatus(request.filter) &&
+        isMatchingDeleted(request.isDeleted) &&
+        includingTagCondition(request.tags);
+  }
+
+  bool isMatchingMembershipStatus(String? filter) {
+    if (filter == null) return true;
+    if (filter == "member") {
+      return isJoined == true;
+    } else if ( filter == "notMember") {
+      return isJoined == false;
+    } else {
+      return true;
+    }
+    
+  }
+
+  bool isMatchingDeleted(bool? isDeleted) {
+    if (isDeleted == null) return true;
+    return this.isDeleted == isDeleted;
+  }
+
+  bool isMatchingCategoryId(String? categoryId) {
+    if (categoryId == null) return true;
+    return categoryIds!.contains(categoryId);
+  }
+
+  bool includingTagCondition(List<String>? tags) {
+    return tags == null ||
+        tags.isEmpty ||
+        (tags).toSet().intersection((tags).toSet()).isNotEmpty;
   }
 
 }

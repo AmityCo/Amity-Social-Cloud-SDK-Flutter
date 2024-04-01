@@ -1,5 +1,4 @@
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/core/utils/community_live_collection.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 class CommunityGetQueryBuilder {
@@ -52,6 +51,7 @@ class CommunityGetQueryBuilder {
     request.categoryId = _categoryId;
     request.filter = _filter.value;
     request.sortBy = _sortBy.apiKey;
+    request.tags = _tags;
     request.isDeleted = _isDeleted ?? true ? null : false;
 
     request.options = OptionsRequest();
@@ -80,7 +80,7 @@ class CommunityGetQueryBuilder {
     if (limit != null) {
       request.options!.limit = limit;
     }
-
+    
     if (_tags != null && _tags!.isNotEmpty) {
       request.tags = _tags;
     }

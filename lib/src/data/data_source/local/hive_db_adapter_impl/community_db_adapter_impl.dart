@@ -37,6 +37,7 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   Stream<List<CommunityHiveEntity>> listenCommunityEntities(
       RequestBuilder<GetCommunityRequest> request) {
     return box.watch().map((event) => box.values
+        .where((community) => community.isMatchingFilter(request.call()))
         .toList());
   }
   
