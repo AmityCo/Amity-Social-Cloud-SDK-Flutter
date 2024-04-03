@@ -22,7 +22,8 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   Future saveCommunityEntity(CommunityHiveEntity entity) async {
     final cachedEntity = getCommunityEntity(entity.communityId);    
     if (cachedEntity != null) {
-      // If cache exist we update queryTimestamp
+      // If cache exist we update queryTimestamp and use cachd isJoined.      
+      entity.isJoined ??= cachedEntity.isJoined;
       entity.queryTimestamp = cachedEntity.queryTimestamp;
     }
     await box.put(entity.communityId, entity);
