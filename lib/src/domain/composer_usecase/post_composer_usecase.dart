@@ -42,10 +42,13 @@ class PostComposerUsecase extends UseCase<AmityPost, AmityPost> {
           await userRepo.getUserByIdFromDb(target.targetUserId!);
       target.targetUser = await userComposerUsecase.get(target.targetUser!);
     } else if (target is CommunityTarget) {
-      target.targetCommunity =
-          await communityRepo.getCommunityById(target.targetCommunityId!);
-      target.targetCommunity =
-          await communityComposerUsecase.get(target.targetCommunity!);
+      var targetCommunityId = target.targetCommunityId;
+      if (targetCommunityId != null) {
+        var targetCommunity = await communityRepo.getCommunityById(targetCommunityId);
+        if (targetCommunity != null) {
+          target.targetCommunity = await communityComposerUsecase.get(targetCommunity);
+        }
+      }
     }
 
     //Add File url to DataType != TEXT
