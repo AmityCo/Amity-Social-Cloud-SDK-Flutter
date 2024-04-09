@@ -1,3 +1,6 @@
+## 0.37.1
+* Fix: Handle spamming unexpected error log from nullable objects.
+
 ## 0.37.0
 * Feat: The post count for a community can be fetched on the basis of AmityFeedType by using AmityCommunity.getPostCount. 
 
