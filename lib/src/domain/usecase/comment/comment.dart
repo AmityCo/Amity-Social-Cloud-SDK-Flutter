@@ -6,4 +6,3 @@ export 'comment_has_local_usecase.dart';
 export 'comment_query_usecase.dart';
 export 'comment_unflag_usecase.dart';
 export 'comment_update_usecase.dart';
-export 'get_comment_by_id_usecase.dart';

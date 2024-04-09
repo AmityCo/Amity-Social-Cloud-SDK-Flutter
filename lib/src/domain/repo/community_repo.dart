@@ -7,7 +7,7 @@ abstract class CommunityRepo {
   Future<List<AmityCommunity>> getRecommendedCommunity(OptionsRequest request);
   Future<List<AmityCommunity>> getTopTrendingCommunity(OptionsRequest request);
   Future<AmityCommunity> createCommunity(CreateCommunityRequest request);
-  Future<AmityCommunity> getCommunityById(String communityId);
+  Future<AmityCommunity?> getCommunityById(String communityId);
 
   Future<AmityCommunity> getCommunity(String communityId);
   Future deleteCommunity(String communityId);
