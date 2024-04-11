@@ -22,10 +22,14 @@ class CommentComposerUsecase extends UseCase<AmityComment, AmityComment> {
     //Compose child comment
     if (params.repliesId != null && params.repliesId!.isNotEmpty) {
       //Add Child Amity Comment
-      params.latestReplies = await Stream.fromIterable(params.repliesId!)
-          .asyncMap((element) async =>
-              await commentRepo.getCommentByIdFromDb(element))
-          .toList();
+      params.latestReplies = (await Stream.fromIterable(params.repliesId!)
+        .asyncMap((element) async  =>
+          await commentRepo.getCommentByIdFromDb(element)
+        )
+          .where((element) => element != null)
+          .cast<AmityComment>()
+          .toList()
+      );
       //Compose Child Amity Comment
       params.latestReplies = await Stream.fromIterable(params.latestReplies!)
           .asyncMap((element) async => await get(element))

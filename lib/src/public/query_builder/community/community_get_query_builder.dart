@@ -43,6 +43,26 @@ class CommunityGetQueryBuilder {
     return this;
   }
 
+  GetCommunityRequest build({int? pageSize = 20}) {
+
+    GetCommunityRequest request = GetCommunityRequest();
+
+    request.keyword = _keyword;
+    request.categoryId = _categoryId;
+    request.filter = _filter.value;
+    request.sortBy = _sortBy.apiKey;
+    request.tags = _tags;
+    request.isDeleted = _isDeleted ?? true ? null : false;
+
+    request.options = OptionsRequest();
+
+    return request;
+  }
+
+  CommunityLiveCollection getLiveCollection({int? pageSize = 20}) {
+    return CommunityLiveCollection(request: (() => build(pageSize: pageSize)));
+  }
+
   Future<PageListData<List<AmityCommunity>, String>> getPagingData(
       {String? token, int? limit}) async {
     GetCommunityRequest request = GetCommunityRequest();
@@ -60,7 +80,7 @@ class CommunityGetQueryBuilder {
     if (limit != null) {
       request.options!.limit = limit;
     }
-
+    
     if (_tags != null && _tags!.isNotEmpty) {
       request.tags = _tags;
     }

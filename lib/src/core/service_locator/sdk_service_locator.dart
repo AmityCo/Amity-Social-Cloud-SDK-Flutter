@@ -30,6 +30,7 @@ import 'package:amity_sdk/src/data/repo_impl/stream_repo_impl.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/stream_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/post/post_observe_usecase.dart';
@@ -39,8 +40,6 @@ import 'package:amity_sdk/src/domain/usecase/story/delete_story_by_id_usecase.da
 import 'package:amity_sdk/src/domain/usecase/story/get_stories_by_target_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/story_has_local_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/story_observe_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/stream/stream_get_local_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/stream/stream_has_local_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/user/get_reach_user_usecase.dart';
@@ -483,6 +482,11 @@ class SdkServiceLocator {
               communityRepo: serviceLocator(),
               communityComposerUsecase: serviceLocator(),
             ));
+    serviceLocator
+        .registerLazySingleton<CommunityGetUsecase>(() => CommunityGetUsecase(
+              communityRepo: serviceLocator(),
+              communityComposerUsecase: serviceLocator(),
+            ));
     serviceLocator.registerLazySingleton<CommunityDeleteUseCase>(
         () => CommunityDeleteUseCase(
               communityRepo: serviceLocator(),
@@ -539,6 +543,11 @@ class SdkServiceLocator {
         () => CommunityHasLocalUsecase(communityRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<CommunityMemberHasLocalUsecase>(() =>
         CommunityMemberHasLocalUsecase(communityMemberRepo: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<CommunityGetUseCase>(() =>
+        CommunityGetUseCase(
+            communityRepo: serviceLocator(),
+            communityComposerUsecase: serviceLocator()));
 
     serviceLocator
         .registerLazySingleton<PostComposerUsecase>(() => PostComposerUsecase(
@@ -684,6 +693,11 @@ class SdkServiceLocator {
         CommunityGetCategoryUsecase(
             communityCategoryRepo: serviceLocator(),
             communityCategoryComposerUsecase: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<CommunityObserveUseCase>(() =>
+        CommunityObserveUseCase(
+            communityRepo: serviceLocator(),
+            communityComposerUsecase: serviceLocator()));
 
     serviceLocator.registerLazySingleton<PostApproveUsecase>(
         () => PostApproveUsecase(postRepo: serviceLocator()));
