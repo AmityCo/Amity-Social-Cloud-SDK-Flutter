@@ -1,5 +1,8 @@
+## 0.38.1
+* Fix: Handle spamming unexpected error log from nullable objects.
+
 ## 0.38.0
-* Fix: Error of FeedType missmatched while creating the video story. Added ability to add FeedType while uploading video file 
+* Fix: Error of FeedType missmatched while creating the video story. Added ability to add FeedType while uploading video file.
 
 ## 0.37.1
 * Fix: Handle spamming unexpected error log from nullable objects.
