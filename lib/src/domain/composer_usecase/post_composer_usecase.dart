@@ -42,10 +42,13 @@ class PostComposerUsecase extends UseCase<AmityPost, AmityPost> {
           await userRepo.getUserByIdFromDb(target.targetUserId!);
       target.targetUser = await userComposerUsecase.get(target.targetUser!);
     } else if (target is CommunityTarget) {
-      target.targetCommunity =
-          await communityRepo.getCommunityById(target.targetCommunityId!);
-      target.targetCommunity =
-          await communityComposerUsecase.get(target.targetCommunity!);
+      var targetCommunityId = target.targetCommunityId;
+      if (targetCommunityId != null) {
+        var targetCommunity = await communityRepo.getCommunityById(targetCommunityId);
+        if (targetCommunity != null) {
+          target.targetCommunity = await communityComposerUsecase.get(targetCommunity);
+        }
+      }
     }
 
     //Add File url to DataType != TEXT
@@ -60,11 +63,17 @@ class PostComposerUsecase extends UseCase<AmityPost, AmityPost> {
       params.latestComments =
           await Stream.fromIterable(params.latestCommentIds!)
               .asyncMap((element) async {
-        AmityComment comment = await commentRepo.getCommentByIdFromDb(element);
-        comment.user = await userRepo.getUserByIdFromDb(comment.userId!);
-        comment.user = await userComposerUsecase.get(comment.user!);
+        AmityComment? comment = await commentRepo.getCommentByIdFromDb(element);
+        var commentUserId = comment?.userId;
+        if (comment != null && commentUserId != null) {
+          var commentUser = await userRepo.getUserByIdFromDb(commentUserId);
+          comment.user = await userComposerUsecase.get(commentUser);
+        }
         return comment;
-      }).toList();
+      })
+        .where((element) => element != null)
+        .cast<AmityComment>()
+        .toList();
     }
 
     //Compose Children post

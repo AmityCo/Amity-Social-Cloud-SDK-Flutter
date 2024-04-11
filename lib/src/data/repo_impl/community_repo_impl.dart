@@ -38,10 +38,8 @@ class CommunityRepoImpl extends CommunityRepo {
   }
 
   @override
-  Future<AmityCommunity> getCommunityById(String communityId) async {
-    return communityDbAdapter
-        .getCommunityEntity(communityId)!
-        .convertToAmityCommunity();
+  Future<AmityCommunity?> getCommunityById(String communityId) async {
+    return communityDbAdapter.getCommunityEntity(communityId)?.convertToAmityCommunity();
   }
 
   @override
