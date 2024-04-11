@@ -9,6 +9,8 @@ enum TombstoneModelType {
   CATEGORY,
   FOLLOW_COUNT,
   SUB_CHANNEL,
+  COMMENT,
+  POLL,
   UNKNOWN
 }
 
