@@ -14,6 +14,7 @@ export 'src/core/utils/comment_live_collection.dart';
 export 'src/core/utils/reaction_live_collection.dart';
 export 'src/core/utils/community_live_collection.dart';
 export 'src/core/utils/Story_live_collection.dart';
+export 'src/core/utils/reaction_live_collection.dart';
 export 'src/core/utils/paging_controller.dart';
 export 'src/domain/model/model.dart';
 export 'src/public/public.dart';
