@@ -69,6 +69,11 @@ class AmityPostCreateDataTypeSelector {
   AmityPollPostCreator poll(String pollId) {
     return AmityPollPostCreator(useCase: _useCase, targetId: _userId, targetType: _targetType.value, pollId: pollId);
   }
+
+  /// Data Type LiveStream
+  AmityLiveStreamPostCreator liveStream(String streamId) {
+    return AmityLiveStreamPostCreator(useCase: _useCase, targetId: _userId, targetType: _targetType.value, streamId: streamId);
+  }
 }
 
 /// Implementation Layer for Amity Post Text Creator
@@ -81,6 +86,20 @@ class AmityTextPostCreator extends PostCreator {
   }
 
   Future<AmityPost> createTextPost() => post();
+}
+
+/// Implementation Layer for Amity Post Live Stream Creator
+class AmityLiveStreamPostCreator extends PostCreator {  
+  /// Init [AmityLiveStreamPostCreator]
+  AmityLiveStreamPostCreator(
+      {required PostCreateUsecase useCase, 
+      required String targetId, 
+      required String targetType,
+      required String streamId})
+      : super(useCase: useCase, targetId: targetId, targetType: targetType) {
+    _streamId = streamId;
+  }
+
 }
 
 /// Implementation Layer for Amity Post Image Creator
@@ -166,6 +185,7 @@ abstract class PostCreator {
   late String _targetType;
   String? _text;
   String? _pollId;
+  String? _streamId;
   Map<String, dynamic>? _metadata;
   List<AmityMentioneeTarget>? _mentionees;
 
@@ -212,6 +232,10 @@ abstract class PostCreator {
       if (_pollId != null) {
         data.pollId = _pollId;
         request.dataType = 'poll';
+      }
+      if (_streamId != null) {
+        data.streamId = _streamId;
+        request.dataType = 'liveStream';
       }
       request.data = data;
     }

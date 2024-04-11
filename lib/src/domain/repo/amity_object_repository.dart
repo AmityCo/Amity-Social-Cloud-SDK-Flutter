@@ -60,7 +60,8 @@ abstract class AmityObjectRepository<Entity extends EkoObject, PublicModel> {
         }
       }
     } catch (error) {
-      if (error.toString() == EntityExpiredException().message || error == EntityNotFoundException().message) {
+      var errorStr = error.toString();
+      if (errorStr == EntityExpiredException().message || errorStr == EntityNotFoundException().message) {
         fetchAndSave(objectId).then((value) {
           getEntity(objectId);
         }).onError((error, stackTrace) {
