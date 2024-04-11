@@ -3,9 +3,13 @@ import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/public/public.dart';
+import 'package:amity_sdk/src/public/query_builder/community/community_live_object.dart';
 
 /// Community Repository for all community related operation
 class AmityCommunityRepository {
+
+  CommunityGetLiveObject live = CommunityGetLiveObject();
+  
   /* begin_public_function 
   id: community.create
   api_style: async
@@ -58,6 +62,7 @@ class AmityCommunityRepository {
   id: community.get
   */
   /// Get Community with Community Id
+  @Deprecated("Use AmitySocialClient.newCommunityRepository().live.getCommunity(communityId) instead")
   Future<AmityCommunity> getCommunity(String communityId) {
     return serviceLocator<CommunityGetUseCase>().get(communityId);
   }

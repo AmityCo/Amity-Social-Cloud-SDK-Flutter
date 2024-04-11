@@ -1,3 +1,4 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
@@ -43,6 +44,25 @@ class GetReactionQueryBuilder {
   GetReactionQueryBuilder reactionName(String reactionName) {
     _reactionName = reactionName;
     return this;
+  }
+
+  ReactionLiveCollection getLiveCollection({int? pageSize = 20}) {
+    return ReactionLiveCollection(request: (() => build(pageSize: pageSize)));
+  }
+
+  GetReactionRequest build({int? pageSize = 20}) {
+    GetReactionRequest getReactionRequest = GetReactionRequest(
+      referenceId: _referenceId,
+      referenceType: _referenceType.value,
+      reactionName: _reactionName,
+    );
+
+    OptionsRequest options = OptionsRequest();
+    getReactionRequest.options = options;
+    options.type = 'pagination'; //Default option
+    getReactionRequest.options?.limit = pageSize;
+
+    return getReactionRequest;
   }
 
   /* begin_public_function 

@@ -8,6 +8,12 @@ import 'package:amity_sdk/src/data/data_source/data_source.dart';
 abstract class AmityObjectRepository<Entity extends EkoObject, PublicModel> {
   static const DEFAULT_PAGE_SIZE = 20;
 
+  // Override this method to return true if the object type is a child object
+  // which doesn't have direct api to get the up-to-date data
+  bool isChildObjectType() {
+    return false;
+  }
+
   Future<PublicModel?> fetchAndSave(String objectId);
 
   Future<Entity?> queryFromCache(String objectId);
@@ -53,16 +59,25 @@ abstract class AmityObjectRepository<Entity extends EkoObject, PublicModel> {
         var entity = object as EkoObject;
         bool isNotExpired =
             entity.getExpiresAt()?.isAfter(DateTime.now()) == true;
-        if (isNotExpired) {
+
+        // Wouldn't check child object expiration because
+        // it doesn't have direct api to get the up-to-date data
+        if (isNotExpired || isChildObjectType()) {
           return mapper().map(object);
         } else {
           throw EntityExpiredException();
         }
       }
     } catch (error) {
-      if (error.toString() == EntityExpiredException().message || error == EntityNotFoundException().message) {
+      var errorStr = error.toString();
+      if (errorStr == EntityExpiredException().message || errorStr == EntityNotFoundException().message) {
         fetchAndSave(objectId).then((value) {
-          getEntity(objectId);
+          getEntity(objectId)
+          .then((object) {
+            if (object != null) { 
+              return mapper().map(object); 
+            }
+          });
         }).onError((error, stackTrace) {
           throw error ?? "";
         });

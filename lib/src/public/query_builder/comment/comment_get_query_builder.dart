@@ -1,9 +1,10 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/comment_live_collection.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 class AmityCommentQueryTypeSelector {
-  late CommentQueryUsecase _useCase;
-  AmityCommentQueryTypeSelector({required CommentQueryUsecase useCase}) {
+  late CommentQueryUseCase _useCase;
+  AmityCommentQueryTypeSelector({required CommentQueryUseCase useCase}) {
     _useCase = useCase;
   }
   AmityCommentQueryBuilder post(String postId) {
@@ -20,18 +21,17 @@ class AmityCommentQueryTypeSelector {
 }
 
 class AmityCommentQueryBuilder {
-  late CommentQueryUsecase _useCase;
+  late CommentQueryUseCase _useCase;
   late String _referenceType;
   late String _referenceId;
 
-  String? _parentId;
-  bool? _isFilterByParentId;
+  String? _parentId = null;
   bool? _isDeleted;
   AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
 
   AmityCommentDataTypeFilter? dataTypeFilter;
 
-  AmityCommentQueryBuilder({required CommentQueryUsecase useCase}) {
+  AmityCommentQueryBuilder({required CommentQueryUseCase useCase}) {
     _useCase = useCase;
   }
 
@@ -59,7 +59,6 @@ class AmityCommentQueryBuilder {
   }
 
   AmityCommentQueryBuilder filterById(bool isFilterByParentId) {
-    _isFilterByParentId = isFilterByParentId;
     return this;
   }
 
@@ -74,56 +73,83 @@ class AmityCommentQueryBuilder {
     return this;
   }
 
-  /// Query the comment list
-  Future<List<AmityComment>> query() {
-    GetCommentRequest getCommentRequest = GetCommentRequest(referenceId: _referenceId, referenceType: _referenceType);
+  Future<PageListData<List<AmityComment>, String>> getPagingData(
+      {String? token, int? limit}) {
+        GetCommentRequest getCommentRequest = GetCommentRequest(
+        referenceId: _referenceId, referenceType: _referenceType);
 
     if (_parentId != null) {
       getCommentRequest.parentId = _parentId;
-    }
-
-    if (_isDeleted != null) {
-      getCommentRequest.isDeleted = _isDeleted;
-    }
-
-    getCommentRequest.sortBy = _sortOption.apiKey;
-
-    return _useCase.get(getCommentRequest);
-  }
-
-  Future<PageListData<List<AmityComment>, String>> getPagingData({String? token, int? limit}) {
-    GetCommentRequest getCommentRequest = GetCommentRequest(referenceId: _referenceId, referenceType: _referenceType);
-
-    if (_parentId != null) {
-      getCommentRequest.parentId = _parentId;
-    }
-
-    if (_isFilterByParentId != null) {
-      getCommentRequest.filterByParentId = _isFilterByParentId;
+      getCommentRequest.filterByParentId = true;
+    } else {
+      getCommentRequest.filterByParentId = false;
     }
 
     getCommentRequest.isDeleted = _isDeleted ?? true ? null : false;
 
     if (dataTypeFilter != null) {
-      getCommentRequest.dataTypes = dataTypeFilter!.dataTypes.map((e) => e.value).toList();
+      getCommentRequest.dataTypes =
+          dataTypeFilter!.dataTypes.map((e) => e.value).toList();
       getCommentRequest.matchType = dataTypeFilter!.matchType;
     }
 
     getCommentRequest.sortBy = _sortOption.apiKey;
 
-    Options options = Options();
+    OptionsRequest options = OptionsRequest();
     getCommentRequest.options = options;
     options.type = 'pagination'; //Default option
+
     if (token != null) {
-      getCommentRequest.options?.token = token;
+      getCommentRequest.options!.token = token;
     }
-
     if (limit != null) {
-      getCommentRequest.options?.limit = limit;
+      getCommentRequest.options!.limit = limit;
+    }
+    
+    return _useCase.get(getCommentRequest);
+  }
+
+  GetCommentRequest build({int? pageSize = 20}) {
+    GetCommentRequest getCommentRequest = GetCommentRequest(
+        referenceId: _referenceId, referenceType: _referenceType);
+
+    if (_parentId != null) {
+      getCommentRequest.parentId = _parentId;
+      getCommentRequest.filterByParentId =  true;
+    } else {
+      getCommentRequest.filterByParentId = false;
     }
 
-    return _useCase.getPagingData(getCommentRequest);
+    getCommentRequest.isDeleted = _isDeleted ?? true ? null : false;
+
+    if (dataTypeFilter != null) {
+      getCommentRequest.dataTypes =
+          dataTypeFilter!.dataTypes.map((e) => e.value).toList();
+      getCommentRequest.matchType = dataTypeFilter!.matchType;
+    }
+
+    getCommentRequest.sortBy = _sortOption.apiKey;
+
+    OptionsRequest options = OptionsRequest();
+    getCommentRequest.options = options;
+    options.type = 'pagination'; //Default option
+    getCommentRequest.options?.limit = pageSize;
+
+    return getCommentRequest;
   }
+
+  /// Query the comment list
+  Future<List<AmityComment>> query({String? token, int? limit = 20}) async {
+    final data =
+        await  _useCase.get(build(pageSize: limit)..options!.token = token);
+
+    return data.data;
+  }
+
+  CommentLiveCollection getLiveCollection({int? pageSize = 20}) {
+    return CommentLiveCollection(request: (() => build(pageSize: pageSize)));
+  }
+
 }
 
 class AmityCommentDataTypeFilter {
@@ -132,9 +158,11 @@ class AmityCommentDataTypeFilter {
 
   AmityCommentDataTypeFilter._internal(this.dataTypes, this.matchType);
 
-  factory AmityCommentDataTypeFilter.any({required List<AmityDataType> dataTypes}) =>
+  factory AmityCommentDataTypeFilter.any(
+          {required List<AmityDataType> dataTypes}) =>
       AmityCommentDataTypeFilter._internal(dataTypes, 'any');
 
-  factory AmityCommentDataTypeFilter.exact({required List<AmityDataType> dataTypes}) =>
+  factory AmityCommentDataTypeFilter.exact(
+          {required List<AmityDataType> dataTypes}) =>
       AmityCommentDataTypeFilter._internal(dataTypes, 'exact');
 }

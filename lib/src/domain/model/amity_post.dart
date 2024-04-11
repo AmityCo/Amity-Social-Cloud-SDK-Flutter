@@ -1,5 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/public/query_builder/poll/poll_get_live_object.dart';
 
 class AmityPost {
   AmityPost({required this.postId});
@@ -153,12 +154,16 @@ class PollData extends AmityPostData {
   /// Poll id
   String pollId;
 
+  late PollGetLiveObject live;
+
   /// init Poll Data
   PollData({
     required String postId,
     required this.pollId,
     Map<String, dynamic>? rawData,
-  }) : super(postId: postId, rawData: rawData);
+  }) : super(postId: postId, rawData: rawData) {
+    live = PollGetLiveObject(pollId);
+  }
 }
 
 // class CustomData extends AmityPostData {
