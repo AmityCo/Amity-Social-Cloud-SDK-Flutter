@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 class AmityCommentGetLiveObject {
   /* begin_sample_code
-    gist_id: 
+    gist_id: 93a75eef4d08380e6970091c80351217
     filename: AmityCommentGetLiveObject.dart
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter comment live object Example 
