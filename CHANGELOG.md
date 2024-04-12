@@ -1,3 +1,6 @@
+## 0.38.2
+* Fix: Handle spamming unexpected error log from socket connection.
+
 ## 0.38.1
 * Fix: Handle spamming unexpected error log from nullable objects.
 
