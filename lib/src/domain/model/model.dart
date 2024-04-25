@@ -21,3 +21,6 @@ export 'analytics/amity_post_analytics.dart';
 export 'amity_story.dart';
 export 'amity_story_item.dart';
 export 'amity_story_data.dart';
+export 'amity_reaction_reference.dart';
+export 'story_target_search_info.dart';
+export 'amity_story_target.dart';

@@ -13,6 +13,12 @@ class AmityCommentQueryTypeSelector {
         .referenceType(AmityCommentReferenceType.POST.value);
   }
 
+  AmityCommentQueryBuilder story(String story) {
+    return AmityCommentQueryBuilder(useCase: _useCase)
+        .referenceId(story)
+        .referenceType(AmityCommentReferenceType.STORY.value);
+  }
+
   AmityCommentQueryBuilder content(String contentId) {
     return AmityCommentQueryBuilder(useCase: _useCase)
         .referenceId(contentId)

@@ -1,5 +1,7 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/get_targets_by_targets_request.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 
 class StoryComposerUseCase extends UseCase<AmityStory, AmityStory> {
   /// User Repo
@@ -11,41 +13,57 @@ class StoryComposerUseCase extends UseCase<AmityStory, AmityStory> {
   /// File Repo
   final FileRepo fileRepo;
 
+  final StoryTargetRepo storyTargetRepo;
+
   /// Post File Composer UseCase
   StoryComposerUseCase(
       {required this.userRepo,
       required this.userComposerUsecase,
-      required this.fileRepo});
+      required this.fileRepo, 
+      required this.storyTargetRepo,});
 
   @override
   Future<AmityStory> get(AmityStory params) async {
     final user = await userRepo.getUserByIdFromDb(params.creatorPublicId!);
     final composedUser = await userComposerUsecase.get(user);
+    // addTarget(params);
+    getData(params);
     params.creator = composedUser;
+    
+
+    return params;
+  }
+
+  Future addTarget(AmityStory story) async {
+    if (story.targetType == AmityStoryTargetType.COMMUNITY) {
+      story.target = await storyTargetRepo.getStoryTarget(GetTargetsByTargetsRequest(targets: [StoryTargetSearchInfo(targetId: story.targetId!, targetType: story.targetType!)]));
+    }
+  }
+
+
+  Future getData(AmityStory story) async {
     AmityStoryData storyData = UnknownStoryData();
-    switch (params.dataType) {
+    switch (story.dataType) {
       case AmityStoryDataType.IMAGE:
         storyData = ImageStoryData(
-            storyId: params.storyId!,
-            rawData: params.rawData!,
+            storyId: story.storyId!,
+            rawData: story.rawData!,
             imageDisplayMode: AmityStoryImageDisplayModeExtension.enumOf(
-                params.rawData?["imageDisplayMode"]),
-            image: await getImageFile(params));
+                story.rawData?["imageDisplayMode"]),
+            image: await getImageFile(story));
         break;
       case AmityStoryDataType.VIDEO:
         storyData = VideoStoryData(
-            storyId: params.storyId!,
-            rawData: params.rawData!,
-            video: await getVideoFile(params),
-            thumbnail: await getThumbnailFile(params));
+            storyId: story.storyId!,
+            rawData: story.rawData!,
+            video: await getVideoFile(story),
+            thumbnail: await getThumbnailFile(story));
         break;
       default:
         storyData = UnknownStoryData();
     }
 
-    params.data = storyData;
-
-    return params;
+    story.data = storyData;
   }
 
   Future<AmityVideo> getVideoFile(AmityStory story) async {
@@ -53,6 +71,8 @@ class StoryComposerUseCase extends UseCase<AmityStory, AmityStory> {
         await fileRepo.getFileByIdFromDb(getVideoId( story.rawData));
     return AmityVideo(fileProperties);
   }
+
+
 
   Future<AmityImage> getImageFile(AmityStory story) async {
     var fileProperties =

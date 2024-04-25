@@ -10,4 +10,9 @@ abstract class StoryApiInterface{
   Future<CreateStoryResponse> getStories( GetStoriesByTragetRequest request);
   // Delete Story
   Future<bool> deleteStoryById( StoryDeleteByIdRequest params);
+
+  // Get Stroies by Target
+  Future<CreateStoryResponse> getStoryById( String storyId);
+
+
 }

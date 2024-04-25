@@ -19,6 +19,8 @@ abstract class AmityTopic {
 
   factory AmityTopic.NETWORK(String networkId) = AmityTopicNetwork;
 
+  factory AmityTopic.STORY(AmityStory story) = AmityTopicStory;
+
   /// Generate topic
   String generateTopic();
 
@@ -60,6 +62,17 @@ class AmityTopicNetwork extends AmityTopic {
   @override
   String generateTopic() {
     return id;
+  }
+}
+
+///  Amity Topic for Story
+class AmityTopicStory extends AmityTopic {
+  AmityStory story;
+  AmityTopicStory( this.story) : super._('story', story.storyId??"", "");
+
+  @override
+  String generateTopic() {
+    return '${story.path}/#';
   }
 }
 

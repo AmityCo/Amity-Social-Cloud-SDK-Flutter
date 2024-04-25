@@ -1,7 +1,9 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/engine/analytics/analytics_event_syncer.dart';
 import 'package:amity_sdk/src/core/engine/analytics/capturer/analytics_event_capturer.dart';
+import 'package:amity_sdk/src/core/engine/analytics/capturer/click_story_event_capturer.dart';
 import 'package:amity_sdk/src/core/engine/analytics/capturer/view_post_event_capturer.dart';
+import 'package:amity_sdk/src/core/engine/analytics/capturer/view_story_event_capturer.dart';
 import 'package:amity_sdk/src/core/session/component/session_component.dart';
 import 'package:amity_sdk/src/core/session/event_bus/session_life_cycle_event_bus.dart';
 import 'package:amity_sdk/src/core/session/event_bus/session_state_event_bus.dart';
@@ -22,6 +24,9 @@ class AnalyticsEngine extends SessionComponent {
 
   List<AnalyticsEventCapturer> eventCapturers = [
     ViewPostEventCapturer(),
+    ClickStoryEventCapturer(),
+    ViewStoryEventCapturer(),
+    
   ];
 
   Type? getCapturerInstance<Type>() {

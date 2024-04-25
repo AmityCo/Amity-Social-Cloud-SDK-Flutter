@@ -10,17 +10,18 @@ import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/analyt
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_target_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/tombstone_db_adapter_impl.dart';
-import 'package:amity_sdk/src/data/data_source/remote/api_interface/analytics_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_api_interface.dart';
-import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/analytics_api_interface_impl.dart';
-import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/story_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_target_api_interface.dart';
 import 'package:amity_sdk/src/data/repo_impl/analytics_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/story_repo_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/story_target_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/tombstone_repo_impl.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/story_composer_usercase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/reaction_composer_usecase.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/story_target_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/analytics_repo.dart';
+import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 import 'package:amity_sdk/src/domain/repo/tombstone_repo.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/stream_db_adapter_impl.dart';
@@ -37,8 +38,12 @@ import 'package:amity_sdk/src/domain/usecase/post/post_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/delete_story_by_id_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/story/get_stories_by_target_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/story/get_failed_stories_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/story/get_targets_by_targets_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/story_has_local_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/story/story_target_observe_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/story_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
@@ -223,7 +228,8 @@ class SdkServiceLocator {
         () => AnalyticsApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<StoryApiInterface>(
         () => StoryApiInterfaceImpl(httpApiClient: serviceLocator()));
-
+    serviceLocator.registerLazySingleton<StoryTargetApiInterface>(
+        () => StoryTargetApiInterfaceImpl(httpApiClient: serviceLocator()));
 
     // Local Data Source
 
@@ -336,7 +342,14 @@ class SdkServiceLocator {
       () => StoryRepoImpl(
         dbAdapterRepo: serviceLocator(),
         fileRepo: serviceLocator(),
+        storyTargetRepo: serviceLocator(),
         storyApiInterface: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<StoryTargetRepo>(
+      () => StoryTargetRepoImpl(
+        dbAdapterRepo: serviceLocator(),
+        storyTargetApiInterface: serviceLocator(),
       ),
     );
     serviceLocator.registerLazySingleton<ChannelRepo>(
@@ -431,8 +444,15 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<StoryComposerUseCase>(() =>
         StoryComposerUseCase(
             userRepo: serviceLocator(),
+            storyTargetRepo: serviceLocator(),
             userComposerUsecase: serviceLocator(),
             fileRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<StoryTargetComposerUseCase>(() =>
+        StoryTargetComposerUseCase(
+            storyRepo: serviceLocator(),
+            storyTargetRepo: serviceLocator(),
+            communityComposerUsecase: serviceLocator(),
+            communityRepo: serviceLocator()));
 
     serviceLocator.registerLazySingleton<GetMyFollowInfoUsecase>(
         () => GetMyFollowInfoUsecase(followRepo: serviceLocator()));
@@ -598,8 +618,8 @@ class SdkServiceLocator {
               userRepo: serviceLocator(),
               reactionComposerUsecase: serviceLocator(),
             ));
-    serviceLocator
-        .registerLazySingleton<ReactionComposerUsecase>(() => ReactionComposerUsecase(
+    serviceLocator.registerLazySingleton<ReactionComposerUsecase>(
+        () => ReactionComposerUsecase(
               reactionRepo: serviceLocator(),
               userRepo: serviceLocator(),
             ));
@@ -667,7 +687,9 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<PostHasLocalUsecase>(
         () => PostHasLocalUsecase(postRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<StoryHasLocalUseCase>(
-        () => StoryHasLocalUseCase( storyRepo: serviceLocator()));
+        () => StoryHasLocalUseCase(storyRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<GetTargetByTargetsUsecase>(
+        () => GetTargetByTargetsUsecase(storyTargetRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<CommentDeleteUseCase>(
         () => CommentDeleteUseCase(commentRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<CommentUpdateUsecase>(() =>
@@ -889,12 +911,22 @@ class SdkServiceLocator {
             storyComposerUseCase: serviceLocator()));
     serviceLocator.registerLazySingleton<DeleteStroyByIdUsecas>(() =>
         DeleteStroyByIdUsecas(
+            storyRepoTraget: serviceLocator(),
+            storyRepo: serviceLocator(),
+            storyComposerUseCase: serviceLocator()));
+    serviceLocator.registerLazySingleton<GetFailedStoriesUseCase>(() =>
+        GetFailedStoriesUseCase(
             storyRepo: serviceLocator(),
             storyComposerUseCase: serviceLocator()));
     serviceLocator.registerLazySingleton<StoryObserveUseCase>(() =>
         StoryObserveUseCase(
             storyRepo: serviceLocator(),
+            getFailedStoriesUseCase: serviceLocator(),
             storyComposerUseCase: serviceLocator()));
+    serviceLocator.registerLazySingleton<StoryTargetObserveUsecase>(() =>
+        StoryTargetObserveUsecase(
+            storyTargetRepo: serviceLocator(),
+            storyTargetComposerUseCase: serviceLocator()));
 
     //-data_source/remote/
     serviceLocator
@@ -916,6 +948,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton(() => ChannelModerationRepository());
     serviceLocator.registerLazySingleton(() => StreamRepository());
     serviceLocator.registerLazySingleton(() => AmityStoryRepository());
+    serviceLocator.registerLazySingleton(() => AmityReactionRepository());
 
     //MQTT Client
     serviceLocator.registerLazySingleton<AmityMQTT>(

@@ -11,3 +11,4 @@ export 'amity_post_poll_data_extension.dart';
 export 'amity_post_text_data_extension.dart';
 export 'amity_post_video_data_extension.dart';
 export 'amity_user_extension.dart';
+export 'amity_story_extension.dart';

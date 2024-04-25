@@ -17,6 +17,7 @@ extension StroyResponseExtensionConverter on StoryResponse {
       mentionedUsers: mentionedUsers,
       impression: impression,
       reach: reach,
+      path: path,
       referenceId: referenceId,
       creatorId: creatorId,
       creatorPublicId: creatorPublicId,
