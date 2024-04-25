@@ -44,7 +44,7 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
 
   @override
   Future saveStoryEntity(StoryHiveEntity data) async {
-    if (data.referenceId!=null) {
+    if (data.referenceId != null) {
       var storyEntity = box.values.firstWhereOrNull(
           (element) => element.referenceId == data.referenceId);
       if (storyEntity != null) {
@@ -66,10 +66,72 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
   @override
   Stream<List<StoryHiveEntity>> listenStoryEntities(
       RequestBuilder<GetStoriesByTragetRequest> request) {
-    return box.watch().map((event) => box.values
-        .where((story) => story.isMatchingFilter(request.call())
+    return box.watch().map((event) => box.values.where((story) {
+          return story.isMatchingFilter(request.call());
+        }
             //missing tags
-            )
-        .toList());
+            ).toList());
+  }
+
+  @override
+  Stream<StoryHiveEntity> listenPostEntity(String storyId) {
+    return box.watch(key: storyId).map((event) => event.value);
+  }
+
+  @override
+  DateTime? getHighestStoryExpiresAt(
+      String targetType, String targetId, List<AmityStorySyncState> states) {
+    return box.values
+        .where((element) =>
+            targetId == element.storyId &&
+            targetType == element.targetType &&
+            states.contains(
+                AmityStorySyncStateExtension.enumOf(element.syncState)))
+        .sorted((a, b) => a.expiresAt!.compareTo(b.expiresAt!) * -1)
+        .first
+        .expiresAt;
+  }
+
+  @override
+  int getStoryCount(
+      String targetType, String targetId, List<AmityStorySyncState> states) {
+    var size = box.values.where(
+      (element) {
+        if (targetId == element.targetId &&
+            targetType == element.targetType &&
+            states.contains(
+              AmityStorySyncStateExtension.enumOf(
+                element.syncState,
+              ),
+            )) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+    ).length;
+
+    return size;
+  }
+  
+  @override
+  List<StoryHiveEntity> getStoriesBySyncStates(String targetType, String targetId, List<AmityStorySyncState> states) {
+    var stories = box.values.where(
+      (element) {
+        if (targetId == element.targetId &&
+            targetType == element.targetType &&
+            states.contains(
+              AmityStorySyncStateExtension.enumOf(
+                element.syncState,
+              ),
+            )) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+    ).toList();
+
+    return stories;
   }
 }

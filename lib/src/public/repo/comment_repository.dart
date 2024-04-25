@@ -1,9 +1,13 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/service_locator/service_locator.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/public/query_builder/comment/comment_get_live_object.dart';
 
 /// Comment Repository
 class CommentRepository {
+
+  CommentGetLiveObject live = CommentGetLiveObject();
+
   /* begin_public_function 
   id: comment.create
   api_style: async

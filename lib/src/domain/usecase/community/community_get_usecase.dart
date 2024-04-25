@@ -15,3 +15,23 @@ class CommunityGetUseCase extends UseCase<AmityCommunity, String> {
     return amityCommunityComposed;
   }
 }
+
+/// Live Object
+class CommunityGetUsecase extends UseCase<
+    PageListData<List<AmityCommunity>, String>, GetCommunityRequest> {
+  final CommunityRepo communityRepo;
+  final CommunityComposerUsecase communityComposerUsecase;
+  CommunityGetUsecase(
+      {required this.communityRepo, required this.communityComposerUsecase});
+
+  @override
+  Future<PageListData<List<AmityCommunity>, String>> get(
+      GetCommunityRequest params) async {
+    final amityCommunity = await communityRepo.getCommunityQuery(params);
+    final amityComposedCommunity =
+        await Stream.fromIterable(amityCommunity.data)
+            .asyncMap((event) => communityComposerUsecase.get(event))
+            .toList();
+    return amityCommunity.withItem1(amityComposedCommunity);
+  }
+}

@@ -1,9 +1,15 @@
+import 'dart:async';
+
+import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/model/api_request/create_comment_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_comment_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/update_comment_request.dart';
 import 'package:amity_sdk/src/core/utils/page_list_data.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
+import 'package:amity_sdk/src/core/utils/model_mapper.dart';
+import 'package:amity_sdk/src/core/mapper/comment_model_mapper.dart';
 
 /// Comment Repo Impl
 class CommentRepoImpl extends CommentRepo {
@@ -41,12 +47,11 @@ class CommentRepoImpl extends CommentRepo {
   }
 
   @override
-  Future<List<AmityComment>> queryComment(GetCommentRequest request) async {
+  Future<PageListData<List<AmityComment>, String>> queryComment(GetCommentRequest request) async {
     final data = await commentApiInterface.queryComment(request);
 
     final amityComments = await _saveDetailsToDb(data);
-
-    return Future.value(amityComments);
+    return PageListData(amityComments, data.paging!.next ?? '');
   }
 
   @override
@@ -174,5 +179,48 @@ class CommentRepoImpl extends CommentRepo {
   @override
   bool hasLocalComment(String commentId) {
     return dbAdapterRepo.commentDbAdapter.getCommentEntity(commentId) != null;
+  }
+
+  @override
+  Stream<List<AmityComment>> listenComments(RequestBuilder<GetCommentRequest> request) {
+    return dbAdapterRepo.commentDbAdapter.listenCommentEntities(request).map((event) {
+      final req = request.call();
+      final List<AmityComment> list = [];
+      for (var element in event) {
+        list.add(element.convertToAmityComment());
+      }
+      list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
+      return list;
+    });
+  }
+
+  @override
+  Future<AmityComment?> fetchAndSave(String objectId) async {
+    var comment = await getComment(objectId);
+    if (comment != null) {
+      return comment;
+    } else {
+      await deleteComment(objectId);
+      return Future.value(null);
+    }
+  }
+
+  @override
+  ModelMapper<CommentHiveEntity, AmityComment> mapper() {
+    return CommentModelMapper();
+  }
+
+  @override
+  StreamController<CommentHiveEntity> observeFromCache(String objectId) {
+    final streamController = StreamController<CommentHiveEntity>();
+    dbAdapterRepo.commentDbAdapter.listenCommentEntity(objectId).listen((event) {
+      streamController.add(event);
+    });
+    return streamController;
+  }
+
+  @override
+  Future<CommentHiveEntity?> queryFromCache(String objectId) async {
+    return dbAdapterRepo.commentDbAdapter.getCommentEntity(objectId);
   }
 }

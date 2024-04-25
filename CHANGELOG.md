@@ -1,3 +1,24 @@
+## 0.40.0
+* Feat: Comment on Story added added
+* Feat: Reply to Comment on Story has been added
+* Feat: Reaction on Story  has been added
+* Feat: Reaction to comment on Story  has been added
+* Feat: Story Traget Live collection has been added (Get Story Targets by tragets)
+* Feat: Story Traget Live Object has been added (Get Story Target by traget)
+
+
+## 0.39.0
+* Feat: Comment Live collection have been added
+* Feat: Comment Live object has been added
+* Feat: Reaction Live collection has been added
+* Feat: Poll Live object has been added
+* Feat: Community Live object has been added
+* Feat: Community Live collection has been added
+* Feat: Ability to create post with livestream id
+
+## 0.38.1
+* Fix: Handle spamming unexpected error log from nullable objects.
+
 ## 0.38.0
 * Fix: Error of FeedType missmatched while creating the video story. Added ability to add FeedType while uploading video file.
 

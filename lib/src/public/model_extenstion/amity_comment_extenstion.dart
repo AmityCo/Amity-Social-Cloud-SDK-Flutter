@@ -6,9 +6,19 @@ import 'package:amity_sdk/src/public/public.dart';
 extension AmityCommentExtension on AmityComment {
   /// Comment create query builder
   AmityCommentCreationTarget comment() {
-    return AmityCommentCreationTarget(
-      useCase: serviceLocator(),
-    ).post(referenceId!).parentId(commentId!);
+    if (referenceType == AmityCommentReferenceType.POST) {
+      return AmityCommentCreationTarget(
+        useCase: serviceLocator(),
+      ).post(referenceId!).parentId(commentId!);
+    } else if (referenceType == AmityCommentReferenceType.STORY) {
+      return AmityCommentCreationTarget(
+        useCase: serviceLocator(),
+      ).story(referenceId!).parentId(commentId!);
+    }else{
+      return AmityCommentCreationTarget(
+        useCase: serviceLocator(),
+      ).content(referenceId!).parentId(commentId!);
+    }
   }
 
   /// Comment react query builder
@@ -28,7 +38,9 @@ extension AmityCommentExtension on AmityComment {
   /// Report Comment
   CommentFlagQueryBuilder report() {
     return CommentFlagQueryBuilder(
-        commentFlagUsecase: serviceLocator(), commentUnflagUsecase: serviceLocator(), commentId: commentId!);
+        commentFlagUsecase: serviceLocator(),
+        commentUnflagUsecase: serviceLocator(),
+        commentId: commentId!);
   }
 
   /* begin_public_function 
@@ -47,7 +59,8 @@ extension AmityCommentExtension on AmityComment {
   */
   /// Edit Comment Text
   AmityTextCommentEditorBuilder edit() {
-    return AmityTextCommentEditorBuilder(useCase: serviceLocator(), targetId: commentId!);
+    return AmityTextCommentEditorBuilder(
+        useCase: serviceLocator(), targetId: commentId!);
   }
   /* end_public_function */
 
@@ -59,7 +72,10 @@ extension AmityCommentExtension on AmityComment {
   bool get isFlaggedByMe {
     if (hashFlag == null) return false;
     return (flaggedByMe ?? false) ||
-        BloomFilter(hash: (hashFlag!['hash'] as String), m: hashFlag!['bits'] as int, k: hashFlag!['hashes'] as int)
+        BloomFilter(
+                hash: (hashFlag!['hash'] as String),
+                m: hashFlag!['bits'] as int,
+                k: hashFlag!['hashes'] as int)
             .mightContains(AmityCoreClient.getUserId());
   }
   /* end_public_function */

@@ -1,3 +1,4 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
@@ -39,10 +40,58 @@ class GetReactionQueryBuilder {
     );
   }
 
+  /// get reaction for Story
+  factory GetReactionQueryBuilder.story({required String storyId}) {
+    return GetReactionQueryBuilder(
+      serviceLocator<GetReactionUsecase>(),
+      AmityReactionReferenceType.STORY,
+      storyId,
+    );
+  }
+
+  /// get reaction for Message
+  factory GetReactionQueryBuilder.build(
+      {required AmityReactionReference reactionReference}) {
+    if (reactionReference.referenceType == AmityReactionReferenceType.POST) {
+      return GetReactionQueryBuilder.post(
+          postId: reactionReference.referenceId);
+    } else if (reactionReference.referenceType ==
+        AmityReactionReferenceType.STORY) {
+      return GetReactionQueryBuilder.story(
+          storyId: reactionReference.referenceId);
+    } else if (reactionReference.referenceType ==
+        AmityReactionReferenceType.COMMENT) {
+      return GetReactionQueryBuilder.comment(
+          commentId: reactionReference.referenceId);
+    } else {
+      return GetReactionQueryBuilder.message(
+          messageId: reactionReference.referenceId);
+    }
+  }
+
   /// get reaction for Reaction name
   GetReactionQueryBuilder reactionName(String reactionName) {
     _reactionName = reactionName;
     return this;
+  }
+
+  ReactionLiveCollection getLiveCollection({int? pageSize = 20}) {
+    return ReactionLiveCollection(request: (() => build(pageSize: pageSize)));
+  }
+
+  GetReactionRequest build({int? pageSize = 20}) {
+    GetReactionRequest getReactionRequest = GetReactionRequest(
+      referenceId: _referenceId,
+      referenceType: _referenceType.value,
+      reactionName: _reactionName,
+    );
+
+    OptionsRequest options = OptionsRequest();
+    getReactionRequest.options = options;
+    options.type = 'pagination'; //Default option
+    getReactionRequest.options?.limit = pageSize;
+
+    return getReactionRequest;
   }
 
   /* begin_public_function 

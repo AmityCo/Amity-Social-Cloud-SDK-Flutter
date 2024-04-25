@@ -21,6 +21,12 @@ class AmityCommentCreationTarget {
     return this;
   }
 
+  AmityCommentCreationTarget story(String referenceId) {
+    _referenceId = referenceId;
+    _referenceType = AmityCommentReferenceType.STORY.value;
+    return this;
+  }
+
   AmityCommentCreationTarget content(String referenceId) {
     _referenceId = referenceId;
     _referenceType = AmityCommentReferenceType.CONTENT.value;

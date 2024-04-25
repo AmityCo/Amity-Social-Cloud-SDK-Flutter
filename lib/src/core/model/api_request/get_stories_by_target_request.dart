@@ -1,10 +1,11 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 
 class GetStoriesByTragetRequest {
   String? targetId;
   String? targetType;
   StoryOptionRequest? options;
-  Map<String, String>? targets;
+ List<StoryTargetSearchInfo>? targets;
 
   GetStoriesByTragetRequest({this.targetId, this.targetType, this.options, this.targets});
 
@@ -21,7 +22,7 @@ class GetStoriesByTragetRequest {
       'targetId': targetId,
       'targetType': targetType,
       'options': options!.toJson(),
-      'targets': targets,
+      'targets': targets?.map((e) => e.toJson()).toList(),
     }..removeNullValue();
   }
 }

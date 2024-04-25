@@ -28,6 +28,7 @@ extension StoryHiveExtentionConverter on StoryHiveEntity {
       ..metadata = metadata ?? {}
       ..createdAt = createdAt
       ..updatedAt = updatedAt
+      ..path = path
       ..expiresAt = expiresAt
       ..syncState = syncState
       ..reactions = reactions ?? {}
@@ -39,8 +40,17 @@ extension StoryHiveExtentionConverter on StoryHiveEntity {
     if(request.targets == null){
       return isMatchingTargetType(request.targetType!) && isMatchingTargetid(request.targetId!);
     }else{
-      return isSyned() && request.targets!.containsKey(targetType!) && request.targets![targetType!] == targetId;
+      return  isMatchingTarget(request.targets);
     }
+  }
+
+  bool isMatchingTarget(List<StoryTargetSearchInfo>? targets){
+    for (var target in targets!) {
+      if(target.targetType.value == targetType && target.targetId == targetId){
+        return true;
+      }
+    }
+    return false;
   }
 
   bool isMatchingTargetType(String targetType) {

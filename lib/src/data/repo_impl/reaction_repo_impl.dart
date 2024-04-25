@@ -1,4 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/data/converter/reaction_response_extension_converter.dart';
+import 'package:amity_sdk/src/data/converter/story/story_hive_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
@@ -111,6 +113,36 @@ class ReactionRepoImpl extends ReactionRepo {
       }
     }
 
+
+    //Add Rection from local Amity Comment
+    if (request.referenceType == AmityReactionReferenceType.STORY.value) {
+      final amityStory =
+          dbAdapterRepo.storyDbAdapter.getStoryEntity(request.referenceId)!;
+      try {
+        final amityStoryLocalCopy = amityStory.copyWith();
+        amityStoryLocalCopy.myReactions ??= [];
+        amityStoryLocalCopy.myReactions!.add(request.reactionName);
+
+        /// Updated this information with RTE payload
+        amityStoryLocalCopy.reactionsCount =
+            (amityStoryLocalCopy.reactionsCount ?? 0) + 1;
+
+        amityStoryLocalCopy.reactions ??= {};
+        amityStoryLocalCopy.reactions![request.reactionName] =
+            (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) + 1;
+
+        await dbAdapterRepo.storyDbAdapter
+            .saveStoryEntity(amityStoryLocalCopy);
+
+        await reactionApiInterface.addReaction(request);
+
+        return amityStoryLocalCopy.convertToAmityStory() as T;
+      } catch (error) {
+        await dbAdapterRepo.storyDbAdapter.saveStoryEntity(amityStory);
+        rethrow;
+      }
+    }
+
     return Future.value();
   }
 
@@ -203,6 +235,35 @@ class ReactionRepoImpl extends ReactionRepo {
       }
     }
 
+    //Remove Rection from local Amity Message
+    if (request.referenceType == AmityReactionReferenceType.STORY.value) {
+      final amityStory =
+          dbAdapterRepo.storyDbAdapter.getStoryEntity(request.referenceId)!;
+      try {
+        final amityStoryLocalCopy = amityStory.copyWith();
+        amityStoryLocalCopy.myReactions ??= [];
+        amityStoryLocalCopy.myReactions!.remove(request.reactionName);
+
+        /// Updated this information with RTE payload
+        amityStoryLocalCopy.reactionsCount =
+            (amityStoryLocalCopy.reactionsCount ?? 0) - 1;
+
+        amityStoryLocalCopy.reactions ??= {};
+        amityStoryLocalCopy.reactions![request.reactionName] =
+            (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) - 1;
+
+        await dbAdapterRepo.storyDbAdapter
+            .saveStoryEntity(amityStoryLocalCopy);
+
+        await reactionApiInterface.removeReaction(request);
+
+        return amityStoryLocalCopy.convertToAmityStory() as T;
+      } catch (error) {
+        await dbAdapterRepo.storyDbAdapter.saveStoryEntity(amityStory);
+        rethrow;
+      }
+    }
+
     return Future.value();
   }
 
@@ -210,7 +271,22 @@ class ReactionRepoImpl extends ReactionRepo {
   Future<PageListData<List<AmityReaction>, String>> getReaction(
       GetReactionRequest request) async {
     final data = await reactionApiInterface.getReaction(request);
+    
+    // Clear old reactions if it is first page (token is null)
+    if (data != null && request.options?.token == null) {
+      await _clearOldReactions(request);
+    }
 
+    // Save the reactions to DB
+    final reactions = await _saveDetailsToDb(data);
+
+
+    return PageListData(
+        reactions.map((e) => e.convertToAmityReaction()).toList(),
+        data.paging.next ?? '');
+  }
+
+  Future<List<ReactionHiveEntity>> _saveDetailsToDb(GetReactionResponse data) async {
     //Convert to Reaction Hive Entity
     final reactionHiveEntities = data.reactions.isNotEmpty
         ? data.reactions.first.reactors
@@ -220,23 +296,38 @@ class ReactionRepoImpl extends ReactionRepo {
             .toList()
         : <ReactionHiveEntity>[];
 
+    //Save the Reaction Entities
+    for (var e in reactionHiveEntities) {
+      await dbAdapterRepo.reactionDbAdapter.saveReactionEntity(e);
+    }
+
     //Convert to User Hive Entity
     final userHiveEntities =
         data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
-    //Save the reaction
-    Stream.fromIterable(reactionHiveEntities).asyncMap(
-      (event) async =>
-          await dbAdapterRepo.reactionDbAdapter.saveReactionEntity(event),
-    );
+    //Save the User Entities
+    for (var e in userHiveEntities) {
+      await dbAdapterRepo.userDbAdapter.saveUserEntity(e);
+    }
 
-    //Save the user
-    Stream.fromIterable(userHiveEntities).asyncMap(
-      (event) async => await dbAdapterRepo.userDbAdapter.saveUserEntity(event),
-    );
-
-    return PageListData(
-        reactionHiveEntities.map((e) => e.convertToAmityReaction()).toList(),
-        data.paging.next ?? '');
+    return reactionHiveEntities;
   }
+
+  @override
+  Stream<List<AmityReaction>> listenReactions(RequestBuilder<GetReactionRequest> request) {
+    return dbAdapterRepo.reactionDbAdapter.listenReactionEntities(request).map((event) {
+      final req = request.call();
+      final List<AmityReaction> list = [];
+      for (var element in event) {
+        list.add(element.convertToAmityReaction());
+      }
+      list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
+      return list;
+    });
+  }
+
+  Future _clearOldReactions(GetReactionRequest request) {
+    return dbAdapterRepo.reactionDbAdapter.clearOldReactions(request);
+  }
+
 }
