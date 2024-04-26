@@ -7,7 +7,7 @@ import 'package:hive/hive.dart';
 part 'story_hive_entity_27.g.dart';
 
 @HiveType(typeId: 27)
-class StoryHiveEntity extends HiveObject {
+class StoryHiveEntity extends EkoObject {
   String? storyId;
   String? path;
   String? creatorId;
@@ -123,5 +123,10 @@ class StoryHiveEntity extends HiveObject {
       reach: reach ?? this.reach,
       referenceId: referenceId ?? this.referenceId,
     );
+  }
+  
+  @override
+  String? getId() {
+    return referenceId;
   }
 }

@@ -8,5 +8,8 @@ export 'paging_controller.dart';
 export 'paging_data.dart';
 export '../enum/tombstone_type.dart';
 export 'post_live_collection.dart';
+export 'story_live_collection.dart';
+export 'story_target_live_collection.dart';
 export 'community_live_collection.dart';
 export 'story_live_collection.dart';
+

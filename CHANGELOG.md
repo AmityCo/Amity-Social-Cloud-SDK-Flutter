@@ -1,3 +1,12 @@
+## 0.40.0
+* Feat: Comment on Story added added
+* Feat: Reply to Comment on Story has been added
+* Feat: Reaction on Story  has been added
+* Feat: Reaction to comment on Story  has been added
+* Feat: Story Traget Live collection has been added (Get Story Targets by tragets)
+* Feat: Story Traget Live Object has been added (Get Story Target by traget)
+
+
 ## 0.39.0
 * Feat: Comment Live collection have been added
 * Feat: Comment Live object has been added

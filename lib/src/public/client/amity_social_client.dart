@@ -18,6 +18,9 @@ class AmitySocialClient {
   /// New Poll Repo
   static PollRepository newPollRepository() => serviceLocator<PollRepository>();
 
-  /// New Poll Repo
+  /// New Story Repo
   static AmityStoryRepository newStoryRepository() => serviceLocator<AmityStoryRepository>();
+
+  /// New Reaction Repo
+  static AmityReactionRepository newReactionRepository() => serviceLocator<AmityReactionRepository>();
 }

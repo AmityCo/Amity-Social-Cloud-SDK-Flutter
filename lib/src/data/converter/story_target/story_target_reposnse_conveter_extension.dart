@@ -6,6 +6,7 @@ extension StroyTargetResponseExtensionConverter on StoryTargetResponse{
   StoryTargetHiveEntity convertToStoryTargetHiveEntity() {
 
     return StoryTargetHiveEntity(
+      uniqueId: AmityStoryTarget.generateUniqueId(targetType!, targetId!),
       targetId: targetId,
       targetType: targetType,
       lastStoryExpiresAt: lastStoryExpiresAt,
@@ -18,3 +19,5 @@ extension StroyTargetResponseExtensionConverter on StoryTargetResponse{
     );
   }
 }
+
+

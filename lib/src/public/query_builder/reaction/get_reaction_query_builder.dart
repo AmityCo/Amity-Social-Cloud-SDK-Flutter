@@ -40,6 +40,35 @@ class GetReactionQueryBuilder {
     );
   }
 
+  /// get reaction for Story
+  factory GetReactionQueryBuilder.story({required String storyId}) {
+    return GetReactionQueryBuilder(
+      serviceLocator<GetReactionUsecase>(),
+      AmityReactionReferenceType.STORY,
+      storyId,
+    );
+  }
+
+  /// get reaction for Message
+  factory GetReactionQueryBuilder.build(
+      {required AmityReactionReference reactionReference}) {
+    if (reactionReference.referenceType == AmityReactionReferenceType.POST) {
+      return GetReactionQueryBuilder.post(
+          postId: reactionReference.referenceId);
+    } else if (reactionReference.referenceType ==
+        AmityReactionReferenceType.STORY) {
+      return GetReactionQueryBuilder.story(
+          storyId: reactionReference.referenceId);
+    } else if (reactionReference.referenceType ==
+        AmityReactionReferenceType.COMMENT) {
+      return GetReactionQueryBuilder.comment(
+          commentId: reactionReference.referenceId);
+    } else {
+      return GetReactionQueryBuilder.message(
+          messageId: reactionReference.referenceId);
+    }
+  }
+
   /// get reaction for Reaction name
   GetReactionQueryBuilder reactionName(String reactionName) {
     _reactionName = reactionName;

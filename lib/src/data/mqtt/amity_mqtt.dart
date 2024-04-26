@@ -75,7 +75,7 @@ class AmityMQTT {
       await activeClient?.connect();
     } on Exception catch (e) {
       logger('AMITY_MQTT::client exception - $e');
-      activeClient?.disconnect();
+      _disconnectClient();
       return MQTT_DISCONNECTED;
     }
 
@@ -85,7 +85,7 @@ class AmityMQTT {
     } else {
       logger(
           'AMITY_MQTT::ERROR Mosquitto client connection failed - disconnecting, status is ${activeClient?.connectionStatus}');
-      activeClient?.disconnect();
+      _disconnectClient();
       return MQTT_DISCONNECTED;
     }
 
@@ -116,8 +116,16 @@ class AmityMQTT {
     });
   }
 
+  void _disconnectClient() {
+    try  {
+      activeClient?.disconnect();
+    } on Exception catch (e) {
+      logger('AMITY_MQTT::client exception - $e');
+    }
+  }
+
   void _obsoleteClient() {
-    activeClient?.disconnect();
+    _disconnectClient();
     activeClient = null;
   }
 
@@ -136,7 +144,12 @@ class AmityMQTT {
     _completerPool[topic.generateTopic()] = completer;
 
     logger('AMITY_MQTT::Subscribing to - ${topic.generateTopic()}');
-    activeClient?.subscribe(topic.generateTopic(), MqttQos.atMostOnce);
+    try {
+      activeClient?.subscribe(topic.generateTopic(), MqttQos.atMostOnce);
+    } on Exception catch (e) {
+      logger('AMITY_MQTT::client fail to subscribe with exception - $e');
+      completer.completeError(e);
+    }
 
     /// Connection timeout for MQTT
     Future.delayed(const Duration(seconds: 30), () {
@@ -165,7 +178,12 @@ class AmityMQTT {
     _completerPool[topic.generateTopic()] = completer;
 
     logger('AMITY_MQTT::Unsubscribing to ${topic.generateTopic()}');
-    activeClient?.unsubscribe(topic.generateTopic());
+    try {
+      activeClient?.unsubscribe(topic.generateTopic());
+    } on Exception catch (e) {
+      logger('AMITY_MQTT::client fail to unsubscribe with exception - $e');
+      completer.completeError(e);
+    }
 
     /// Connection timeout for MQTT
     Future.delayed(const Duration(seconds: 30), () {
@@ -219,22 +237,25 @@ class AmityMQTT {
   /// The successful connect callback
   void _onConnected() {
     logger('AMITY_MQTT::OnConnected client callback - Client connection was sucessful');
+    try {
+      activeClient?.updates?.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+        final recMess = c?[0].payload as MqttPublishMessage;
+        final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    activeClient?.updates?.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-      final recMess = c?[0].payload as MqttPublishMessage;
-      final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+        final payload = MqttPayloadResponse.fromJson(jsonDecode(pt));
 
-      final payload = MqttPayloadResponse.fromJson(jsonDecode(pt));
+        logger(
+            'AMITY_MQTT::Notification:: Payload Type - ${payload.eventType} topic is <${c?[0].topic}>, payload is <-- $pt -->');
 
-      logger(
-          'AMITY_MQTT::Notification:: Payload Type - ${payload.eventType} topic is <${c?[0].topic}>, payload is <-- $pt -->');
-      //
-      final listener = MqttEventListeners().getEvent(payload.eventType);
+        final listener = MqttEventListeners().getEvent(payload.eventType);
 
-      if (listener != null && payload.data != null) {
-        listener.processEvent(payload.data!);
-      }
-    });
+        if (listener != null && payload.data != null) {
+          listener.processEvent(payload.data!);
+        }
+      });
+    } on Exception catch (e) {
+      logger('AMITY_MQTT::client fail to listen an event with exception - $e');
+    }
   }
 
   /// Pong callback

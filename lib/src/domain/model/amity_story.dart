@@ -20,6 +20,7 @@ class AmityStory {
   DateTime? createdAt;
   DateTime? updatedAt;
   String? path;
+  AmityStoryTarget? target = null;
   int impression = 0;
   int reach = 0;
   AmityUser? creator;
@@ -27,6 +28,14 @@ class AmityStory {
   String? creatorPublicId;
   String? targetPublicId;
   AmityStorySyncState? syncState;
+
+  // bool isSeen() {
+  //   var lastStorySeenExpiresAt = target?.highestSeen;
+  //   if (lastStorySeenExpiresAt == null || expiresAt == null) {
+  //     return false;
+  //   } else {
+  //     return lastStorySeenExpiresAt.compareTo(expiresAt!) == 0 ||
+  //         lastStorySeenExpiresAt.isAfter(expiresAt!);
+  //   }
+  // }
 }
-
-

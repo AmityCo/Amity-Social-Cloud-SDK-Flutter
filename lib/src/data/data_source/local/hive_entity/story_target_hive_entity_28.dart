@@ -7,6 +7,8 @@ part 'story_target_hive_entity_28.g.dart';
 @HiveType(typeId: 28)
 class StoryTargetHiveEntity  extends EkoObject {
 
+  String? uniqueId;
+
   String? targetId;
 
   String? targetType = AmityStoryTargetType.UNKNOWN.value;
@@ -28,6 +30,7 @@ class StoryTargetHiveEntity  extends EkoObject {
   DateTime? localLastStorySeenExpiresAt;
 
   StoryTargetHiveEntity({
+    this.uniqueId,
     this.targetId,
     this.targetType,
     this.lastStoryExpiresAt,
@@ -41,6 +44,7 @@ class StoryTargetHiveEntity  extends EkoObject {
 
 
   StoryTargetHiveEntity copyWith({
+    String? uniqueId,
     String? targetId,
     String? targetType,
     DateTime? lastStoryExpiresAt,
@@ -52,6 +56,7 @@ class StoryTargetHiveEntity  extends EkoObject {
     DateTime? localLastStorySeenExpiresAt
   }){
     return StoryTargetHiveEntity(
+      uniqueId: uniqueId ?? this.uniqueId,
       targetId: targetId ?? this.targetId,
       targetType: targetType ?? this.targetType,
       lastStoryExpiresAt: lastStoryExpiresAt ?? this.lastStoryExpiresAt,
@@ -68,7 +73,7 @@ class StoryTargetHiveEntity  extends EkoObject {
 
   @override
   String? getId() {
-    return targetId;
+    return "$targetType/$targetId";
   }
 
 }

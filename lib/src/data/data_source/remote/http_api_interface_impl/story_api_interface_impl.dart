@@ -19,7 +19,7 @@ class StoryApiInterfaceImpl extends StoryApiInterface {
       final data = await httpApiClient().post(STORIES, data: request.toJson());
       return CreateStoryResponse.fromJson(data.data);
     } on DioException catch (error) {
-      final amityError = AmityErrorResponse.fromJson(error.response!.data);
+      final amityError = AmityErrorResponse.fromJson(error.response?.data);
       return Future.error(amityError.amityException());
     }
   }
@@ -28,8 +28,9 @@ class StoryApiInterfaceImpl extends StoryApiInterface {
   Future<CreateStoryResponse> getStories(
       GetStoriesByTragetRequest request) async {
     try {
-      final data =
-          await httpApiClient().get(STORIES, queryParameters: request.toJson());
+      final data = await httpApiClient().get(
+          request.targets != null ? STORIES_BY_TARGETS : STORIES,
+          queryParameters: request.toJson());
       return CreateStoryResponse.fromJson(data.data);
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
@@ -43,6 +44,17 @@ class StoryApiInterfaceImpl extends StoryApiInterface {
       final data = await httpApiClient().delete('$STORIES/${params.storyId}',
           queryParameters: {"permanent": params.permanentDelete});
       return true;
+    } on DioException catch (error) {
+      final amityError = AmityErrorResponse.fromJson(error.response!.data);
+      return Future.error(amityError.amityException());
+    }
+  }
+
+  @override
+  Future<CreateStoryResponse> getStoryById(String storyId) async {
+    try {
+      final data = await httpApiClient().get('$STORIES/$storyId');
+      return CreateStoryResponse.fromJson(data.data);
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
       return Future.error(amityError.amityException());

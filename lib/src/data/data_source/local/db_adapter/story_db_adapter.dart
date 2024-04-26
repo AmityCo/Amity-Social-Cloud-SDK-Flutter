@@ -3,18 +3,24 @@ import 'package:amity_sdk/src/core/model/api_request/get_stories_by_target_reque
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/story_hive_entity_27.dart';
 
 abstract class StoryDbAdapter {
-
   Future saveStoryEntity(StoryHiveEntity data);
-  
+
   Future deleteStoryEntity(String storyId);
-  
+
   Future deleteAllStoryEntity();
 
-  Future updateSyncState(String storyId , String syncState);
+  Future updateSyncState(String storyId, String syncState);
 
   StoryHiveEntity? getStoryEntity(String storyId);
+
+  Stream<StoryHiveEntity> listenPostEntity(String storyId);
+
+  List<StoryHiveEntity> getStoriesBySyncStates(String targetType, String targetId, List<AmityStorySyncState> states);
 
   Stream<List<StoryHiveEntity>> listenStoryEntities(
       RequestBuilder<GetStoriesByTragetRequest> request);
 
+  DateTime? getHighestStoryExpiresAt(String targetType, String targetId, List<AmityStorySyncState> states);
+
+  int getStoryCount(String targetType, String targetId,  List<AmityStorySyncState> states);
 }

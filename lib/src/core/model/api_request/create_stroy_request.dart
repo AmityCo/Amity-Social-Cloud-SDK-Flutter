@@ -61,7 +61,7 @@ class CreateStoryRequest {
       targetId: targetId,
       metadata: metadata,
       referenceId: referenceId,
-      storyId: referenceId,
+      storyId: "LOCAL_$referenceId",
       creatorPublicId: AmityCoreClient.getUserId(),
       createdAt: DateTime.now().toUtc(),
     );

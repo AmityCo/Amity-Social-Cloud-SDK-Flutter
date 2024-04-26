@@ -70,17 +70,18 @@ abstract class AmityObjectRepository<Entity extends EkoObject, PublicModel> {
       }
     } catch (error) {
       var errorStr = error.toString();
-      if (errorStr == EntityExpiredException().message || errorStr == EntityNotFoundException().message) {
+      if (errorStr == EntityExpiredException().message ||
+          errorStr == EntityNotFoundException().message) {
         fetchAndSave(objectId).then((value) {
-          getEntity(objectId)
-          .then((object) {
-            if (object != null) { 
-              return mapper().map(object); 
+          getEntity(objectId).then((object) {
+            if (object != null) {
+              return mapper().map(object);
             }
           });
         }).onError((error, stackTrace) {
           throw error ?? "";
         });
+        // }
       }
     }
 
