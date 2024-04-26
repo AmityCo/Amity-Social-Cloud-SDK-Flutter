@@ -8,8 +8,8 @@ class StoryGetLiveObject{
     return StoryLiveObjectUseCase().execute(storyId);
   }
 
-  Stream<AmityStoryTarget> getStoryTaregt({required AmityStoryTargetType targetType , required String storyId}){
+  Stream<AmityStoryTarget> getStoryTaregt({required AmityStoryTargetType targetType , required String targetId}){
     return StoryTargetLiveObjectUsecase()
-        .execute(AmityStoryTarget.generateUniqueId(targetType.value, storyId));
+        .execute(AmityStoryTarget.generateUniqueId(targetType.value, targetId));
   }
 }
