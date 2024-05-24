@@ -20,11 +20,16 @@ StoryTargetDbAdapter {
 
   Stream<List<StoryTargetHiveEntity>> listenStoryTargetEntities(
       RequestBuilder<GetTargetsByTargetsRequest> request);
+  
+  Stream<List<StoryTargetHiveEntity>> listenAllStoryTargetEntities();
 
   Stream<StoryTargetHiveEntity> listenStoryTargetEntity(String uniqueId);
 
   StoryTargetHiveEntity? getStoryTarget(
       String uniqueId);
+
+
+  Future? triggerChange();
 
   Future createStoryTarget(
       AmityStoryTargetType targetType,

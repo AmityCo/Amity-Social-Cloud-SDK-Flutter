@@ -9,6 +9,7 @@ sealed class AmityStoryTarget {
   DateTime? lastStoryExpiresAt;
   DateTime? lastStorySeenExpiresAt;
   bool hasUnseen;
+  String? targetPublicId;
   DateTime? localSortingDate;
   final DateTime? localLastStoryExpiresAt;
   final DateTime? localLastStorySeenExpiresAt;
@@ -24,6 +25,7 @@ sealed class AmityStoryTarget {
       this.lastStoryExpiresAt,
       this.lastStorySeenExpiresAt,
       this.hasUnseen = false,
+      this.targetPublicId,
       this.localSortingDate,
       this.localLastStoryExpiresAt,
       this.localLastStorySeenExpiresAt,
@@ -61,6 +63,7 @@ class AmityStoryTargetCommunity extends AmityStoryTarget {
     DateTime? lastStoryExpiresAt,
     DateTime? lastStorySeenExpiresAt,
     bool hasUnseen = false,
+    String? targetPublicId,
     DateTime? localSortingDate,
     DateTime? localLastStoryExpiresAt,
     DateTime? localLastStorySeenExpiresAt,
@@ -76,6 +79,7 @@ class AmityStoryTargetCommunity extends AmityStoryTarget {
             lastStoryExpiresAt: lastStoryExpiresAt,
             lastStorySeenExpiresAt: lastStorySeenExpiresAt,
             hasUnseen: hasUnseen,
+            targetPublicId: targetPublicId,
             localSortingDate: localSortingDate,
             localLastStoryExpiresAt: localLastStoryExpiresAt,
             localLastStorySeenExpiresAt: localLastStorySeenExpiresAt,
@@ -92,6 +96,7 @@ class AmityStoryTargetUser extends AmityStoryTarget {
       DateTime? lastStorySeenExpiresAt,
       bool hasUnseen = false,
       DateTime? localSortingDate,
+      String? targetPublicId,
       DateTime? localLastStoryExpiresAt,
       DateTime? localLastStorySeenExpiresAt,
       int syncingStoriesCount = 0,
@@ -106,6 +111,7 @@ class AmityStoryTargetUser extends AmityStoryTarget {
             lastStoryExpiresAt: lastStoryExpiresAt,
             lastStorySeenExpiresAt: lastStorySeenExpiresAt,
             hasUnseen: hasUnseen,
+            targetPublicId: targetPublicId,
             localSortingDate: localSortingDate,
             localLastStoryExpiresAt: localLastStoryExpiresAt,
             localLastStorySeenExpiresAt: localLastStorySeenExpiresAt,
@@ -122,6 +128,7 @@ class AmityStoryTargetUnknown extends AmityStoryTarget {
       DateTime? lastStorySeenExpiresAt,
       bool hasUnseen = false,
       DateTime? localSortingDate,
+      String? targetPublicId,
       DateTime? localLastStoryExpiresAt,
       DateTime? localLastStorySeenExpiresAt,
       int syncingStoriesCount = 0,
@@ -136,6 +143,7 @@ class AmityStoryTargetUnknown extends AmityStoryTarget {
             lastStoryExpiresAt: lastStoryExpiresAt,
             lastStorySeenExpiresAt: lastStorySeenExpiresAt,
             hasUnseen: hasUnseen,
+            targetPublicId: targetPublicId,
             localSortingDate: localSortingDate,
             localLastStoryExpiresAt: localLastStoryExpiresAt,
             localLastStorySeenExpiresAt: localLastStorySeenExpiresAt,

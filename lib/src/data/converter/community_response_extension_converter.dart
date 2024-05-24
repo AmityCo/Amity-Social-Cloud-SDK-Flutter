@@ -22,6 +22,7 @@ extension CommunityResponsseExtension on CommunityResponse {
       ..editedAt = updatedAt
       ..metadata = metadata
       ..categoryIds = categoryIds
+      ..allowCommentInStory = allowCommentInStory
       ..needApprovalOnPostCreation = needApprovalOnPostCreation
       ..tags = tags;
   }

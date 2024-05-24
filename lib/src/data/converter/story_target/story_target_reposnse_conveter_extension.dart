@@ -8,6 +8,7 @@ extension StroyTargetResponseExtensionConverter on StoryTargetResponse{
     return StoryTargetHiveEntity(
       uniqueId: AmityStoryTarget.generateUniqueId(targetType!, targetId!),
       targetId: targetId,
+      targetPublicId: targetPublicId,
       targetType: targetType,
       lastStoryExpiresAt: lastStoryExpiresAt,
       lastStorySeenExpiresAt: lastStorySeenExpiresAt,

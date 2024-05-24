@@ -98,13 +98,16 @@ class StoryTargetComposerUseCase
         storyTarget.localSortingDate != localSortingDate) {
       storyTarget.hasUnseen = computedHasUnseen;
       storyTarget.localSortingDate = localSortingDate;
-      //  updateStoryTarget(storyTarget, computedHasUnseen, localSortingDate);
+
+      // print("Updating story target: ${storyTarget.targetId} with hasUnseen: $computedHasUnseen and localSortingDate: $localSortingDate");
+
+       updateStoryTarget(storyTarget, computedHasUnseen, localSortingDate);
     }
   }
 
   Future updateStoryTarget(AmityStoryTarget storyTarget, bool hasUnseen,
       DateTime? localSortingDate) async {
-     storyTargetRepo.updateStoryTargetHasUnseen(storyTarget.targetType,
-        storyTarget.targetId, hasUnseen, localSortingDate);
+        // storyTargetRepo.updateStoryTargetHasUnseen(storyTarget.targetType,
+        // storyTarget.targetId, hasUnseen, localSortingDate);
   }
 }

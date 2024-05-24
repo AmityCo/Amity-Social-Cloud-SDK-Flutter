@@ -13,7 +13,8 @@ class CommunityUpdaterBuilder {
   List<String>? _userIds;
   List<String>? _tags;
   String? _avatarFileId;
-  bool? _needApprovalOnPostCreation;
+  AmityCommunityStorySettings? _storySettings;
+  AmityCommunityPostSettings? _postSettings;
 
   CommunityUpdaterBuilder(this.usecase, this.communityId);
 
@@ -47,6 +48,11 @@ class CommunityUpdaterBuilder {
     return this;
   }
 
+  CommunityUpdaterBuilder postSetting(AmityCommunityPostSettings settings) {
+    _postSettings = settings;
+    return this;
+  }
+
   CommunityUpdaterBuilder tags(List<String> tags) {
     _tags = tags;
     return this;
@@ -57,8 +63,8 @@ class CommunityUpdaterBuilder {
     return this;
   }
 
-  CommunityUpdaterBuilder isPostReviewEnabled(bool isPostReviewEnabled) {
-    _needApprovalOnPostCreation = isPostReviewEnabled;
+  CommunityUpdaterBuilder storySettings(AmityCommunityStorySettings settings) {
+    _storySettings = settings;
     return this;
   }
 
@@ -73,8 +79,10 @@ class CommunityUpdaterBuilder {
     request.metadata = _metadata;
     request.userIds = _userIds;
     request.tags = _tags;
+    request.allowCommentInStory = _storySettings?.allowComment;
     request.avatarFileId = _avatarFileId;
-    request.needApprovalOnPostCreation = _needApprovalOnPostCreation;
+    request.needApprovalOnPostCreation = _postSettings?.isPostReviewEnabled;
+    request.onlyAdminCanPost = _postSettings?.onlyAdminCanPost;
 
     return usecase.get(request);
   }
