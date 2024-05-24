@@ -43,6 +43,7 @@ class StoryRepoImpl extends StoryRepo {
       entity.syncState = AmityStorySyncState.CREATED.value;
       entity.expiresAt = DateTime.now().add(Duration(days: 365));
       await dbAdapterRepo.storyDbAdapter.saveStoryEntity(entity);
+      
       storyTargetRepo.updateStoryTargetLocalLastStoryExpiresAt(
           AmityStoryTargetTypeExtension.enumOf(request.targetType!),
           request.targetId!,

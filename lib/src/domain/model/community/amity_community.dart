@@ -29,6 +29,7 @@ class AmityCommunity {
   bool? isPostReviewEnabled;
   DateTime? createdAt;
   DateTime? updatedAt;
+  bool? allowCommentInStory;
   String? path;
 
   Map<String, dynamic> toMap() {
@@ -56,6 +57,7 @@ class AmityCommunity {
       'createdAt': createdAt?.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
       'path': path,
+      'allowCommentInStory': allowCommentInStory,
     };
   }
 

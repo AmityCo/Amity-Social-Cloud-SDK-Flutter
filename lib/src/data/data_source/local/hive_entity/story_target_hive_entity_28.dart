@@ -11,6 +11,8 @@ class StoryTargetHiveEntity  extends EkoObject {
 
   String? targetId;
 
+  String? targetPublicId;
+
   String? targetType = AmityStoryTargetType.UNKNOWN.value;
 
   DateTime? lastStoryExpiresAt;
@@ -18,6 +20,8 @@ class StoryTargetHiveEntity  extends EkoObject {
   DateTime? lastStorySeenExpiresAt;
 
   DateTime? targetUpdatedAt;
+
+  
 
   // Local Feild
 
@@ -29,10 +33,12 @@ class StoryTargetHiveEntity  extends EkoObject {
 
   DateTime? localLastStorySeenExpiresAt;
 
+
   StoryTargetHiveEntity({
     this.uniqueId,
     this.targetId,
     this.targetType,
+    this.targetPublicId,
     this.lastStoryExpiresAt,
     this.lastStorySeenExpiresAt,
     this.targetUpdatedAt,
@@ -51,6 +57,7 @@ class StoryTargetHiveEntity  extends EkoObject {
     DateTime? lastStorySeenExpiresAt,
     DateTime? targetUpdatedAt,
     bool? hasUnseen,
+    String? targetPublicId,
     DateTime? localSortingDate,
     DateTime? localLastStoryExpiresAt,
     DateTime? localLastStorySeenExpiresAt
@@ -58,6 +65,7 @@ class StoryTargetHiveEntity  extends EkoObject {
     return StoryTargetHiveEntity(
       uniqueId: uniqueId ?? this.uniqueId,
       targetId: targetId ?? this.targetId,
+      targetPublicId: targetPublicId ?? this.targetPublicId,
       targetType: targetType ?? this.targetType,
       lastStoryExpiresAt: lastStoryExpiresAt ?? this.lastStoryExpiresAt,
       lastStorySeenExpiresAt: lastStorySeenExpiresAt ?? this.lastStorySeenExpiresAt,

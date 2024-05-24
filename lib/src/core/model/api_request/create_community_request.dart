@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:amity_sdk/amity_sdk.dart';
+
 CreateCommunityRequest createPostRequestFromJson(String str) =>
     CreateCommunityRequest.fromJson(json.decode(str));
 
@@ -18,6 +20,8 @@ class CreateCommunityRequest {
     this.tags,
     this.avatarFileId,
     this.needApprovalOnPostCreation,
+    this.onlyAdminCanPost,
+    this.allowCommentInStory,
   });
   String? communityId;
   String? displayName;
@@ -29,6 +33,8 @@ class CreateCommunityRequest {
   List<String>? tags;
   String? avatarFileId;
   bool? needApprovalOnPostCreation;
+  bool? onlyAdminCanPost;
+  bool? allowCommentInStory;
 
   factory CreateCommunityRequest.fromJson(Map<String, dynamic> json) =>
       CreateCommunityRequest(
@@ -44,6 +50,8 @@ class CreateCommunityRequest {
         avatarFileId: json["avatarFileId"],
         metadata: json["metadata"],
         needApprovalOnPostCreation: json["needApprovalOnPostCreation"],
+        onlyAdminCanPost: json["onlyAdminCanPost"],
+        allowCommentInStory : json["allowCommentInStory"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +65,8 @@ class CreateCommunityRequest {
         "tags": tags,
         "avatarFileId": avatarFileId,
         "needApprovalOnPostCreation": needApprovalOnPostCreation,
+        "onlyAdminCanPost": onlyAdminCanPost,
+        "allowCommentInStory": allowCommentInStory,
       }..removeWhere((key, value) => value == null);
 
   @override

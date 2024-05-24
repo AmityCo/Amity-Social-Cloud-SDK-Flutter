@@ -30,6 +30,7 @@ class HttpApiClient {
     dio.interceptors.add(QueuedInterceptorsWrapper(onRequest: (options, handler) {
       if (serviceLocator.isRegistered<SessionResponse>()) {
         options.headers['authorization'] = 'Bearer ${serviceLocator<SessionResponse>().accessToken}';
+        // options.headers['cookie'] = 'userId=${AmityCoreClient.getUserId()}';
       }
       handler.next(options);
     }, onError: (e, handler) {

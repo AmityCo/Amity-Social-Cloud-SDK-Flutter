@@ -46,3 +46,5 @@ export 'amity_story_state.dart';
 export 'amity_story_data_type.dart';
 export 'amity_content_feed_type.dart';
 export 'amity_video_resolution.dart';
+export 'amity_global_story_targets_query_option.dart';
+export 'amity_roles_filter.dart';

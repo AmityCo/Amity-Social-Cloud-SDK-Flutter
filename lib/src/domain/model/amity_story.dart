@@ -29,13 +29,13 @@ class AmityStory {
   String? targetPublicId;
   AmityStorySyncState? syncState;
 
-  // bool isSeen() {
-  //   var lastStorySeenExpiresAt = target?.highestSeen;
-  //   if (lastStorySeenExpiresAt == null || expiresAt == null) {
-  //     return false;
-  //   } else {
-  //     return lastStorySeenExpiresAt.compareTo(expiresAt!) == 0 ||
-  //         lastStorySeenExpiresAt.isAfter(expiresAt!);
-  //   }
-  // }
+  bool isSeen() {
+    var lastStorySeenExpiresAt = target?.highestSeen;
+    if (lastStorySeenExpiresAt == null || expiresAt == null) {
+      return false;
+    } else {
+      return lastStorySeenExpiresAt.compareTo(expiresAt!) == 0 ||
+          lastStorySeenExpiresAt.isAfter(expiresAt!);
+    }
+  }
 }

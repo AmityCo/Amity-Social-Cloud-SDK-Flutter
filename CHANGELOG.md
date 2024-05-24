@@ -1,3 +1,12 @@
+## 0.41.0
+* Feat: Global Story Target Added
+* Feat: Story can be marked as view by AmityStory.analytics().markAsSeen()
+* Feat: Story can be marked as Linked Clicked by AmityStory.analytics().markLinkAsClicked() 
+* Feat: Reached user for the AmityStory can be fetched. 
+* Feat: Story RTE Subscription added.
+* Feat: Urls can be validated now by using AmityCoreClient().validateUrls(urls)
+* Feat: Texts can be validated now by using AmityCoreClient().validateTexts(texts)
+
 ## 0.40.0
 * Feat: Comment on Story added added
 * Feat: Reply to Comment on Story has been added
