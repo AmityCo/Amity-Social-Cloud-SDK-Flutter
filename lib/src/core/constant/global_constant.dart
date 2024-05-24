@@ -91,4 +91,11 @@ const REACH_STORIES = 'api/v1/analytics/views/stories/';
 const STORIES = 'api/v4/stories';
 const STORIES_SEEN = 'api/v4/stories/seen';
 const STORIES_BY_TARGETS = 'api/v4/stories-by-targets';
+const STORIES_TARGETS_GLOBAL = 'api/v5/me/global-story-targets';
+
+
+const VALIDATE_URL = "api/v3/allowlists/verify";
+const VALIDATE_TEXT = "api/v3/blocklists/verify";
+
+const NOTIFICATION_SETTINGS = "api/v3/notification/setting";
 

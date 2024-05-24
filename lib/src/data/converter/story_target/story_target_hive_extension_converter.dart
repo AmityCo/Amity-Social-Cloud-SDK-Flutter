@@ -5,15 +5,23 @@ import 'package:amity_sdk/src/domain/model/amity_story_target.dart';
 
 extension StoryTargetHiveExtentionConverter on StoryTargetHiveEntity {
   AmityStoryTarget convertToAmityStoryTarget() {
+
+    if(targetId ==null && key !=null){
+      targetId = key.split("/")[1];
+      targetType = key.split("/")[0];
+      targetPublicId = key.split("/")[1];
+    }
     AmityStoryTargetType storytargetType =
-        AmityStoryTargetTypeExtension.enumOf(targetType!);
+        AmityStoryTargetTypeExtension.enumOf(targetType);
     switch (storytargetType) {
       case AmityStoryTargetType.COMMUNITY:
         return AmityStoryTargetCommunity(
             targetId: targetId!,
+            targetPublicId: targetPublicId,
             lastStoryExpiresAt: lastStoryExpiresAt,
             lastStorySeenExpiresAt: lastStorySeenExpiresAt,
             hasUnseen: false,
+            updatedAt: targetUpdatedAt,
             localSortingDate: localSortingDate,
             localLastStoryExpiresAt: localLastStoryExpiresAt,
             localLastStorySeenExpiresAt: localLastStorySeenExpiresAt);
@@ -23,6 +31,8 @@ extension StoryTargetHiveExtentionConverter on StoryTargetHiveEntity {
             lastStoryExpiresAt: lastStoryExpiresAt,
             lastStorySeenExpiresAt: lastStorySeenExpiresAt,
             hasUnseen: false,
+            updatedAt: targetUpdatedAt,
+            targetPublicId: targetPublicId,
             localSortingDate: localSortingDate,
             localLastStoryExpiresAt: localLastStoryExpiresAt,
             localLastStorySeenExpiresAt: localLastStorySeenExpiresAt);
@@ -32,6 +42,8 @@ extension StoryTargetHiveExtentionConverter on StoryTargetHiveEntity {
             lastStoryExpiresAt: lastStoryExpiresAt,
             lastStorySeenExpiresAt: lastStorySeenExpiresAt,
             hasUnseen: false,
+            updatedAt: targetUpdatedAt,
+            targetPublicId: targetPublicId,
             localSortingDate: localSortingDate,
             localLastStoryExpiresAt: localLastStoryExpiresAt,
             localLastStorySeenExpiresAt: localLastStorySeenExpiresAt);
@@ -44,6 +56,7 @@ extension StoryTargetHiveExtentionConverter on StoryTargetHiveEntity {
 
 
   bool isMatchingTarget(List<StoryTargetSearchInfo>? targets){
+    if(targets == null) return false;
     for (var target in targets!) {
       if(target.targetType.value == targetType && target.targetId == targetId){
         return true;

@@ -17,3 +17,4 @@ export 'reaction_api_interface.dart';
 export 'user_api_interface.dart';
 export 'user_feed_api_interface.dart';
 export 'analytics_api_interface.dart';
+export 'network_settings_api_interface.dart';

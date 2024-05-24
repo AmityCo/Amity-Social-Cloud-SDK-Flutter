@@ -1,5 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_targets_by_targets_request.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/story_target_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 
@@ -13,20 +14,25 @@ class StoryComposerUseCase extends UseCase<AmityStory, AmityStory> {
   /// File Repo
   final FileRepo fileRepo;
 
+  /// Story Target Repo
   final StoryTargetRepo storyTargetRepo;
+  
+  /// Story composer usecase
+  final StoryTargetComposerUseCase storyTargetComposerUseCase;
 
   /// Post File Composer UseCase
   StoryComposerUseCase(
       {required this.userRepo,
       required this.userComposerUsecase,
       required this.fileRepo, 
-      required this.storyTargetRepo,});
+      required this.storyTargetRepo,
+      required this.storyTargetComposerUseCase});
 
   @override
   Future<AmityStory> get(AmityStory params) async {
     final user = await userRepo.getUserByIdFromDb(params.creatorPublicId!);
     final composedUser = await userComposerUsecase.get(user);
-    // addTarget(params);
+    await addTarget(params);
     getData(params);
     params.creator = composedUser;
     
@@ -34,9 +40,10 @@ class StoryComposerUseCase extends UseCase<AmityStory, AmityStory> {
     return params;
   }
 
-  Future addTarget(AmityStory story) async {
+  Future addTarget(AmityStory story) async  {
     if (story.targetType == AmityStoryTargetType.COMMUNITY) {
-      story.target = await storyTargetRepo.getStoryTarget(GetTargetsByTargetsRequest(targets: [StoryTargetSearchInfo(targetId: story.targetId!, targetType: story.targetType!)]));
+      story.target = storyTargetRepo.getStoryTargetLocal(story.targetType!, story.targetId!,);
+      if( story.target!=null){story.target = await  storyTargetComposerUseCase.get(story.target!);}
     }
   }
 

@@ -10,7 +10,8 @@ extension AmityStoryTargetTypeExtension on AmityStoryTargetType {
   }
 
 
-  static AmityStoryTargetType enumOf(String value) {
+  static AmityStoryTargetType enumOf(String? value) {
+    if(value == null) return AmityStoryTargetType.UNKNOWN;
     return AmityStoryTargetType.values.firstWhere(
       (element) => element.name.toLowerCase() == value.toLowerCase(),
       orElse: () => AmityStoryTargetType.UNKNOWN,

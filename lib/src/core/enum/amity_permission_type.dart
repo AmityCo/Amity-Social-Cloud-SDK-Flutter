@@ -29,10 +29,17 @@ enum AmityPermission {
   MUTE_USER_INSIDE_CHANNEL,
   ADD_CHANNEL_USER,
   REMOVE_CHANNEL_USER,
-  EDIT_CHANNEL_USER
+  EDIT_CHANNEL_USER,
+  MANAGE_COMMUNITY_STORY
 }
 
 extension AmityPermissionExtension on AmityPermission {
+
+  // String get value {
+  //   return AmityPermission.values[index].name;
+  
+  // }
+
   String get value {
     return [
       'BAN_USER',
@@ -63,7 +70,8 @@ extension AmityPermissionExtension on AmityPermission {
       'MUTE_USER_INSIDE_CHANNEL',
       'ADD_CHANNEL_USER',
       'REMOVE_CHANNEL_USER',
-      'EDIT_CHANNEL_USER'
+      'EDIT_CHANNEL_USER',
+      'MANAGE_COMMUNITY_STORY'
     ][index];
   }
 

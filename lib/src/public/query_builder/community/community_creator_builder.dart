@@ -1,5 +1,7 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/model/amity_community_post_settings.dart';
+import 'package:amity_sdk/src/domain/model/amity_community_story_settings.dart';
 
 /// [CommunityCreatorBuilder]
 class CommunityCreatorBuilder {
@@ -14,7 +16,9 @@ class CommunityCreatorBuilder {
   List<String>? _userIds;
   List<String>? _tags;
   String? _avatarFileId;
-  bool? _needApprovalOnPostCreation;
+  // bool? _needApprovalOnPostCreation;
+  AmityCommunityStorySettings? _storySettings;
+  AmityCommunityPostSettings? _postSettings;
 
   /// init [CommunityCreatorBuilder]
   CommunityCreatorBuilder(this.usecase, this._displayName);
@@ -44,6 +48,12 @@ class CommunityCreatorBuilder {
     return this;
   }
 
+
+  CommunityCreatorBuilder storySettings(AmityCommunityStorySettings settings) {
+    _storySettings = settings;
+    return this;
+  }
+
   CommunityCreatorBuilder tags(List<String> tags) {
     _tags = tags;
     return this;
@@ -54,8 +64,13 @@ class CommunityCreatorBuilder {
     return this;
   }
 
-  CommunityCreatorBuilder isPostReviewEnabled(bool isPostReviewEnabled) {
-    _needApprovalOnPostCreation = isPostReviewEnabled;
+  // CommunityCreatorBuilder isPostReviewEnabled(bool isPostReviewEnabled) {
+  //   _needApprovalOnPostCreation = isPostReviewEnabled;
+  //   return this;
+  // }
+
+  CommunityCreatorBuilder postSetting(AmityCommunityPostSettings settings) {
+    _postSettings = settings;
     return this;
   }
 
@@ -68,8 +83,10 @@ class CommunityCreatorBuilder {
     request.metadata = _metadata;
     request.userIds = _userIds;
     request.tags = _tags;
+    request.allowCommentInStory = _storySettings?.allowComment ;
     request.avatarFileId = _avatarFileId;
-    request.needApprovalOnPostCreation = _needApprovalOnPostCreation;
+    request.needApprovalOnPostCreation = _postSettings?.isPostReviewEnabled;
+    request.onlyAdminCanPost = _postSettings?.onlyAdminCanPost;
 
     return usecase.get(request);
   }

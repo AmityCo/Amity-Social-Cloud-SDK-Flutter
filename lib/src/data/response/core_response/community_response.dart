@@ -22,6 +22,7 @@ class CommunityResponse {
     required this.hasFlaggedComment,
     required this.hasFlaggedPost,
     required this.needApprovalOnPostCreation,
+    required this.allowCommentInStory,
   });
 
   final String communityId;
@@ -34,6 +35,7 @@ class CommunityResponse {
   final bool? isOfficial;
   final bool? isPublic;
   final bool? onlyAdminCanPost;
+  final bool? allowCommentInStory;
   final List<String>? tags;
   final Map<String, dynamic>? metadata;
   final int? postsCount;
@@ -70,6 +72,7 @@ class CommunityResponse {
         updatedAt: DateTime.parse(json["updatedAt"]),
         hasFlaggedComment: json["hasFlaggedComment"],
         hasFlaggedPost: json["hasFlaggedPost"],
+        allowCommentInStory: json["allowCommentInStory"],
         needApprovalOnPostCreation: json["needApprovalOnPostCreation"],
       );
 
@@ -96,6 +99,7 @@ class CommunityResponse {
         "updatedAt": updatedAt == null ? null : updatedAt!.toIso8601String(),
         "hasFlaggedComment": hasFlaggedComment,
         "hasFlaggedPost": hasFlaggedPost,
+        "allowCommentInStory": allowCommentInStory,
         "needApprovalOnPostCreation": needApprovalOnPostCreation,
       };
 }

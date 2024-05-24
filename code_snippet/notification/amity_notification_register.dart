@@ -8,9 +8,19 @@ class AmityNotificationRegister {
     description: Flutter register notification example
     */
   void registerNotification(String fcmToken) {
-    // example of getting token from firebase
-    // FirebaseMessaging messaging = FirebaseMessaging.instance;
-    // final fcmToken = await messaging.getToken();
+    /* 
+
+    ************ IMPORTANT ************
+    Example of getting token from firebase.
+    Please check the platform before getting the token and send token as per platform. 
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      if (Platform.isIOS) {
+        final fcmToken = await messaging.getAPNSToken();
+      } else {
+        final fcmToken = await messaging.getToken();
+      }
+    
+    */
     AmityCoreClient.registerDeviceNotification(fcmToken)
         .then((value) => {
               //success

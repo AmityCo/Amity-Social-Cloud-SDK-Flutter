@@ -9,6 +9,9 @@ import 'package:amity_sdk/src/core/session/model/session_state.dart';
 import 'package:amity_sdk/src/core/session/session_state_manager.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_notification.dart';
+import 'package:amity_sdk/src/domain/usecase/network/validate_text_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/network/validate_urls_usecase.dart';
 import 'package:amity_sdk/src/public/public.dart';
 import 'package:amity_sdk_api/amity_sdk_api.dart';
 
@@ -86,6 +89,16 @@ class AmityCoreClient {
     return;
   }
   /* end_public_function */
+
+
+
+  Future<bool> validateUrls(List<String> urls)  async  {
+        return await  ValidateUrlsUseCase(networkSettingsRepo: serviceLocator()).get(urls);
+    }
+
+    Future<bool>  validateTexts( List<String> texts) async  {
+        return await  ValidateTextsUseCase(networkSettingsRepo: serviceLocator()).get(texts);
+    }
 
   /* begin_public_function 
   id: client.disconnect
@@ -168,6 +181,15 @@ class AmityCoreClient {
         .unregisterDeviceNotification();
   }
   /* end_public_function */
+
+
+  /* begin_public_function
+	  id: client.notifications
+	*/
+    AmityNotification notifications()  {
+        return AmityNotification();
+    }
+    /* end_public_function */
 
   /// Check if Current user have the permissions
   static AmityPermissionValidator hasPermission(AmityPermission permission) {

@@ -44,7 +44,16 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
 
   @override
   Future saveStoryTargetEntity(StoryTargetHiveEntity data) async {
-    return box.put(data.uniqueId, data);
+    var storyTarget = box.values.firstWhereOrNull((element) => element.getId() == AmityStoryTarget.generateUniqueId(data.targetType!, data.targetId!));
+    
+    if(storyTarget!=null){
+      data.hasUnseen = storyTarget.hasUnseen;
+      data.localSortingDate = storyTarget.localSortingDate;
+      data.localLastStoryExpiresAt = storyTarget.localLastStoryExpiresAt;
+      data.localLastStorySeenExpiresAt = storyTarget.localLastStorySeenExpiresAt;
+    }
+    print("Saving Story Target Entity ${data.targetPublicId}");
+    await box.put(data.uniqueId, data);
   }
 
   @override
@@ -64,12 +73,20 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
 
   @override
   Future updateStoryTargetLocalSortingDate(AmityStoryTargetType targetType,
-      String targetId, bool hasUnseen, DateTime? localSortingDate) async  {
-    var storyTarget = box.values.firstWhere((element) =>
-        element.targetId == targetId && element.targetType == targetType.value);
+      String targetId, bool hasUnseen, DateTime? localSortingDate) async {
+    var key = AmityStoryTarget.generateUniqueId(targetType.value, targetId);
+    // var storyTarget = box.values.firstWhere((element) =>
+    //     element.targetId == targetId && element.targetType == targetType.value);
+
+    var storyTarget = box.get(key);
+
+    if (storyTarget == null) {
+      return;
+    }
+
     storyTarget.hasUnseen = hasUnseen;
     storyTarget.localSortingDate = localSortingDate;
-    box.put(storyTarget.uniqueId, storyTarget);
+    return box.put(storyTarget.uniqueId, storyTarget);
   }
 
   @override
@@ -84,10 +101,9 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
   }
 
   @override
-  StoryTargetHiveEntity? getStoryTarget(
-      String uniqueId) {
-    var storyTarget = box.values.firstWhereOrNull((element) =>
-        element.getId() == uniqueId);
+  StoryTargetHiveEntity? getStoryTarget(String uniqueId) {
+    var storyTarget =
+        box.values.firstWhereOrNull((element) => element.getId() == uniqueId);
     return storyTarget;
   }
 
@@ -117,20 +133,43 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
 
     return saveStoryTargetEntity(storyTarget);
   }
-  
+
   @override
-  Future updateStoryTargetLastStoryExpiresAt(AmityStoryTargetType targetType, String targetId, DateTime? lastStoryExpiresAt) async {
+  Future updateStoryTargetLastStoryExpiresAt(AmityStoryTargetType targetType,
+      String targetId, DateTime? lastStoryExpiresAt) async {
     var storyTarget = box.values.firstWhere((element) =>
         element.targetId == targetId && element.targetType == targetType.value);
     storyTarget.lastStoryExpiresAt = lastStoryExpiresAt;
     return box.put(storyTarget.uniqueId, storyTarget);
   }
-  
+
   @override
-  Future updateStoryTargetLocalLastStorySeenExpiresAt(AmityStoryTargetType targetType, String targetId, DateTime? localLastStorySeenExpiresAt) {
+  Future updateStoryTargetLocalLastStorySeenExpiresAt(
+      AmityStoryTargetType targetType,
+      String targetId,
+      DateTime? localLastStorySeenExpiresAt) {
     var storyTarget = box.values.firstWhere((element) =>
         element.targetId == targetId && element.targetType == targetType.value);
     storyTarget.localLastStorySeenExpiresAt = localLastStorySeenExpiresAt;
     return box.put(storyTarget.uniqueId, storyTarget);
+  }
+
+  @override
+  Stream<List<StoryTargetHiveEntity>> listenAllStoryTargetEntities() {
+    return box.watch().map((event) {
+      var list = box.values.toList();
+      return list;
+    });
+  }
+  
+  @override
+  Future? triggerChange() async {
+    try{
+      var storyTarget = box.values.first ;
+      box.put(storyTarget.uniqueId, storyTarget);
+    }catch(e){
+      print("Error: $e");
+    }
+     
   }
 }
