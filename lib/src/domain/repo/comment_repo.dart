@@ -4,6 +4,7 @@ import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 
 abstract class CommentRepo extends AmityObjectRepository<CommentHiveEntity, AmityComment> {
+
   Future<AmityComment?> getCommentByIdFromDb(String commentId);
 
   Future<AmityComment> createComment(CreateCommentRequest request);
