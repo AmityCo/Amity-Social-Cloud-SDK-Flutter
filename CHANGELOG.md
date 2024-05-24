@@ -1,3 +1,4 @@
+
 ## 0.41.0
 * Feat: Global Story Target Added
 * Feat: Story can be marked as view by AmityStory.analytics().markAsSeen()
