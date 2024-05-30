@@ -603,6 +603,7 @@ class SdkServiceLocator {
               userComposerUsecase: serviceLocator(),
               fileComposerUsecase: serviceLocator(),
               communityRepo: serviceLocator(),
+              communityMemberRepo:  serviceLocator(),
               communityComposerUsecase: serviceLocator(),
             ));
     serviceLocator.registerLazySingleton<CommentComposerUsecase>(() =>
@@ -620,6 +621,7 @@ class SdkServiceLocator {
         .registerLazySingleton<PostCreateUsecase>(() => PostCreateUsecase(
               postRepo: serviceLocator(),
               postComposerUsecase: serviceLocator(),
+
             ));
 
     serviceLocator

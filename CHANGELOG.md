@@ -1,3 +1,6 @@
+## 0.42.0
+* Fix: PostedCommunityMember is always null. 
+
 ## 0.41.0
 * Feat: Global Story Target Added
 * Feat: Story can be marked as view by AmityStory.analytics().markAsSeen()
@@ -6,7 +9,6 @@
 * Feat: Story RTE Subscription added.
 * Feat: Urls can be validated now by using AmityCoreClient().validateUrls(urls)
 * Feat: Texts can be validated now by using AmityCoreClient().validateTexts(texts)
-
 
 ## 0.40.0
 * Feat: Comment on Story added added
