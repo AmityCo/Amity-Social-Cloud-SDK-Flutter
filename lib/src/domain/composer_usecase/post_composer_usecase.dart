@@ -24,6 +24,9 @@ class PostComposerUsecase extends UseCase<AmityPost, AmityPost> {
   /// Community Composer Usecase
   final CommunityComposerUsecase communityComposerUsecase;
 
+  /// Community Member Usecase
+  CommunityMemberRepo communityMemberRepo;
+
   /// init [PostComposerUsecase]
   PostComposerUsecase(
       {required this.userRepo,
@@ -32,7 +35,8 @@ class PostComposerUsecase extends UseCase<AmityPost, AmityPost> {
       required this.userComposerUsecase,
       required this.fileComposerUsecase,
       required this.communityRepo,
-      required this.communityComposerUsecase});
+      required this.communityComposerUsecase,
+      required this.communityMemberRepo});
   @override
   Future<AmityPost> get(AmityPost params) async {
     //Compose Target User/Community
@@ -42,12 +46,18 @@ class PostComposerUsecase extends UseCase<AmityPost, AmityPost> {
           await userRepo.getUserByIdFromDb(target.targetUserId!);
       target.targetUser = await userComposerUsecase.get(target.targetUser!);
     } else if (target is CommunityTarget) {
+
+
       var targetCommunityId = target.targetCommunityId;
       if (targetCommunityId != null) {
         var targetCommunity = await communityRepo.getCommunityById(targetCommunityId);
         if (targetCommunity != null) {
           target.targetCommunity = await communityComposerUsecase.get(targetCommunity);
+          if(params.postedUserId!=null){
+           target.postedCommunityMember = await communityMemberRepo.getMemberOptional(targetCommunityId, params.postedUserId!);
         }
+        }
+        
       }
     }
 

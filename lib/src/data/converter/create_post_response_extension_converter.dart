@@ -28,6 +28,9 @@ extension CreatePostResponseExtension on CreatePostResponse {
     List<CommunityHiveEntity> communityHiveEntities =
         communities.map((e) => e.convertToCommunityHiveEntity()).toList();
 
+    List<CommnityMemberHiveEntity> communityUsersHiveEntities =
+        communityUsers.map((e) => e.convertToCommnityMemberHiveEntity()).toList();
+
     //Convert to User Hive Entity
     List<UserHiveEntity> userHiveEntities =
         users.map((e) => e.convertToUserHiveEntity()).toList();
@@ -85,6 +88,10 @@ extension CreatePostResponseExtension on CreatePostResponse {
     //Save the Community Entity
     for (var e in communityHiveEntities) {
       await dbRepo.communityDbAdapter.saveCommunityEntity(e);
+    }
+
+    for (var e in communityUsersHiveEntities) {
+      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e);
     }
 
     //Save Child Post Entity
