@@ -1,3 +1,6 @@
+## 0.43.0
+* Feat: Add creator property as AmityUser to AmityReaction.
+
 ## 0.42.0
 * Fix: PostedCommunityMember is always null. 
 
