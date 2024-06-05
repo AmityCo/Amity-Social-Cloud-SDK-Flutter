@@ -1,3 +1,5 @@
+import 'package:amity_sdk/amity_sdk.dart';
+
 class AmityReaction {
   String? reactionId;
   String? referenceType;
@@ -6,4 +8,5 @@ class AmityReaction {
   String? userId;
   String? userDisplayName;
   DateTime? createdAt;
+  AmityUser? creator;
 }
