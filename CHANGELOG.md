@@ -1,3 +1,5 @@
+## 0.42.0
+* Fix: PostedCommunityMember is always null. 
 
 ## 0.41.0
 * Feat: Global Story Target Added
