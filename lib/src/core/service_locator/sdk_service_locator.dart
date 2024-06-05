@@ -647,6 +647,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<ReactionComposerUsecase>(
         () => ReactionComposerUsecase(
               reactionRepo: serviceLocator(),
+              userComposerUsecase: serviceLocator(),
               userRepo: serviceLocator(),
             ));
 
