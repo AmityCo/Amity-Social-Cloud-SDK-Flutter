@@ -30,6 +30,7 @@ class AmityCommentQueryBuilder {
   late CommentQueryUseCase _useCase;
   late String _referenceType;
   late String _referenceId;
+  bool applyParentFilter  = false;
 
   String? _parentId = null;
   bool? _isDeleted;
@@ -60,10 +61,12 @@ class AmityCommentQueryBuilder {
 
   /// Get the comment with parent ID
   AmityCommentQueryBuilder parentId(String? parentId) {
+    applyParentFilter = true;
     _parentId = parentId;
     return this;
   }
 
+  @Deprecated('Use parentId instead')
   AmityCommentQueryBuilder filterById(bool isFilterByParentId) {
     return this;
   }
@@ -86,10 +89,8 @@ class AmityCommentQueryBuilder {
 
     if (_parentId != null) {
       getCommentRequest.parentId = _parentId;
-      getCommentRequest.filterByParentId = true;
-    } else {
-      getCommentRequest.filterByParentId = false;
-    }
+    } 
+    getCommentRequest.filterByParentId = applyParentFilter;
 
     getCommentRequest.isDeleted = _isDeleted ?? true ? null : false;
 
@@ -121,11 +122,8 @@ class AmityCommentQueryBuilder {
 
     if (_parentId != null) {
       getCommentRequest.parentId = _parentId;
-      getCommentRequest.filterByParentId =  true;
-    } else {
-      getCommentRequest.filterByParentId = false;
-    }
-
+    } 
+    getCommentRequest.filterByParentId = applyParentFilter;
     getCommentRequest.isDeleted = _isDeleted ?? true ? null : false;
 
     if (dataTypeFilter != null) {
