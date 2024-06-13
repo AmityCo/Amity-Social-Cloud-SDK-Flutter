@@ -37,6 +37,7 @@ class PostResponse {
     required this.mentionees,
     required this.impression,
     required this.reach,
+    required this.rawData
   });
 
   /// Doc id
@@ -132,6 +133,9 @@ class PostResponse {
   /// reach count
   final int reach;
 
+  /// raw data for custom post only
+  final Map<String, dynamic>? rawData;
+
   /// factory method to init [PostResponse] from map
   factory PostResponse.fromJson(Map<String, dynamic> json) => PostResponse(
         id: json["_id"],
@@ -145,7 +149,7 @@ class PostResponse {
         targetType: json["targetType"],
         dataType: json["dataType"],
         data: PostDataResponse.fromJson(json["data"]),
-        // metadata: DataClass.fromJson(json["metadata"]),
+        rawData: json["data"],
         flagCount: json["flagCount"],
         hashFlag: json["hashFlag"] == null
             ? null

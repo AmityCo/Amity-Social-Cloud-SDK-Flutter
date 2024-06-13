@@ -166,16 +166,12 @@ class PollData extends AmityPostData {
   }
 }
 
-// class CustomData extends AmityPostData {
-//   String? postId;
-//   String? pollId;
-//   Map<String, dynamic>? rawData;
-//   CustomData({
-//     this.postId,
-//     this.pollId,
-//     this.rawData,
-//   });
-// }
+class CustomData extends AmityPostData {
+  CustomData({
+    required super.postId,
+    required super.rawData,
+  });
+}
 
 class AmityPostTarget {}
 

@@ -48,7 +48,7 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
             postId: postId, pollId: data!.pollId!, rawData: data!.toMap());
         break;
       case AmityDataType.CUSTOM:
-        // TODO: Handle this case.
+        amityPostData = CustomData(postId: postId, rawData: rawData);
         break;
     }
 
@@ -107,10 +107,9 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
     return feedType == feed;
   }
 
-  bool isMatchingDeleted( bool? isDeleted) {
+  bool isMatchingDeleted(bool? isDeleted) {
     if (isDeleted == null) return true;
     return this.isDeleted == isDeleted;
-
   }
 
   bool isMatchingTargetType(String targetType) {
@@ -120,7 +119,6 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
   bool isMatchingTargetid(String targetId) {
     return this.targetId == targetId;
   }
-
 
   bool isMatchingDataType(List<String>? dataTypes) {
     if (dataTypes == null) {
@@ -134,5 +132,4 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
       return false;
     }
   }
-
 }

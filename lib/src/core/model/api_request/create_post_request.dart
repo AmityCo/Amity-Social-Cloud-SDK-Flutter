@@ -9,16 +9,15 @@ import 'package:amity_sdk/src/domain/domain.dart';
 /// Create Post Request
 class CreatePostRequest {
   /// Init [CreatePostRequest]
-  CreatePostRequest({
-    this.data,
-    this.attachments,
-    this.dataType,
-    required this.targetType,
-    required this.targetId,
-    this.metadata,
-    this.postId,
-    this.mentionees,
-  });
+  CreatePostRequest(
+      {this.data,
+      this.attachments,
+      this.dataType,
+      required this.targetType,
+      required this.targetId,
+      this.metadata,
+      this.postId,
+      this.mentionees});
 
   /// Post Data
   CreatePostData? data;
@@ -44,29 +43,36 @@ class CreatePostRequest {
   /// Mentionees
   List<AmityMentioneeTarget>? mentionees;
 
+
   /// Init [CreatePostRequest] from Json
-  factory CreatePostRequest.fromJson(Map<String, dynamic> json) => CreatePostRequest(
+  factory CreatePostRequest.fromJson(Map<String, dynamic> json) =>
+      CreatePostRequest(
         data: CreatePostData.fromJson(json["data"]),
-        attachments:
-            List<PostAttachmentRequest>.from(json["attachments"].map((x) => PostAttachmentRequest.fromJson(x))),
+        attachments: List<PostAttachmentRequest>.from(
+            json["attachments"].map((x) => PostAttachmentRequest.fromJson(x))),
         dataType: json["dataType"],
         targetType: json["targetType"],
         targetId: json["targetId"],
         metadata: json["metadata"],
         postId: json["postId"],
-        mentionees: List<AmityMentioneeTarget>.from(json["mentionees"].map((x) => AmityMentioneeTarget.fromJson(x))),
+        mentionees: List<AmityMentioneeTarget>.from(
+            json["mentionees"].map((x) => AmityMentioneeTarget.fromJson(x))),
       );
 
   /// map from [CreatePostRequest]
   Map<String, dynamic> toJson() => {
         "data": data == null ? null : data!.toJson(),
-        "attachments": attachments == null ? null : List<dynamic>.from(attachments!.map((x) => x.toJson())),
+        "attachments": attachments == null
+            ? null
+            : List<dynamic>.from(attachments!.map((x) => x.toJson())),
         "dataType": dataType,
         "targetType": targetType,
         "targetId": targetId,
         "metadata": metadata,
         "postId": postId,
-        "mentionees": mentionees == null ? null : List<dynamic>.from(mentionees!.map((x) => x.toJson())),
+        "mentionees": mentionees == null
+            ? null
+            : List<dynamic>.from(mentionees!.map((x) => x.toJson())),
       }..removeWhere((key, value) => value == null);
 
   @override
@@ -94,7 +100,8 @@ class PostAttachmentRequest {
   final String type;
 
   /// Init [PostAttachmentRequest] from Json
-  factory PostAttachmentRequest.fromJson(Map<String, dynamic> json) => PostAttachmentRequest(
+  factory PostAttachmentRequest.fromJson(Map<String, dynamic> json) =>
+      PostAttachmentRequest(
         fileId: json["fileId"],
         videoFileId: json["videoFileId"],
         type: json["type"],
@@ -115,6 +122,7 @@ class CreatePostData {
     this.text,
     this.streamId,
     this.pollId,
+    this.customPostJsonObject
   });
 
   /// Text Data
@@ -126,6 +134,9 @@ class CreatePostData {
   /// Poll Id
   String? pollId;
 
+  /// Json object for custom post
+  Map<String, dynamic>? customPostJsonObject;
+
   /// Init [CreatePostData] from Json
   factory CreatePostData.fromJson(Map<String, dynamic> json) => CreatePostData(
         text: json["text"],
@@ -134,9 +145,15 @@ class CreatePostData {
       );
 
   /// map from [CreatePostData]
-  Map<String, dynamic> toJson() => {
-        "text": text,
-        "streamId": streamId,
-        "pollId": pollId,
-      }..removeWhere((key, value) => value == null);
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> dataJson = <String, dynamic>{};
+    if (customPostJsonObject == null) {
+      dataJson['text'] = text;
+      dataJson['streamId'] = streamId;
+      dataJson['pollId'] = pollId;
+    } else {
+      dataJson = customPostJsonObject!;
+    }
+    return dataJson..removeWhere((key, value) => value == null);
+  }
 }
