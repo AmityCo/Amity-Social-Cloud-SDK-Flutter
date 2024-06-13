@@ -67,7 +67,7 @@ class VideoStreamingResponse {
         resolution: json["resolution"],
         streamerUrl: json["platform"] == null
             ? null
-            : ErUrl.fromJson(json["streamerUrl"]),
+            : ErUrl.fromJson(json["streamerUrl"]??''),
         recordings: json["recordings"] == null
             ? null
             : List<Map<String, Recording>>.from(json["recordings"].map((x) =>
@@ -141,7 +141,7 @@ class Recording {
   final double? stopTime;
 
   factory Recording.fromJson(Map<String, dynamic> json) => Recording(
-        url: json["url"],
+        url: json["url"]??[],
         duration: double.tryParse('${json["duration"]}'),
         startTime: double.tryParse('${json["startTime"]}'),
         stopTime: double.tryParse('${json["stopTime"]}'),
@@ -162,16 +162,16 @@ class ErUrl {
   });
 
   final String url;
-  final Components components;
+  final Components? components;
 
   factory ErUrl.fromJson(Map<String, dynamic> json) => ErUrl(
-        url: json["url"],
-        components: Components.fromJson(json["components"]),
+        url: json["url"]??'',
+        components: Components.fromJson(json["components"] ?? <String, dynamic>{}),
       );
 
   Map<String, dynamic> toJson() => {
         "url": url,
-        "components": components.toJson(),
+        "components": components?.toJson(),
       };
 }
 
@@ -189,10 +189,10 @@ class Components {
   final String query;
 
   factory Components.fromJson(Map<String, dynamic> json) => Components(
-        origin: json["origin"],
-        appName: json["appName"],
-        streamName: json["streamName"],
-        query: json["query"],
+        origin: json["origin"] ?? '',
+        appName: json["appName"] ?? '',
+        streamName: json["streamName"] ?? '',
+        query: json["query"]??'' ,
       );
 
   Map<String, dynamic> toJson() => {
