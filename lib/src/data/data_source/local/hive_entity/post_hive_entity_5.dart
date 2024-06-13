@@ -105,6 +105,9 @@ class PostHiveEntity extends EkoObject {
   /// Mentions
   List<Mentionee>? mentionees;
 
+  /// Json raw data for custom post
+  Map<String, dynamic>? rawData;
+
   PostHiveEntity(
       {this.id,
       this.path,
@@ -139,6 +142,7 @@ class PostHiveEntity extends EkoObject {
       this.mentionees,
       this.impression,
       this.reach,
+      this.rawData
       });
 
   PostHiveEntity copyWith({

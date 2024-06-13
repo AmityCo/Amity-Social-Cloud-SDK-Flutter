@@ -1,3 +1,6 @@
+## 0.45.0
+* Feat: Ability to create and update custom post.
+
 ## 0.44.0
 * Fix: Getting comment relies in the query comments.
 
