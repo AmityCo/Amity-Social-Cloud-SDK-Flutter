@@ -1,3 +1,6 @@
+## 0.44.0
+* Fix: Getting comment relies in the query comments.
+
 ## 0.43.0
 * Feat: Add creator property as AmityUser to AmityReaction.
 
