@@ -1,4 +1,3 @@
-import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/data/data.dart';
 
 ///
@@ -36,7 +35,8 @@ extension PostResponseExtension on PostResponse {
       ..metadata = metadata
       ..reach = reach
       ..impression = impression
-      ..mentionees = mentionees;
+      ..mentionees = mentionees
+      ..rawData = rawData;
   }
 }
 

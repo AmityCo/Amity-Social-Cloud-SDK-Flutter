@@ -22,20 +22,31 @@ class AmityTextPostEditorBuilder {
   }
 
   AmityTextPostEditorBuilder image(List<AmityImage> images) {
-    _updater._attachments =
-        images.map((e) => PostAttachmentRequest(fileId: e.fileId, type: AmityDataType.IMAGE.value)).toList();
+    _updater._attachments = images
+        .map((e) => PostAttachmentRequest(
+            fileId: e.fileId, type: AmityDataType.IMAGE.value))
+        .toList();
     return this;
   }
 
   AmityTextPostEditorBuilder file(List<AmityFile> files) {
-    _updater._attachments =
-        files.map((e) => PostAttachmentRequest(fileId: e.fileId, type: AmityDataType.FILE.value)).toList();
+    _updater._attachments = files
+        .map((e) => PostAttachmentRequest(
+            fileId: e.fileId, type: AmityDataType.FILE.value))
+        .toList();
     return this;
   }
 
   AmityTextPostEditorBuilder video(List<AmityVideo> videos) {
-    _updater._attachments =
-        videos.map((e) => PostAttachmentRequest(fileId: e.fileId, type: AmityDataType.VIDEO.value)).toList();
+    _updater._attachments = videos
+        .map((e) => PostAttachmentRequest(
+            fileId: e.fileId, type: AmityDataType.VIDEO.value))
+        .toList();
+    return this;
+  }
+
+  AmityTextPostEditorBuilder custom(Map<String, dynamic>? jsonObject) {
+    _updater._customPostJsonObject = jsonObject;
     return this;
   }
 
@@ -46,7 +57,8 @@ class AmityTextPostEditorBuilder {
 
   AmityTextPostEditorBuilder mentionUsers(List<String> userIds) {
     _mentionees ??= [];
-    _mentionees!.add(AmityMentioneeTarget(type: AmityMentionType.USER.value, userIds: userIds));
+    _mentionees!.add(AmityMentioneeTarget(
+        type: AmityMentionType.USER.value, userIds: userIds));
     _updater._mentionees = _mentionees;
     return this;
   }
@@ -73,6 +85,7 @@ class AmityPostUpdater {
   List<PostAttachmentRequest>? _attachments;
   Map<String, dynamic>? _metadata;
   List<AmityMentioneeTarget>? _mentionees;
+  Map<String, dynamic>? _customPostJsonObject;
   AmityPostUpdater(this._usecase, this._targetId);
 
   Future update() {
@@ -90,8 +103,14 @@ class AmityPostUpdater {
     if (_metadata != null) {
       updatePostRequest.metadata = _metadata;
     }
+
     if (_attachments != null) {
       updatePostRequest.attachments = _attachments;
+    }
+
+    if (_customPostJsonObject != null) {
+      updateData.customPostJsonObject = _customPostJsonObject;
+      updatePostRequest.data = updateData;
     }
 
     return _usecase.get(updatePostRequest);
