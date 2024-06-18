@@ -9,6 +9,10 @@ extension AmityDataTypeExtension on AmityDataType {
 
   //TODO - this method need to acceesable with AmityDataType
   static AmityDataType enumOf(String value) {
+    //basic validation, expected outcome (amity.custom, color.yellow, post.special)
+    if (value.contains('.') && value.length > 2) {
+      return AmityDataType.CUSTOM;
+    }
     return AmityDataType.values.firstWhere(
       (element) => element.name.toLowerCase() == value.toLowerCase(),
       orElse: () => AmityDataType.TEXT,

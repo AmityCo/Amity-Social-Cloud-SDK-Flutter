@@ -8,12 +8,19 @@ import 'package:amity_sdk/src/domain/domain.dart';
 
 import 'create_post_request.dart';
 
-UpdatePostRequest updatePostRequestFromJson(String str) => UpdatePostRequest.fromJson(json.decode(str));
+UpdatePostRequest updatePostRequestFromJson(String str) =>
+    UpdatePostRequest.fromJson(json.decode(str));
 
-String updatePostRequestToJson(UpdatePostRequest data) => json.encode(data.toJson());
+String updatePostRequestToJson(UpdatePostRequest data) =>
+    json.encode(data.toJson());
 
 class UpdatePostRequest {
-  UpdatePostRequest({required this.postId, this.data, this.metadata, this.mentionees, this.attachments});
+  UpdatePostRequest(
+      {required this.postId,
+      this.data,
+      this.metadata,
+      this.mentionees,
+      this.attachments});
 
   String postId;
   UpdatePostData? data;
@@ -25,36 +32,46 @@ class UpdatePostRequest {
   /// Attachment for the Post
   List<PostAttachmentRequest>? attachments;
 
-  factory UpdatePostRequest.fromJson(Map<String, dynamic> json) => UpdatePostRequest(
+
+  factory UpdatePostRequest.fromJson(Map<String, dynamic> json) =>
+      UpdatePostRequest(
         postId: json["postId"],
         data: UpdatePostData.fromJson(json["data"]),
         metadata: json["metadata"],
-        mentionees: List<AmityMentioneeTarget>.from(json["mentionees"].map((x) => AmityMentioneeTarget.fromJson(x))),
-        attachments:
-            List<PostAttachmentRequest>.from(json["attachments"].map((x) => PostAttachmentRequest.fromJson(x))),
+        mentionees: List<AmityMentioneeTarget>.from(
+            json["mentionees"].map((x) => AmityMentioneeTarget.fromJson(x))),
+        attachments: List<PostAttachmentRequest>.from(
+            json["attachments"].map((x) => PostAttachmentRequest.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "postId": postId,
         "data": data?.toJson(),
         "metadata": metadata,
-        "mentionees": mentionees == null ? null : List<dynamic>.from(mentionees!.map((x) => x.toJson())),
-        "attachments": attachments == null ? null : List<dynamic>.from(attachments!.map((x) => x.toJson())),
+        "mentionees": mentionees == null
+            ? null
+            : List<dynamic>.from(mentionees!.map((x) => x.toJson())),
+        "attachments": attachments == null
+            ? null
+            : List<dynamic>.from(attachments!.map((x) => x.toJson())),
       }..removeWhere((key, value) => value == null);
 }
 
 class UpdatePostData {
-  UpdatePostData({
-    this.text,
-    this.fileId,
-    this.streamId,
-    this.thumbnailFileId,
-  });
+  UpdatePostData(
+      {this.text,
+      this.fileId,
+      this.streamId,
+      this.thumbnailFileId,
+      this.customPostJsonObject});
 
   String? text;
   String? fileId;
   String? streamId;
   String? thumbnailFileId;
+
+  /// Json object for custom post
+  Map<String, dynamic>? customPostJsonObject;
 
   factory UpdatePostData.fromJson(Map<String, dynamic> json) => UpdatePostData(
         text: json["text"],
@@ -63,10 +80,16 @@ class UpdatePostData {
         thumbnailFileId: json["thumbnailFileId"],
       );
 
-  Map<String, dynamic> toJson() => {
-        "text": text,
-        "fileId": fileId,
-        "streamId": streamId,
-        "thumbnailFileId": thumbnailFileId,
-      }..removeWhere((key, value) => value == null);
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> dataJson = <String, dynamic>{};
+    if (customPostJsonObject == null) {
+      dataJson['text'] = text;
+      dataJson['fileId'] = fileId;
+      dataJson['streamId'] = streamId;
+      dataJson['thumbnailFileId'] = thumbnailFileId;
+    } else {
+      dataJson = customPostJsonObject!;
+    }
+    return dataJson..removeWhere((key, value) => value == null);
+  }
 }
