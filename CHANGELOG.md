@@ -1,3 +1,6 @@
+## 0.46.0
+* Fix: Community live collection return wrong order when query with displayName filter.
+
 ## 0.45.0
 * Feat: Ability to create and update custom post.
 
