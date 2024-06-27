@@ -11,7 +11,7 @@ class AmityPostCustomCreation {
   //current post collection from feed repository
   late PagingController<AmityPost> _controller;
 
-  void createTextPost() {
+  void createCustomPost() {
     AmitySocialClient.newPostRepository()
         .createPost()
         .targetUser(
