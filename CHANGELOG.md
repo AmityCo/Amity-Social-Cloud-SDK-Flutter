@@ -1,3 +1,6 @@
+## 0.46.1
+* Fix: Post Content being null after added or removing reaction from the Custom Post.
+
 ## 0.46.0
 * Fix: Community live collection return wrong order when query with displayName filter.
 
