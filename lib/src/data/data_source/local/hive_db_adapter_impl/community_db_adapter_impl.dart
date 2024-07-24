@@ -31,7 +31,7 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
 
   @override
   Stream<CommunityHiveEntity> listenCommunityEntity(String communityId) {
-    return box.watch(key: communityId).map((event) => event.value);
+    return box.watch(key: communityId).where((event) { return event != null && event.value != null; }).map((event) => event.value);
   }
 
   @override
