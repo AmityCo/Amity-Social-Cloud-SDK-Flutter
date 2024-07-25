@@ -41,12 +41,11 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
         .where((community) => community.isMatchingFilter(request.call()))
         .toList());
   }
-  
+
   @override
   Future deleteCommunityEntities() async {
-    box.values.toList()
-        .forEach((element) {
-      box.delete(element.communityId);
+    box.values.toList().forEach((element) {      
+      element.delete();
     });
     return;
   }
