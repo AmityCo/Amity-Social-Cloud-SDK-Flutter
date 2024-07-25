@@ -1,3 +1,13 @@
+## 0.46.2
+* Fix:  Handle spamming unexpected error log from nullable objects.
+* Chore: Config Dio to do JSON Parser on the background thread.
+
+## 0.46.1
+* Fix: Post Content being null after added or removing reaction from the Custom Post.
+
+## 0.46.0
+* Fix: Community live collection return wrong order when query with displayName filter.
+
 ## 0.45.0
 * Feat: Ability to create and update custom post.
 
