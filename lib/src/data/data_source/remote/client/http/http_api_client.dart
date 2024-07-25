@@ -26,6 +26,7 @@ class HttpApiClient {
     );
 
     dio = Dio(baseOptions);
+    dio.transformer = BackgroundTransformer();
 
     dio.interceptors.add(QueuedInterceptorsWrapper(onRequest: (options, handler) {
       if (serviceLocator.isRegistered<SessionResponse>()) {
