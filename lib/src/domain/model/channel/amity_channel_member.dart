@@ -21,6 +21,9 @@ class AmityChannelMember {
   /// is user banned
   bool? isBanned = false;
 
+  /// is Deleted
+  bool? isDeleted = false;
+
   /// user channel roles
   AmityRoles? roles; // Compose
 

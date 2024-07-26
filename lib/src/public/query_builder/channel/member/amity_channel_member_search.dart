@@ -23,6 +23,9 @@ class AmityChannelMemberSearch {
   /// Keyword
   String? _keyword;
 
+  /// Is deleted
+  bool? _isDeleted;
+
   /// Init [AmityChannelMemberSearch]
   AmityChannelMemberSearch(this.useCase, this.channelId);
 
@@ -57,6 +60,12 @@ class AmityChannelMemberSearch {
     return this;
   }
 
+  /// Apply Filter
+  AmityChannelMemberSearch includeDeleted(bool includeDeleted) {
+    _isDeleted = (includeDeleted) ? null : false;
+    return this;
+  }
+
   Future<PageListData<List<AmityChannelMember>, String>> getPagingData(
       {String? token, int? limit}) async {
     final request = GetChannelMembersRequestV4(channelId: channelId);
@@ -64,6 +73,7 @@ class AmityChannelMemberSearch {
     request.memberships = _channelMembership.map((e) => e.value).toList();
     request.sortBy = _sortOption.value;
     request.keyword = _keyword;
+    request.isDeleted = _isDeleted;
 
     if (_roles != null) request.roles = _roles!.roles;
 
@@ -87,6 +97,7 @@ class AmityChannelMemberSearch {
     request.memberships = _channelMembership.map((e) => e.value).toList();
     request.sortBy = _sortOption.value;
     request.keyword = _keyword;
+    request.isDeleted = _isDeleted;
 
     if (_roles != null) request.roles = _roles!.roles;
 

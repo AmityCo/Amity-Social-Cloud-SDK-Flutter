@@ -42,7 +42,7 @@ class UserRepoImpl extends UserRepo {
       await fileDbAdapter.saveFileEntity(fileEntity);
     }
 
-    final amityUsers = userHiveEntities.map((e) => e.convertToAmityUser()).toList();
+    final amityUsers = userHiveEntities.where((user) => !(user.isDeleted ?? false)).map((e) => e.convertToAmityUser()).toList();
 
     return PageListData(amityUsers, data.paging!.next ?? '');
   }

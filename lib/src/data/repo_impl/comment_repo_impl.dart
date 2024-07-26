@@ -10,6 +10,7 @@ import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/core/mapper/comment_model_mapper.dart';
+import 'package:collection/collection.dart';
 
 /// Comment Repo Impl
 class CommentRepoImpl extends CommentRepo {
@@ -161,7 +162,8 @@ class CommentRepoImpl extends CommentRepo {
 
     //Save the Community Member Entity
     for (var e in communityUserHiveEntites) {
-      await dbAdapterRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await dbAdapterRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     return commentHiveEntities.map((e) => e.convertToAmityComment()).toList();

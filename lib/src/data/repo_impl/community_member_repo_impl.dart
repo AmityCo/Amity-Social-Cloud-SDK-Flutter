@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:collection/collection.dart';
 
 class CommunityMemberRepoImpl extends CommunityMemberRepo {
   final CommunityMemmberApiInterface communityMemmberApiInterface;
@@ -144,7 +145,8 @@ class CommunityMemberRepoImpl extends CommunityMemberRepo {
 
     //Save the Community Member Entity
     for (var e in communityMemberHiveEntities) {
-      await communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     return communityMemberHiveEntities.map((e) => e.convertToAmityCommunityMember()).toList();

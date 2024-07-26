@@ -8,6 +8,7 @@ extension CommunityMemberHiveEntityExtension on CommnityMemberHiveEntity {
       ..channelId = channelId
       ..userId = userId
       ..roles = roles
-      ..isBanned = isBanned;
+      ..isBanned = isBanned
+      ..isDeleted = isDeleted ?? false; // If isDeleted is null, set it to false to avoid null value
   }
 }
