@@ -13,6 +13,7 @@ class AmityCommunityMember {
   bool? isBanned; //Notify
   List<String>? roles; //Notify
   AmityUser? user; //Compose
+  bool? isDeleted;
 
   StreamController<AmityCommunityMember> get listen {
     StreamController<AmityCommunityMember> controller =
@@ -42,6 +43,7 @@ class AmityCommunityMember {
       'isBanned': isBanned,
       'roles': roles,
       'user': user?.toMap(),
+      'isDeleted': isDeleted,
     };
   }
 

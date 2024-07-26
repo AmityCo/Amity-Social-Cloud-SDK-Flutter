@@ -7,6 +7,7 @@ import 'package:amity_sdk/src/core/mapper/community_model_mapper.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:collection/collection.dart';
 
 class CommunityRepoImpl extends CommunityRepo {
   final CommunityApiInterface communityApiInterface;
@@ -132,7 +133,8 @@ class CommunityRepoImpl extends CommunityRepo {
 
     //Save the Community Member Entity
     for (var e in communityMemberHiveEntities) {
-      await communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     return communityHiveEnties.map((e) => e.convertToAmityCommunity()).toList();

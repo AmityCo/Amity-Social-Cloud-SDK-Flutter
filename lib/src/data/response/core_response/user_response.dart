@@ -15,6 +15,7 @@ class UserResponse {
     this.flagCount,
     this.hashFlag,
     this.metadata,
+    this.isDeleted,
     this.isGlobalBan,
     this.createdAt,
     this.updatedAt,
@@ -52,6 +53,9 @@ class UserResponse {
 
   /// User profile metadata
   final Map<String, dynamic>? metadata;
+
+  /// Flag if user is deleted
+  final bool? isDeleted;
 
   /// Flag if user ban globally
   final bool? isGlobalBan;
@@ -107,6 +111,7 @@ class UserResponse {
         "flagCount": flagCount,
         "hashFlag": hashFlag?.toJson(),
         "metadata": metadata,
+        "isDeleted": isDeleted ?? false,
         "isGlobalBan": isGlobalBan,
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),

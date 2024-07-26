@@ -3,7 +3,7 @@ import 'package:amity_sdk/src/data/data.dart';
 ///[ChannelUserDbAdapter]
 abstract class ChannelUserDbAdapter {
   /// Save  Entity
-  Future saveEntity(ChannelUserHiveEntity data);
+  Future saveEntity(ChannelUserHiveEntity data, UserHiveEntity? userEntity);
 
   /// Delete  Entity
   Future deleteEntity(ChannelUserHiveEntity data);
