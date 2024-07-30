@@ -85,6 +85,7 @@ class UserResponse {
             ? null
             : HashFlag.fromJson(json["hashFlag"]),
         metadata: json["metadata"],
+        isDeleted: json["isDeleted"],
         isGlobalBan: json["isGlobalBan"],
         createdAt: json["createdAt"] == null
             ? null
