@@ -7,13 +7,36 @@ part 'reaction_hive_entity_8.g.dart';
 
 @HiveType(typeId: 8)
 class ReactionHiveEntity extends EkoObject {
+  @HiveField(0)
   String? reactionId;
+
+  @HiveField(1)
   String? reactionName;
+
+  @HiveField(2)
   String? userId;
+
+  @HiveField(3)
   String? userDisplayName;
+
+  @HiveField(4)
   String? referenceId;
+
+  @HiveField(5)
   String? referenceType;
+
+  @HiveField(6)
   DateTime? createdAt;
+
+  ReactionHiveEntity({
+    this.reactionId,
+    this.reactionName,
+    this.userId,
+    this.userDisplayName,
+    this.referenceId,
+    this.referenceType,
+    this.createdAt,
+  });
 
   @override
   int get hashCode => Object.hash(

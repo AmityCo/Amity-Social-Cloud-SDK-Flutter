@@ -5,7 +5,7 @@ class UserDbAdapterImpl extends UserDbAdapter {
   final DBClient dbClient;
 
   UserDbAdapterImpl({required this.dbClient});
-  late Box box;
+  late Box<UserHiveEntity> box;
   Future<UserDbAdapterImpl> init() async {
     Hive.registerAdapter(UserHiveEntityAdapter(), override: true);
     box = await Hive.openBox<UserHiveEntity>('user_db');
@@ -14,7 +14,7 @@ class UserDbAdapterImpl extends UserDbAdapter {
 
   @override
   UserHiveEntity getUserEntity(String userId) {
-    return box.get(userId);
+    return box.get(userId)!;
   }
 
   @override
@@ -25,5 +25,10 @@ class UserDbAdapterImpl extends UserDbAdapter {
   @override
   Stream<UserHiveEntity> listenEntity(String userId) {
     return box.watch(key: userId).map((event) => event.value);
+  }
+
+  @override
+  List<UserHiveEntity> getUsers() {
+    return box.values.toList();
   }
 }

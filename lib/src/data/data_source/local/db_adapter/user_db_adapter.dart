@@ -4,4 +4,5 @@ abstract class UserDbAdapter {
   Future saveUserEntity(UserHiveEntity entity);
   UserHiveEntity getUserEntity(String userId);
   Stream<UserHiveEntity> listenEntity(String userId);
+  List<UserHiveEntity> getUsers();
 }

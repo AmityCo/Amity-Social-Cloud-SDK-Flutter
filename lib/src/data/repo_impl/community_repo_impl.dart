@@ -98,7 +98,7 @@ class CommunityRepoImpl extends CommunityRepo {
         data.communities.map((e) => e.convertToCommunityHiveEntity()).toList();
 
     //Convert to Community Member Hive Entity
-    List<CommnityMemberHiveEntity> communityMemberHiveEntities = data
+    List<CommunityMemberHiveEntity> communityMemberHiveEntities = data
         .communityUsers
         .map((e) => e.convertToCommnityMemberHiveEntity())
         .toList();
@@ -179,6 +179,17 @@ class CommunityRepoImpl extends CommunityRepo {
   @override
   bool hasLocalCommunity(String communityId) {
     return communityDbAdapter.getCommunityEntity(communityId) != null;
+  }
+
+  @override
+  List<CommunityHiveEntity> getCommunityEntities(
+      RequestBuilder<GetCommunityRequest> request) {
+    return communityDbAdapter.getCommunityEntities(request);
+  }
+
+  @override
+  Future saveCommunityEntity(CommunityHiveEntity entity) {
+    return communityDbAdapter.saveCommunityEntity(entity);
   }
 
   @override

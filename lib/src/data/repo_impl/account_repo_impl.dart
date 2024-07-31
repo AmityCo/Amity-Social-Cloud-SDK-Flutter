@@ -19,4 +19,9 @@ class AccountRepoImpl extends AccountRepo {
   Stream<AccountHiveEntity?> listenAuthState() {
     return accountDbAdapter.listenAccounts();
   }
+
+  @override
+  List<AccountHiveEntity> getAccounts() {
+    return accountDbAdapter.getAccounts();
+  }
 }

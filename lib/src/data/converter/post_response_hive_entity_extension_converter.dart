@@ -24,31 +24,31 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
     AmityPostData? amityPostData;
     switch (amityDataType) {
       case AmityDataType.TEXT:
-        amityPostData = TextData(postId: postId, text: data!.text);
+        amityPostData = TextData(postId: postId!, text: data!.text);
         break;
       case AmityDataType.IMAGE:
-        amityPostData = ImageData(postId: postId, fileId: data!.fileId);
+        amityPostData = ImageData(postId: postId!, fileId: data!.fileId);
         break;
       case AmityDataType.VIDEO:
         amityPostData = VideoData(
-          postId: postId,
+          postId: postId!,
           fileId: data!.thumbnailFileId,
           rawData: data?.videoFileId,
         );
         break;
       case AmityDataType.FILE:
-        amityPostData = FileData(postId: postId, fileId: data!.fileId);
+        amityPostData = FileData(postId: postId!, fileId: data!.fileId);
         break;
       case AmityDataType.LIVESTREAM:
         amityPostData = LiveStreamData(
-            postId: postId, streamId: data!.streamId, rawData: data!.toMap());
+            postId: postId!, streamId: data!.streamId, rawData: data!.toMap());
         break;
       case AmityDataType.POLL:
         amityPostData = PollData(
-            postId: postId, pollId: data!.pollId!, rawData: data!.toMap());
+            postId: postId!, pollId: data!.pollId!, rawData: data!.toMap());
         break;
       case AmityDataType.CUSTOM:
-        amityPostData = CustomData(postId: postId, rawData: rawData);
+        amityPostData = CustomData(postId: postId!, rawData: rawData);
         break;
     }
 

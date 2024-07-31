@@ -164,4 +164,11 @@ class UserRepoImpl extends UserRepo {
 
     return PageListData(amityUsers, data.paging!.next ?? '');
   }
+
+  @override
+  List<AmityUser> getUsersFromDB() {
+    final userHiveEntities = userDbAdapter.getUsers();
+    print(">>>>>>>>>>>>>users: ${userHiveEntities.map((e) => e.userId).toList()}");
+    return userHiveEntities.map((e) => e.convertToAmityUser()).toList();
+  }
 }

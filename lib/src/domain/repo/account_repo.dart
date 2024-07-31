@@ -4,4 +4,5 @@ abstract class AccountRepo {
   AccountHiveEntity? getAccount(String userId);
   Stream<AccountHiveEntity?> listenAccount(String userId);
   Stream<AccountHiveEntity?> listenAuthState();
+  List<AccountHiveEntity> getAccounts();
 }
