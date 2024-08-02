@@ -8,6 +8,7 @@ class GetChannelMembersRequestV4 {
       this.memberId,
       this.memberships,
       this.roles,
+      this.isDeleted,
       this.sortBy,
       this.options,
       this.keyword});
@@ -27,6 +28,9 @@ class GetChannelMembersRequestV4 {
   /// Sort by
   String? sortBy;
 
+  /// Is Deleted
+  bool? isDeleted;
+
   /// Option
   OptionsRequest? options;
 
@@ -42,6 +46,7 @@ class GetChannelMembersRequestV4 {
             ? null
             : List<String>.from(json["memberships"].map((x) => x)),
         keyword: json["search"],
+        isDeleted: json["isDeleted"],
         roles: json["roles"] == null
             ? null
             : List<String>.from(json["roles"].map((x) => x)),
@@ -58,6 +63,7 @@ class GetChannelMembersRequestV4 {
             ? null
             : List<dynamic>.from(memberships!.map((x) => x)),
         "search": keyword,
+        "isDeleted": isDeleted,
         "roles[]":
             roles == null ? null : List<dynamic>.from(roles!.map((x) => x)),
         "options": options?.toJson(),

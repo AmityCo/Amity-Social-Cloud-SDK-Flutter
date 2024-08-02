@@ -11,6 +11,7 @@ extension ChannelUserHiveExtensionConverter on ChannelUserHiveEntity {
       ..userId = userId
       ..isMuted = isMuted
       ..isBanned = isBanned
+      ..isDeleted = isDeleted
       ..roles = AmityRoles(roles: roles)
       ..permissions = AmityPermissions(permissions: permissions);
   }

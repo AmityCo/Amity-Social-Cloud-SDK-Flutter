@@ -7,12 +7,14 @@ class GetCommunityMembersRequest {
       this.memberships,
       this.roles,
       this.sortBy,
+      this.isDeleted,
       this.options});
 
   final String communityId;
   String? keyword;
   List<String>? memberships;
   List<String>? roles;
+  bool? isDeleted;
   String? sortBy;
   OptionsRequest? options;
 
@@ -20,6 +22,7 @@ class GetCommunityMembersRequest {
         "communityId": communityId,
         "search": keyword,
         "sortBy": sortBy,
+        "isDeleted": isDeleted,
         "memberships": memberships == null
             ? null
             : List<dynamic>.from(memberships!.map((x) => x)),
