@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/data/converter/stream/stream_response_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/stream_hive_entity_22.dart';
+import 'package:collection/collection.dart';
 
 /// Create Post Response Extension
 extension CreatePostResponseExtension on CreatePostResponse {
@@ -91,7 +92,8 @@ extension CreatePostResponseExtension on CreatePostResponse {
     }
 
     for (var e in communityUsersHiveEntities) {
-      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     //Save Child Post Entity

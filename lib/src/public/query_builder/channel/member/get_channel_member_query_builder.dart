@@ -19,6 +19,9 @@ class GetChannelMemberQueryBuilder {
   AmityMembershipSortOption _sortOption =
       AmityMembershipSortOption.LAST_CREATED;
 
+  /// Is deleted
+  bool? _isDeleted;
+
   /// Init [GetChannelMemberQueryBuilder]
   GetChannelMemberQueryBuilder(this.useCase, this.channelId);
 
@@ -46,6 +49,12 @@ class GetChannelMemberQueryBuilder {
     return this;
   }
 
+  /// Apply Filter
+  GetChannelMemberQueryBuilder includeDeleted(bool includeDeleted) {
+    _isDeleted = (includeDeleted) ? null : false;
+    return this;
+  }
+
   Future<PageListData<List<AmityChannelMember>, String>> getPagingData(
       {String? token, int? limit}) async {
     GetChannelMembersRequest request =
@@ -53,6 +62,7 @@ class GetChannelMemberQueryBuilder {
 
     request.filter = _fileter.value;
     request.sortBy = _sortOption.value;
+    request.isDeleted = _isDeleted;
 
     if (_roles != null) request.roles = _roles!.roles;
 

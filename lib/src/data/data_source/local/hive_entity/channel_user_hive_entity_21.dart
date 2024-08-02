@@ -35,6 +35,9 @@ class ChannelUserHiveEntity extends HiveObject {
   /// Last Mentioned Segment
   int? lastMentionedSegment;
 
+  /// Is Deleted
+  bool? isDeleted;
+
   /// Is Mute
   bool? isMuted;
 

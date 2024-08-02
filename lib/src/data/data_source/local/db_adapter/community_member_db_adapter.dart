@@ -1,8 +1,8 @@
 import 'package:amity_sdk/src/core/enum/amity_membership_sorting_order.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/community_member_hive_entity_14.dart';
+import 'package:amity_sdk/src/data/data_source/data_source.dart';
 
 abstract class CommunityMemberDbAdapter {
-  Future saveCommunityMemberEntity(CommnityMemberHiveEntity entity);
+  Future saveCommunityMemberEntity(CommnityMemberHiveEntity entity, UserHiveEntity? userEntity);
   CommnityMemberHiveEntity? getCommunityMemberEntity(String id);
   Future deleteCommunityMemberEntity(CommnityMemberHiveEntity entity);
   CommnityMemberHiveEntity getCommunityMemberEntities(

@@ -24,7 +24,17 @@ class CommunityMemberDbAdapterImpl extends CommunityMemberDbAdapter {
   }
 
   @override
-  Future saveCommunityMemberEntity(CommnityMemberHiveEntity entity) async {
+  Future saveCommunityMemberEntity(CommnityMemberHiveEntity entity, UserHiveEntity? userEntity) async {
+    if (userEntity != null) {
+      // Determine if the user is deleted from user entity
+      entity.isDeleted = userEntity.isDeleted;
+    } else {
+      // If no user entity is found, and the cache from the db is exists, use cache.isDeleted value
+      final cache = await box.get(entity.communityId! + entity.userId!);
+      if (cache != null) {
+        entity.isDeleted = cache.isDeleted;
+      }
+    }
     await box.put(entity.communityId! + entity.userId!, entity);
   }
 

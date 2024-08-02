@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:collection/collection.dart';
 
 extension GetCommunityMembersResponseExtensionConverter
     on GetCommunityMembersResponse {
@@ -39,7 +40,8 @@ extension GetCommunityMembersResponseExtensionConverter
 
     //Save the Community Member Entity
     for (var e in communityMemberHiveEntities) {
-      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     // FIXME: right logic for type checking

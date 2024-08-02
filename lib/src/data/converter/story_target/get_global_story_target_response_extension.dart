@@ -3,6 +3,7 @@ import 'package:amity_sdk/src/data/converter/story_target/story_target_reposnse_
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/story_target_hive_entity_28.dart';
 import 'package:amity_sdk/src/data/response/get_global_story_target_response.dart';
+import 'package:collection/collection.dart';
 
 extension GetGlobalStoryTargetResponseExtension on GetGlobalStoryTargetResponse {
   
@@ -48,7 +49,8 @@ extension GetGlobalStoryTargetResponseExtension on GetGlobalStoryTargetResponse 
     }
 
     for (var e in communityUserHiveEntities) {
-      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     if (T.toString() == 'AmityStoryTarget') {

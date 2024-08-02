@@ -39,6 +39,9 @@ class UserHiveEntity extends  EkoObject {
   /// User metadata
   Map<String, dynamic>? metadata;
 
+  /// flag to check if user is deleted
+  bool? isDeleted;
+
   /// flag to check if user ban globally
   bool? isGlobalBan;
 

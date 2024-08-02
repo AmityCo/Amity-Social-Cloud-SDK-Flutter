@@ -13,6 +13,7 @@ class CommnityMemberHiveEntity extends HiveObject {
   List<String>? roles;
   List<String>? permissions;
   bool? isBanned;
+  bool? isDeleted;
 
   // Map<> metaData;
 
@@ -27,6 +28,6 @@ class CommnityMemberHiveEntity extends HiveObject {
 
   @override
   String toString() {
-    return 'CommnityMemberHiveEntity(id: $id, communityId: $communityId, channelId: $channelId, userId: $userId, communityMembership: $communityMembership, roles: $roles, permissions: $permissions, isBanned: $isBanned)';
+    return 'CommnityMemberHiveEntity(id: $id, communityId: $communityId, channelId: $channelId, userId: $userId, communityMembership: $communityMembership, roles: $roles, permissions: $permissions, isBanned: $isBanned, isDeleted: $isDeleted)';
   }
 }

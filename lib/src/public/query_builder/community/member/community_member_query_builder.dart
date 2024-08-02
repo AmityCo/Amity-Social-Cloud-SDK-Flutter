@@ -29,6 +29,11 @@ class CommunityMemberQueryBuilder {
     return this;
   }
 
+  CommunityMemberQueryBuilder includeDeleted(bool includeDeleted) {
+    _request.isDeleted = (includeDeleted) ? null : false;
+    return this;
+  }
+
   Future<PageListData<List<AmityCommunityMember>, String>> getPagingData(
       {String? token, int? limit}) async {
     _request.options = OptionsRequest();
