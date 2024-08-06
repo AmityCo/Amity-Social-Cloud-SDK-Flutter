@@ -1,3 +1,6 @@
+## 0.47.1
+* Fix: Community live collection page size issue.
+
 ## 0.47.0
 * Feat: Introduce 'includeDeleted' options to Channel Membership Query and Search, Community Membership Query and Search api.
 
