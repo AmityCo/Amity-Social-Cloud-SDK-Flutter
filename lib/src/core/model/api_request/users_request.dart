@@ -23,6 +23,9 @@ class UsersRequest {
   String? filter;
   String? sortBy;
   OptionsRequest? options;
+  // Force exclude deleted users from the requirement
+  // https://ekoapp.atlassian.net/browse/ASC-24500
+  bool isDeleted = false; 
 
   factory UsersRequest.fromJson(Map<String, dynamic> json) => UsersRequest(
         keyword: json["keyword"],
@@ -35,6 +38,7 @@ class UsersRequest {
     Map<String, dynamic> data = {};
     if (keyword != null) data['keyword'] = keyword;
     if (filter != null) data['filter'] = filter;
+    data['isDeleted'] = isDeleted;
     if (sortBy != null) data['sortBy'] = sortBy;
     if (options != null) data['options'] = options!.toJson();
     return data;

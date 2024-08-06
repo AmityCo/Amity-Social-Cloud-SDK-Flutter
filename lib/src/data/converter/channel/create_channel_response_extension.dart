@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:collection/collection.dart';
 
 /// [CreateChannelResponseExtension]
 extension CreateChannelResponseExtension on CreateChannelResponse {
@@ -39,7 +40,8 @@ extension CreateChannelResponseExtension on CreateChannelResponse {
 
     //Save the Channel User Hive
     for (var e in channelUserHiveEntities) {
-      await dbRepo.channelUserDbAdapter.saveEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await dbRepo.channelUserDbAdapter.saveEntity(e, user);
     }
 
     // FIXME: right logic for type checking

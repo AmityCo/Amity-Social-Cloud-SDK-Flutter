@@ -35,7 +35,17 @@ class ChannelUserDbAdapterImpl extends ChannelUserDbAdapter {
   }
 
   @override
-  Future saveEntity(ChannelUserHiveEntity data) async {
+  Future saveEntity(ChannelUserHiveEntity data, UserHiveEntity? userEntity) async {
+     if (userEntity != null) {
+      // Determine if the user is deleted from user entity
+      data.isDeleted = userEntity.isDeleted;
+    } else {
+      // If no user entity is found, and the cache from the db is exists, use cache.isDeleted value
+      final cache = await box.get(data.id);
+      if (cache != null) {
+        data.isDeleted = cache.isDeleted;
+      }
+    }
     box.put(data.id, data);
   }
 }

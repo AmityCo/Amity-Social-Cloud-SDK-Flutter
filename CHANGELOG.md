@@ -1,3 +1,6 @@
+## 0.47.0
+* Feat: Introduce 'includeDeleted' options to Channel Membership Query and Search, Community Membership Query and Search api.
+
 ## 0.46.2
 * Fix:  Handle spamming unexpected error log from nullable objects.
 * Chore: Config Dio to do JSON Parser on the background thread.

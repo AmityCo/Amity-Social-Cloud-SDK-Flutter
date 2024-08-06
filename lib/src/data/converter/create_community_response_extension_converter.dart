@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:collection/collection.dart';
 
 extension CreateCommunityResponseExtentionResponse on CreateCommunityResponse {
   /// Utils Method to save the Communiyt Response to Db
@@ -57,7 +58,8 @@ extension CreateCommunityResponseExtentionResponse on CreateCommunityResponse {
 
     //Save the Community Member Entity
     for (var e in communityMemberHiveEntities) {
-      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e);
+      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      await dbRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
     // FIXME: right logic for type checking
