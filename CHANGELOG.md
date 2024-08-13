@@ -1,3 +1,8 @@
+## 0.48.0
+* Feat: Channel Live Collection
+* Fix: Fix inconsistent behavior of Community Live Collection
+* Feat: Support retain previous session after re-open the app
+
 ## 0.47.1
 * Fix: Community live collection page size issue.
 
