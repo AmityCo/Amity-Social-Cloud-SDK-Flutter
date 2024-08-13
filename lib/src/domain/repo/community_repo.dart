@@ -18,7 +18,10 @@ abstract class CommunityRepo extends AmityObjectRepository<CommunityHiveEntity, 
   Future deleteCommunity(String communityId);
   Future<AmityCommunity> updateCommunity(CreateCommunityRequest request);
   Future saveCommunityEntity(CommunityHiveEntity entity);
-
+  Future<PageListData<List<AmityCommunity>, String>> queryCommunities(
+      GetCommunityRequest request);
+  Stream<List<AmityCommunity>> listenCommunities(
+      RequestBuilder<GetCommunityRequest> request);
   int getPostCount(String targetId , String feedType);
 
   Future<AmityCommunityCategory?> getCommunityCategoryById(String categoryId);

@@ -37,11 +37,13 @@ import 'package:amity_sdk/src/domain/repo/network_settings_repo.dart';
 import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 import 'package:amity_sdk/src/domain/repo/tombstone_repo.dart';
-import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/channel/channel_query_fetch_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_observe_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
@@ -301,7 +303,9 @@ class SdkServiceLocator {
           fileDbAdapter: serviceLocator(),
           communityCategoryDbAdapter: serviceLocator(),
           communityFeedDbAdapter: serviceLocator(),
-          communityMemberDbAdapter: serviceLocator()),
+          communityMemberDbAdapter: serviceLocator(),
+          pagingIdRepo: serviceLocator(),
+        ),
     );
     serviceLocator.registerLazySingleton<CommunityMemberRepo>(() =>
         CommunityMemberRepoImpl(
@@ -538,9 +542,8 @@ class SdkServiceLocator {
               communityComposerUsecase: serviceLocator(),
             ));
     serviceLocator
-        .registerLazySingleton<CommunityGetUsecase>(() => CommunityGetUsecase(
+        .registerLazySingleton<CommunityFetchListUseCase>(() => CommunityFetchListUseCase(
               communityRepo: serviceLocator(),
-              communityComposerUsecase: serviceLocator(),
             ));
     serviceLocator.registerLazySingleton<CommunityDeleteUseCase>(
         () => CommunityDeleteUseCase(
@@ -758,6 +761,12 @@ class SdkServiceLocator {
             communityCategoryRepo: serviceLocator(),
             communityCategoryComposerUsecase: serviceLocator()));
 
+    serviceLocator.registerLazySingleton<CommunityObserveListUseCase>(() =>
+        CommunityObserveListUseCase(
+            communityRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator(),
+            communityComposerUsecase: serviceLocator())); 
+
     serviceLocator.registerLazySingleton<CommunityObserveUseCase>(() =>
         CommunityObserveUseCase(
             communityRepo: serviceLocator(),
@@ -971,15 +980,15 @@ class SdkServiceLocator {
         StoryTargetObserveUsecase(
             storyTargetRepo: serviceLocator(),
             storyTargetComposerUseCase: serviceLocator()));
-    serviceLocator.registerLazySingleton<ChannelObserveUseCase>(() =>
-      ChannelObserveUseCase(
+    serviceLocator.registerLazySingleton<ChannelObserveListUseCase>(() =>
+      ChannelObserveListUseCase(
         channelRepo: serviceLocator(),
         pagingIdRepo: serviceLocator(),
         channelComposerUsecase: serviceLocator(),
       ),
     );
-    serviceLocator.registerLazySingleton<ChannelQueryFetchUseCase>(() =>
-      ChannelQueryFetchUseCase(
+    serviceLocator.registerLazySingleton<ChannelFetchListUseCase>(() =>
+      ChannelFetchListUseCase(
         channelRepo: serviceLocator(),
       ),
     );

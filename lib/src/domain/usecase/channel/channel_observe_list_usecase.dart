@@ -2,19 +2,19 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/core/utils/amity_nounce.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
 
-class ChannelObserveUseCase
+class ChannelObserveListUseCase
     extends ObserverUseCase<List<AmityChannel>, GetChannelRequest> {
   final ChannelRepo channelRepo;
   final PagingIdRepo pagingIdRepo;
   final ChannelComposerUsecase channelComposerUsecase;
   final nonce = AmityNonce.CHANNEL_LIST.value;
 
-  ChannelObserveUseCase(
+  ChannelObserveListUseCase(
       {required this.channelRepo,
       required this.pagingIdRepo,
       required this.channelComposerUsecase});
