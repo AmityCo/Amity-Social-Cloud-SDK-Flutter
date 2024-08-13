@@ -53,8 +53,8 @@ class CommunityGetQueryBuilder {
     request.sortBy = _sortBy.apiKey;
     request.tags = _tags;
     request.isDeleted = _isDeleted ?? true ? null : false;
-
-    request.options = OptionsRequest();
+    
+    request.options = OptionsRequest(limit: pageSize);
 
     return request;
   }

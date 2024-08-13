@@ -38,14 +38,14 @@ class UserHiveEntity extends EkoObject {
   @HiveField(7)
   String? avatarCustomUrl;
 
-  /// User path with networkid 
+  /// User path with networkid
   @HiveField(8)
   String? path;
 
   /// User flag count
   @HiveField(9)
   int? flagCount;
-  
+
   //  HashFlag hashFlag;
   /// User metadata
   @HiveField(10)
@@ -70,11 +70,11 @@ class UserHiveEntity extends EkoObject {
   /// Hash Flag
   @HiveField(15)
   Map<String, dynamic>? hashFlag;
-  
+
   @override
   String? getId() {
     return id;
-  }  
+  }
 
   UserHiveEntity({
     this.id,
