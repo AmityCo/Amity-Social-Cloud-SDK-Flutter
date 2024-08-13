@@ -7,7 +7,7 @@ extension ChannelHiveExtensionConverter on ChannelHiveEntity {
   ///
   AmityChannel convertToAmityChannel() {
     //Data type
-    AmityChannelType amityChannelType = AmityChannelTypeExtension.enumOf(type!);
+    AmityChannelType amityChannelType = AmityChannelTypeExtension.enumOf(type);
 
     return AmityChannel()
       ..channelId = channelId

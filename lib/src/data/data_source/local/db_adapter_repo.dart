@@ -2,8 +2,8 @@ import 'package:amity_sdk/src/data/data_source/local/db_adapter/analytics_db_ada
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_target_db_adapter.dart';
-import 'package:amity_sdk/src/data/data_source/local/db_adapter/tombstone_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
+import 'package:amity_sdk/src/data/data_source/local/db_adapter/tombstone_db_adapter.dart';
 
 /// This class hold all the Db Adapter instance as Singleton class, so we dont have to pass all diffrent db adapter in the constructor
 /// of the repo, we can just pass this. this will bit clean the code.
@@ -65,6 +65,8 @@ class DbAdapterRepo {
   /// Story Target Db Adapter
   final StoryTargetDbAdapter storyTargetDbAdapter;
 
+  final PagingIdDbAdapter pagingIdDbAdapter;
+
   /// Init DbAdapter Repo
   DbAdapterRepo({
     required this.postDbAdapter,
@@ -86,5 +88,6 @@ class DbAdapterRepo {
     required this.analyticsDbAdapter,
     required this.storyDbAdapter,
     required this.storyTargetDbAdapter,
+    required this.pagingIdDbAdapter,
   });
 }

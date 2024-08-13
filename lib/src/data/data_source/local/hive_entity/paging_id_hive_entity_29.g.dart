@@ -1,28 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'amity_paging_id_hive_entity_29.dart';
+part of 'paging_id_hive_entity_29.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AmityPagingIdHiveEntityAdapter
-    extends TypeAdapter<AmityPagingIdHiveEntity> {
+class PagingIdHiveEntityAdapter extends TypeAdapter<PagingIdHiveEntity> {
   @override
   final int typeId = 29;
 
   @override
-  AmityPagingIdHiveEntity read(BinaryReader reader) {
+  PagingIdHiveEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AmityPagingIdHiveEntity();
+    return PagingIdHiveEntity(
+      id: fields[0] as String?,
+      hash: fields[1] as int?,
+      nonce: fields[2] as int?,
+      position: fields[3] as int?,
+    );
   }
 
   @override
-  void write(BinaryWriter writer, AmityPagingIdHiveEntity obj) {
-    writer.writeByte(0);
+  void write(BinaryWriter writer, PagingIdHiveEntity obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.hash)
+      ..writeByte(2)
+      ..write(obj.nonce)
+      ..writeByte(3)
+      ..write(obj.position);
   }
 
   @override
@@ -31,7 +44,7 @@ class AmityPagingIdHiveEntityAdapter
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AmityPagingIdHiveEntityAdapter &&
+      other is PagingIdHiveEntityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

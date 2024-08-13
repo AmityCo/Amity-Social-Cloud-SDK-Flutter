@@ -12,6 +12,7 @@ export 'file_db_adapter.dart';
 export 'follow_db_adapter.dart';
 export 'follow_info_db_adapter.dart';
 export 'message_db_adapter.dart';
+export 'paging_id_db_adapter.dart';
 export 'poll_db_adapter.dart';
 export 'post_db_adapter.dart';
 export 'reaction_db_adapter.dart';
