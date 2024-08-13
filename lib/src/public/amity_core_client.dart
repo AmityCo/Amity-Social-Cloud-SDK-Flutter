@@ -39,17 +39,13 @@ class AmityCoreClient {
 
     _intialCleanUp();
     setupSessionComponents();
-    print(">>>>>>>>>>>>>>>prepare session");
   
     final accountRepo = serviceLocator.get<AccountRepo>();
     AccountHiveEntity? account = accountRepo.getAccounts().firstOrNull;
-    print(">>>>>>>>>>>>>>>account: ${account?.userId}");
     if (account != null) {
       final userRepo = serviceLocator.get<UserRepo>();
       List<AmityUser> users = userRepo.getUsersFromDB();
-      print(">>>>>>>>>>>>>>>users: $users");
       AmityUser? user = users.where((element) => element.userId == account.userId).firstOrNull;
-      print(">>>>>>>>>>>>>>>currentUser: $user");
       if (user != null && user.userId != null) {
         if (serviceLocator.isRegistered<AccountHiveEntity>()) {
           serviceLocator.unregister<AccountHiveEntity>();
