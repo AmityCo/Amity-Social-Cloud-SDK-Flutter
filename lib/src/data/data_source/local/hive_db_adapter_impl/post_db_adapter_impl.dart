@@ -9,6 +9,8 @@ class PostDbAdapterImpl extends PostDbAdapter {
   late Box<PostHiveEntity> box;
   Future<PostDbAdapter> init() async {
     Hive.registerAdapter(PostHiveEntityAdapter(), override: true);
+    Hive.registerAdapter(PostChildDataHiveEntityAdapter(), override: true);
+    Hive.registerAdapter(MentioneeHiveEntityAdapter(), override: true);
     box = await Hive.openBox<PostHiveEntity>('post_db');
     return this;
   }

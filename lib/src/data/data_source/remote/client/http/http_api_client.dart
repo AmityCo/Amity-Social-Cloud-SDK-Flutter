@@ -29,8 +29,8 @@ class HttpApiClient {
     dio.transformer = BackgroundTransformer();
 
     dio.interceptors.add(QueuedInterceptorsWrapper(onRequest: (options, handler) {
-      if (serviceLocator.isRegistered<SessionResponse>()) {
-        options.headers['authorization'] = 'Bearer ${serviceLocator<SessionResponse>().accessToken}';
+      if (serviceLocator.isRegistered<AccountHiveEntity>()) {
+        options.headers['authorization'] = 'Bearer ${serviceLocator<AccountHiveEntity>().accessToken}';
         // options.headers['cookie'] = 'userId=${AmityCoreClient.getUserId()}';
       }
       handler.next(options);

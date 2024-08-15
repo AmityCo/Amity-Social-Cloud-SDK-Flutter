@@ -12,12 +12,30 @@ class FeedPagingHiveEntityAdapter extends TypeAdapter<FeedPagingHiveEntity> {
 
   @override
   FeedPagingHiveEntity read(BinaryReader reader) {
-    return FeedPagingHiveEntity();
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return FeedPagingHiveEntity(
+      id: fields[0] as String?,
+      postIds: (fields[1] as List?)?.cast<String>(),
+      nextToken: fields[2] as String?,
+      prevToken: fields[3] as String?,
+    );
   }
 
   @override
   void write(BinaryWriter writer, FeedPagingHiveEntity obj) {
-    writer.writeByte(0);
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.postIds)
+      ..writeByte(2)
+      ..write(obj.nextToken)
+      ..writeByte(3)
+      ..write(obj.prevToken);
   }
 
   @override

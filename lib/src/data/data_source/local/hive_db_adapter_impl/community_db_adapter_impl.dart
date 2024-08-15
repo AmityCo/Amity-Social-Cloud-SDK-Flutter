@@ -20,7 +20,7 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
 
   @override
   Future saveCommunityEntity(CommunityHiveEntity entity) async {
-    final cachedEntity = getCommunityEntity(entity.communityId);    
+    final cachedEntity = getCommunityEntity(entity.communityId!);    
     if (cachedEntity != null) {
       // If cache exist we update queryTimestamp and use cachd isJoined.      
       entity.isJoined ??= cachedEntity.isJoined;
@@ -32,6 +32,12 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   @override
   Stream<CommunityHiveEntity> listenCommunityEntity(String communityId) {
     return box.watch(key: communityId).where((event) { return event != null && event.value != null; }).map((event) => event.value);
+  }
+
+  @override
+  List<CommunityHiveEntity> getCommunityEntities(
+      RequestBuilder<GetCommunityRequest> request) {
+    return box.values.where((community) => community.isMatchingFilter(request.call())).toList();
   }
 
   @override

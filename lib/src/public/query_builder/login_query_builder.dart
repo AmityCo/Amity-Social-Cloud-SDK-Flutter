@@ -53,15 +53,17 @@ class LoginQueryBuilder {
 
     var amityUser = await _useCase.get(params);
 
-    //TODO uncomment when ready
-    //connect to socket if login is successful
-    serviceLocator<AmitySocket>().connect();
-    serviceLocator<AmityMQTT>().connect();
-    _sessionLifeCycleEventBus!.publish(SessionLifeCycle.Establish);
+    onSessionEstablished(_sessionLifeCycleEventBus!);  
     _appEventBus!.publish(AppEvent.LoginSuccess);
 
     ///
 
     return amityUser;
+  }
+
+  static void onSessionEstablished(SessionLifeCycleEventBus sessionLifeCycleEventBus) {
+    serviceLocator<AmitySocket>().connect();
+    serviceLocator<AmityMQTT>().connect();
+    sessionLifeCycleEventBus.publish(SessionLifeCycle.Establish);
   }
 }

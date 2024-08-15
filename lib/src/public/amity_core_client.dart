@@ -5,11 +5,9 @@ import 'package:amity_sdk/src/core/session/event_bus/session_life_cycle_event_bu
 import 'package:amity_sdk/src/core/session/event_bus/session_state_event_bus.dart';
 import 'package:amity_sdk/src/core/session/model/app_event.dart';
 import 'package:amity_sdk/src/core/session/model/session_life_cycle.dart';
-import 'package:amity_sdk/src/core/session/model/session_state.dart';
 import 'package:amity_sdk/src/core/session/session_state_manager.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_notification.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_text_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_urls_usecase.dart';
 import 'package:amity_sdk/src/public/public.dart';
@@ -21,7 +19,6 @@ class AmityCoreClient {
   static SessionLifeCycleEventBus? _sessionLifeCycleEventBus;
   static AppEventBus? _appEventBus;
   static SessionStateEventBus? _sessionStateEventBus;
-  static SessionState currentSessionState = SessionState.NotLoggedIn;
   static AnalyticsEngine? analyticsEngine = null;
 
   ///Do the intial set
@@ -42,6 +39,26 @@ class AmityCoreClient {
 
     _intialCleanUp();
     setupSessionComponents();
+  
+    final accountRepo = serviceLocator.get<AccountRepo>();
+    AccountHiveEntity? account = accountRepo.getAccounts().firstOrNull;
+    if (account != null) {
+      final userRepo = serviceLocator.get<UserRepo>();
+      List<AmityUser> users = userRepo.getUsersFromDB();
+      AmityUser? user = users.where((element) => element.userId == account.userId).firstOrNull;
+      if (user != null && user.userId != null) {
+        if (serviceLocator.isRegistered<AccountHiveEntity>()) {
+          serviceLocator.unregister<AccountHiveEntity>();
+        }
+        serviceLocator.registerSingleton<AccountHiveEntity>(account);
+        //Keep the current user in session (service locator)
+        if (serviceLocator.isRegistered<AmityUser>()) {
+          serviceLocator.unregister<AmityUser>();
+        }
+        serviceLocator.registerSingleton<AmityUser>(user);
+        LoginQueryBuilder.onSessionEstablished(_sessionLifeCycleEventBus!);
+      }
+    }
 
     return;
   }

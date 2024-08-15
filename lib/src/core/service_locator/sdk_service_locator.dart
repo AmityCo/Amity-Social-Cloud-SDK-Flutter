@@ -5,39 +5,45 @@ import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/analytics_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_target_db_adapter.dart';
+import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/tombstone_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/analytics_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_target_db_adapter_impl.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/stream_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/tombstone_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/community_notification_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_target_api_interface.dart';
+import 'package:amity_sdk/src/data/data_source/remote/api_interface/stream_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/community_notification_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/stream_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/analytics_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/community_notification_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/network_settings_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/paging_id_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/story_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/story_target_repo_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/stream_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/tombstone_repo_impl.dart';
-import 'package:amity_sdk/src/domain/composer_usecase/story_composer_usercase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/reaction_composer_usecase.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/story_composer_usercase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/story_target_composer_usecase.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/stream_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_community_notification_event.dart';
 import 'package:amity_sdk/src/domain/repo/analytics_repo.dart';
 import 'package:amity_sdk/src/domain/repo/community_notification_repo.dart';
 import 'package:amity_sdk/src/domain/repo/network_settings_repo.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 import 'package:amity_sdk/src/domain/repo/tombstone_repo.dart';
-import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/stream_db_adapter_impl.dart';
-import 'package:amity_sdk/src/data/data_source/remote/api_interface/stream_api_interface.dart';
-import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/stream_api_interface_impl.dart';
-import 'package:amity_sdk/src/data/repo_impl/stream_repo_impl.dart';
-import 'package:amity_sdk/src/domain/composer_usecase/stream_composer_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_observe_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
@@ -51,12 +57,7 @@ import 'package:amity_sdk/src/domain/usecase/story/get_failed_stories_usecase.da
 import 'package:amity_sdk/src/domain/usecase/story/get_targets_by_targets_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/global_story_targets_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/story_has_local_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/story_target_observe_usercase.dart';
-import 'package:amity_sdk/src/domain/usecase/story/story_observe_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
-import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/stream/stream_get_local_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/stream/stream_has_local_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/user/get_reach_user_usecase.dart';
@@ -160,6 +161,9 @@ class SdkServiceLocator {
     serviceLocator.registerSingletonAsync<StoryTargetDbAdapter>(
         () => StoryTargetDbAdapterImpl(dbClient: serviceLocator()).init(),
         dependsOn: [DBClient]);
+    serviceLocator.registerSingletonAsync<PagingIdDbAdapter>(
+        () => PagingIdDbAdapterImpl(dbClient: serviceLocator()).init(),
+        dependsOn: [DBClient]);
 
     //Register Db adapter Repo which hold all the Db Adapters
     serviceLocator.registerLazySingleton<DbAdapterRepo>(
@@ -182,7 +186,9 @@ class SdkServiceLocator {
           streamDbAdapter: serviceLocator(),
           analyticsDbAdapter: serviceLocator(),
           storyDbAdapter: serviceLocator(),
-          storyTargetDbAdapter: serviceLocator()),
+          storyTargetDbAdapter: serviceLocator(),
+          pagingIdDbAdapter: serviceLocator(),
+        ),
     );
 
     //-data_source/remote/
@@ -297,7 +303,9 @@ class SdkServiceLocator {
           fileDbAdapter: serviceLocator(),
           communityCategoryDbAdapter: serviceLocator(),
           communityFeedDbAdapter: serviceLocator(),
-          communityMemberDbAdapter: serviceLocator()),
+          communityMemberDbAdapter: serviceLocator(),
+          pagingIdRepo: serviceLocator(),
+        ),
     );
     serviceLocator.registerLazySingleton<CommunityMemberRepo>(() =>
         CommunityMemberRepoImpl(
@@ -378,6 +386,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<ChannelRepo>(
       () => ChannelRepoImpl(
         commonDbAdapter: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
         channelApiInterface: serviceLocator(),
       ),
     );
@@ -406,6 +415,10 @@ class SdkServiceLocator {
       () => AnalytcisRepoImpl(
           analyticsApiInterface: serviceLocator(),
           dbAdapterRepo: serviceLocator()),
+    );
+
+    serviceLocator.registerLazySingleton<PagingIdRepo>(
+      () => PagingIdRepoImpl(commonDbAdapter: serviceLocator()),
     );
 
     //-UserCase
@@ -529,9 +542,8 @@ class SdkServiceLocator {
               communityComposerUsecase: serviceLocator(),
             ));
     serviceLocator
-        .registerLazySingleton<CommunityGetUsecase>(() => CommunityGetUsecase(
+        .registerLazySingleton<CommunityFetchListUseCase>(() => CommunityFetchListUseCase(
               communityRepo: serviceLocator(),
-              communityComposerUsecase: serviceLocator(),
             ));
     serviceLocator.registerLazySingleton<CommunityDeleteUseCase>(
         () => CommunityDeleteUseCase(
@@ -749,6 +761,12 @@ class SdkServiceLocator {
             communityCategoryRepo: serviceLocator(),
             communityCategoryComposerUsecase: serviceLocator()));
 
+    serviceLocator.registerLazySingleton<CommunityObserveListUseCase>(() =>
+        CommunityObserveListUseCase(
+            communityRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator(),
+            communityComposerUsecase: serviceLocator())); 
+
     serviceLocator.registerLazySingleton<CommunityObserveUseCase>(() =>
         CommunityObserveUseCase(
             communityRepo: serviceLocator(),
@@ -962,6 +980,23 @@ class SdkServiceLocator {
         StoryTargetObserveUsecase(
             storyTargetRepo: serviceLocator(),
             storyTargetComposerUseCase: serviceLocator()));
+    serviceLocator.registerLazySingleton<ChannelObserveListUseCase>(() =>
+      ChannelObserveListUseCase(
+        channelRepo: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
+        channelComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<ChannelFetchListUseCase>(() =>
+      ChannelFetchListUseCase(
+        channelRepo: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<ChannelUpdateLastActivityUsecase>(() =>
+      ChannelUpdateLastActivityUsecase(
+        channelRepo: serviceLocator(),
+      ),
+    );
 
     //-data_source/remote/
     serviceLocator

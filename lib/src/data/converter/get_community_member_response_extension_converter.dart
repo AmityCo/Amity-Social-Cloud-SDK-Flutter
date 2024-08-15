@@ -19,7 +19,7 @@ extension GetCommunityMembersResponseExtensionConverter
         users.map((e) => e.convertToUserHiveEntity()).toList();
 
     //Convert to Community Member Hive Entity
-    List<CommnityMemberHiveEntity> communityMemberHiveEntities = communityUsers
+    List<CommunityMemberHiveEntity> communityMemberHiveEntities = communityUsers
         .map((e) => e.convertToCommnityMemberHiveEntity())
         .toList();
 
