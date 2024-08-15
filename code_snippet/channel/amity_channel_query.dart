@@ -21,27 +21,27 @@ class AmityChannelQuery {
   void queryChannels() {
     // Query for Community type
     liveCollection = AmityChatClient.newChannelRepository()
-          .getChannels()
-          .communityType()
-          .getLiveCollection();
+      .getChannels()
+      .communityType()
+      .getLiveCollection();
 
     // Query for Live type
     liveCollection = AmityChatClient.newChannelRepository()
-          .getChannels()
-          .liveType()
-          .getLiveCollection();
+      .getChannels()
+      .liveType()
+      .getLiveCollection();
 
     // Query for Broadcast type
     liveCollection = AmityChatClient.newChannelRepository()
-          .getChannels()
-          .broadcastType()
-          .getLiveCollection();
+      .getChannels()
+      .broadcastType()
+      .getLiveCollection();
 
     // Query for Conversation type
     liveCollection = AmityChatClient.newChannelRepository()
-          .getChannels()
-          .conversationType()
-          .getLiveCollection();
+      .getChannels()
+      .conversationType()
+      .getLiveCollection();
 
      // Query for Multiple types
     final types = <AmityChannelType>[
@@ -49,9 +49,9 @@ class AmityChannelQuery {
       AmityChannelType.COMMUNITY
     ];
     liveCollection = AmityChatClient.newChannelRepository()
-          .getChannels()
-          .types(types)
-          .getLiveCollection();
+      .getChannels()
+      .types(types)
+      .getLiveCollection(); 
 
     //listen to data changes from live collection
     liveCollection.getStreamController().stream.listen((event) {
