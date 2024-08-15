@@ -1,5 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/mentionee_hive_entity_30.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 /// Post Response Hive Entity Extension
@@ -55,7 +56,7 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
     List<AmityMentionee>? mentionees;
 
     if (this.mentionees != null) {
-      for (Mentionee mentionee in this.mentionees!) {
+      for (MentioneeHiveEntity mentionee in this.mentionees!) {
         if (mentionee.type == 'user') {
           mentionees =
               mentionee.userIds!.map((e) => AmityMentionee(userId: e)).toList();

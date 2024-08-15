@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/mentionee_hive_entity_30.dart';
 import 'package:hive/hive.dart';
 
 part 'post_hive_entity_5.g.dart';
@@ -136,7 +137,7 @@ class PostHiveEntity extends EkoObject {
 
   /// Mentions
   @HiveField(32)
-  List<Mentionee>? mentionees;
+  List<MentioneeHiveEntity>? mentionees;
 
   /// Json raw data for custom post
   @HiveField(33)
@@ -213,7 +214,7 @@ class PostHiveEntity extends EkoObject {
     bool? flaggedByMe,
     int? impression,
     int? reach,
-    List<Mentionee>? mentionees,
+    List<MentioneeHiveEntity>? mentionees,
   }) {
     return PostHiveEntity(
       id: id ?? this.id,

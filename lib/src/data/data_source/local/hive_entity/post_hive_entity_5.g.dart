@@ -47,7 +47,7 @@ class PostHiveEntityAdapter extends TypeAdapter<PostHiveEntity> {
       feedType: fields[27] as String?,
       require: fields[28] as String?,
       flaggedByMe: fields[29] as bool?,
-      mentionees: (fields[32] as List?)?.cast<Mentionee>(),
+      mentionees: (fields[32] as List?)?.cast<MentioneeHiveEntity>(),
       impression: fields[30] as int?,
       reach: fields[31] as int?,
       rawData: (fields[33] as Map?)?.cast<String, dynamic>(),
