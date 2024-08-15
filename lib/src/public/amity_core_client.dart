@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io' as io;
+
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/engine/analytics_engine.dart';
 import 'package:amity_sdk/src/core/session/event_bus/app_event_bus.dart';
@@ -14,6 +17,8 @@ import 'package:amity_sdk/src/domain/usecase/network/validate_text_usecase.dart'
 import 'package:amity_sdk/src/domain/usecase/network/validate_urls_usecase.dart';
 import 'package:amity_sdk/src/public/public.dart';
 import 'package:amity_sdk_api/amity_sdk_api.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+
 
 ///Amity Core Client to do primary Setup
 class AmityCoreClient {
@@ -29,14 +34,42 @@ class AmityCoreClient {
     required AmityCoreClientOption option,
     bool sycInitialization = false,
   }) async {
+
+    AmityCoreClientOption setupOption = option;
+
     //Reset config get_it instance
     await configServiceLocator.reset();
 
     //Reset SDK get_it instance
     await serviceLocator.reset();
 
+    if (io.Platform.isAndroid) {
+      try {
+        DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+        // Switch to compatible endpoint for Android 7.1.1 and below [https://ekoapp.atlassian.net/browse/ASC-24966
+        if (androidInfo.version.sdkInt <= 25) {
+          final httpEndpoint = option.httpEndpoint;
+          switch(httpEndpoint){
+            case AmityRegionalHttpEndpoint.SG:
+              setupOption = option.copyWith(httpEndpoint: AmityRegionalHttpEndpoint.custom(SG_HTTP_COMPAT_ENDPOINT));
+              break;
+            case AmityRegionalHttpEndpoint.EU:
+              setupOption = option.copyWith(httpEndpoint: AmityRegionalHttpEndpoint.custom(EU_HTTP_COMPAT_ENDPOINT));
+              break;
+            case AmityRegionalHttpEndpoint.US:
+              setupOption = option.copyWith(httpEndpoint: AmityRegionalHttpEndpoint.custom(US_HTTP_COMPAT_ENDPOINT));
+              break;
+          }
+        }
+      } catch (e) {
+        log("Failed to get platform version: $e");
+      }
+    }
+
     configServiceLocator
-        .registerLazySingleton<AmityCoreClientOption>(() => option);
+        .registerLazySingleton<AmityCoreClientOption>(() => setupOption);
 
     await SdkServiceLocator.initServiceLocator(syc: sycInitialization);
 
@@ -241,4 +274,20 @@ class AmityCoreClientOption {
     this.mqttEndpoint = AmityRegionalMqttEndpoint.SG,
     this.showLogs = false,
   });
+
+  AmityCoreClientOption copyWith({
+    String? apiKey,
+    AmityRegionalHttpEndpoint? httpEndpoint,
+    AmityRegionalSocketEndpoint? socketEndpoint,
+    AmityRegionalMqttEndpoint? mqttEndpoint,
+    bool? showLogs,
+  }) {
+    return AmityCoreClientOption(
+      apiKey: apiKey ?? this.apiKey,
+      httpEndpoint: httpEndpoint ?? this.httpEndpoint,
+      socketEndpoint: socketEndpoint ?? this.socketEndpoint,
+      mqttEndpoint: mqttEndpoint ?? this.mqttEndpoint,
+      showLogs: showLogs ?? this.showLogs,
+    );
+  }
 }

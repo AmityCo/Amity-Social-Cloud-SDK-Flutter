@@ -28,6 +28,7 @@ dependencies:
   socket_io_client: ^1.0.2
   uuid: ^4.3.3
   amity_sdk_api: ^0.0.3
+  device_info_plus: ^10.1.2
 # Add the lib from the pub dev before deploying
   # amity_api:
   #   path: ../amity_api
