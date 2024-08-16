@@ -1,3 +1,4 @@
+import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
 
 /// [ChannelDbAdapter]
@@ -13,6 +14,14 @@ abstract class ChannelDbAdapter {
 
   /// Listen entity with  id
   Stream<ChannelHiveEntity> listenEntity(String id);
+
+  /// Listen to channel entities caches
+  Stream<List<ChannelHiveEntity>> listenChannelEntities(
+      RequestBuilder<GetChannelRequest> request);
+
+  /// get channel entities caches
+  List<ChannelHiveEntity> getChannelEntities(
+      RequestBuilder<GetChannelRequest> request);
 
   // /// Listen Message Entities
   // Stream<List<ChannelHiveEntity>> listenMessageEntities(

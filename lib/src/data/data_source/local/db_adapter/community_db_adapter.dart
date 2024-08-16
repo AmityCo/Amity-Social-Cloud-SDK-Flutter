@@ -5,7 +5,8 @@ abstract class CommunityDbAdapter {
   Future saveCommunityEntity(CommunityHiveEntity entity);
   Future deleteCommunityEntities();
   CommunityHiveEntity? getCommunityEntity(String id);
-
+  List<CommunityHiveEntity> getCommunityEntities(
+      RequestBuilder<GetCommunityRequest> request);
   Stream<CommunityHiveEntity> listenCommunityEntity(String communityId);
   Stream<List<CommunityHiveEntity>> listenCommunityEntities(
       RequestBuilder<GetCommunityRequest> request);

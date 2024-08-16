@@ -12,4 +12,5 @@ abstract class UserRepo {
   Future block(String userId);
   Future unblock(String userId);
   Future<PageListData<List<AmityUser>, String>> getBlockedUsers(OptionsRequest request);
+  List<AmityUser> getUsersFromDB();
 }

@@ -15,6 +15,8 @@ abstract class LiveCollection<Model> {
   /// Check if first page is loaded
   bool _isFirstPage = true;
 
+  final defaultPageSize = 20;
+
   /// get the next page request
   Future<PageListData<List<Model>, String>> getNextPageRequest(String? token);
 

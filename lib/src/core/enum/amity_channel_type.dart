@@ -15,9 +15,10 @@ extension AmityChannelTypeExtension on AmityChannelType {
   }
 
   //TODO - this method need to acceesable with AmityChannelType
-  static AmityChannelType enumOf(String value) {
+  static AmityChannelType enumOf(String? value) {
+    final type = value ?? "";
     return AmityChannelType.values.firstWhere(
-      (element) => element.name.toLowerCase() == value.toLowerCase(),
+      (element) => element.name.toLowerCase() == type.toLowerCase(),
       orElse: () => AmityChannelType.COMMUNITY,
     );
   }

@@ -25,7 +25,7 @@ extension GetGlobalStoryTargetResponseExtension on GetGlobalStoryTargetResponse 
     List<CommunityCategoryHiveEntity> communityCategoryHiveEntities =
         categories.map((e) => e.convertToCommunityCategoryHiveEntity()).toList();
 
-    List<CommnityMemberHiveEntity> communityUserHiveEntities =
+    List<CommunityMemberHiveEntity> communityUserHiveEntities =
         communityUsers.map((e) => e.convertToCommnityMemberHiveEntity()).toList();
 
     for (var e in fileHiveEntities) {

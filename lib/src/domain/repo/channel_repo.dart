@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 /// [ChannelRepo]
@@ -24,4 +25,18 @@ abstract class ChannelRepo {
 
   /// Mute Channel
   Future muteChannel(UpdateChannelMembersRequest request);
+
+  /// listen to channels stream
+  Stream<List<AmityChannel>> listenChannels(
+      RequestBuilder<GetChannelRequest> request);
+
+  /// Get Channels
+  List<ChannelHiveEntity> getChannelEntities(
+      RequestBuilder<GetChannelRequest> request);
+
+  /// Get Channel Entity from cache
+  ChannelHiveEntity? getChannelEntity(String channelId);
+
+  /// Save Channel Entity
+  Future saveChannelEntity(ChannelHiveEntity data);
 }

@@ -1,8 +1,8 @@
 import 'package:amity_sdk/src/data/data.dart';
 
 extension CommunityMemberResponseExtension on CommunityUserResponse {
-  CommnityMemberHiveEntity convertToCommnityMemberHiveEntity() {
-    return CommnityMemberHiveEntity()
+  CommunityMemberHiveEntity convertToCommnityMemberHiveEntity() {
+    return CommunityMemberHiveEntity()
       ..id = communityId + userId
       ..userId = userId
       ..communityId = communityId

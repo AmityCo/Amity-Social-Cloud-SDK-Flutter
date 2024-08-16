@@ -27,7 +27,7 @@ extension CreateCommunityResponseExtentionResponse on CreateCommunityResponse {
         communities.map((e) => e.convertToCommunityHiveEntity()).toList();
 
     //Convert to Community Member Hive Entity
-    List<CommnityMemberHiveEntity> communityMemberHiveEntities = communityUsers
+    List<CommunityMemberHiveEntity> communityMemberHiveEntities = communityUsers
         .map((e) => e.convertToCommnityMemberHiveEntity())
         .toList();
 

@@ -2,6 +2,7 @@ import 'package:amity_sdk/src/core/service_locator/service_locator.dart';
 import 'package:amity_sdk/src/core/socket/event/socket_event_listener.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
 
 ///[MessageEventListener]
 class MessageEventListener extends SocketEventListener {
@@ -22,6 +23,9 @@ class MessageEventListener extends SocketEventListener {
     }
 
     data.saveToDb(serviceLocator());
+
+    final channelId = data.messages[0].channelId;
+    serviceLocator<ChannelUpdateLastActivityUsecase>().process(channelId);
   }
 
   @override

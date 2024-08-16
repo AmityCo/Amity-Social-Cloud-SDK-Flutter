@@ -6,6 +6,8 @@ import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 abstract class CommunityRepo extends AmityObjectRepository<CommunityHiveEntity, AmityCommunity> {
   Future<PageListData<List<AmityCommunity>, String>> getCommunityQuery(
       GetCommunityRequest request);
+  List<CommunityHiveEntity> getCommunityEntities(
+      RequestBuilder<GetCommunityRequest> request);
   Stream<List<AmityCommunity>> listenCommunity(RequestBuilder<GetCommunityRequest> request);
   Future<List<AmityCommunity>> getRecommendedCommunity(OptionsRequest request);
   Future<List<AmityCommunity>> getTopTrendingCommunity(OptionsRequest request);
@@ -15,7 +17,11 @@ abstract class CommunityRepo extends AmityObjectRepository<CommunityHiveEntity, 
   Future<AmityCommunity> getCommunity(String communityId);
   Future deleteCommunity(String communityId);
   Future<AmityCommunity> updateCommunity(CreateCommunityRequest request);
-
+  Future saveCommunityEntity(CommunityHiveEntity entity);
+  Future<PageListData<List<AmityCommunity>, String>> queryCommunities(
+      GetCommunityRequest request);
+  Stream<List<AmityCommunity>> listenCommunities(
+      RequestBuilder<GetCommunityRequest> request);
   int getPostCount(String targetId , String feedType);
 
   Future<AmityCommunityCategory?> getCommunityCategoryById(String categoryId);

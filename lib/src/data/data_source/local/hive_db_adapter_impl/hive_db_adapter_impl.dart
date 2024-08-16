@@ -16,3 +16,4 @@ export 'poll_db_adapter_impl.dart';
 export 'post_db_adapter_impl.dart';
 export 'reaction_db_adapter_impl.dart';
 export 'user_db_adapter_impl.dart';
+export 'paging_id_db_adapter_impl.dart';

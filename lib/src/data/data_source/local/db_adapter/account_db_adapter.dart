@@ -8,4 +8,6 @@ abstract class AccountDbAdapter {
   Stream<AccountHiveEntity?> listenAccountEntity(String userId);
 
   Stream<AccountHiveEntity?> listenAccounts();
+
+  List<AccountHiveEntity> getAccounts();
 }
