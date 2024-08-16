@@ -133,7 +133,7 @@ class CommentRepoImpl extends CommentRepo {
     List<CommentHiveEntity> commentHiveEntities = data.comments.map((e) => e.convertToCommentHiveEntity()).toList();
 
     //Convert to File Hive Entity
-    List<CommnityMemberHiveEntity> communityUserHiveEntites = data.communityUsers.map((e) => e.convertToCommnityMemberHiveEntity()).toList();
+    List<CommunityMemberHiveEntity> communityUserHiveEntites = data.communityUsers.map((e) => e.convertToCommnityMemberHiveEntity()).toList();
 
     //Save the File Entity
     for (var e in fileHiveEntities) {

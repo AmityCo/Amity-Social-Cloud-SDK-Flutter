@@ -4,6 +4,10 @@ const SG_HTTP_ENDPOINT = "https://apix.sg.amity.co/";
 const EU_HTTP_ENDPOINT = "https://apix.eu.amity.co/";
 const US_HTTP_ENDPOINT = "https://apix.us.amity.co/";
 
+const SG_HTTP_COMPAT_ENDPOINT = "https://api.sg.amity.co/";
+const EU_HTTP_COMPAT_ENDPOINT = "https://api.eu.amity.co/";
+const US_HTTP_COMPAT_ENDPOINT = "https://api.us.amity.co/";
+
 const SG_SOCKET_ENDPOINT = "https://api.sg.amity.co/";
 const EU_SOCKET_ENDPOINT = "https://api.eu.amity.co/";
 const US_SOCKET_ENDPOINT = "https://api.us.amity.co/";

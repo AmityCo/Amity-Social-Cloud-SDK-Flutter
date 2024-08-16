@@ -1,12 +1,16 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/mapper/community_model_mapper.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/paging_id_hive_entity_29.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
 import 'package:collection/collection.dart';
 
 class CommunityRepoImpl extends CommunityRepo {
@@ -21,6 +25,9 @@ class CommunityRepoImpl extends CommunityRepo {
   final CommunityFeedDbAdapter communityFeedDbAdapter;
   final CommunityMemberDbAdapter communityMemberDbAdapter;
 
+  // Paging Id Repository
+  final PagingIdRepo pagingIdRepo;
+
   CommunityRepoImpl({
     required this.communityApiInterface,
     required this.communityDbAdapter,
@@ -30,6 +37,7 @@ class CommunityRepoImpl extends CommunityRepo {
     required this.communityCategoryDbAdapter,
     required this.communityFeedDbAdapter,
     required this.communityMemberDbAdapter,
+    required this.pagingIdRepo,
   });
 
   @override
@@ -98,7 +106,7 @@ class CommunityRepoImpl extends CommunityRepo {
         data.communities.map((e) => e.convertToCommunityHiveEntity()).toList();
 
     //Convert to Community Member Hive Entity
-    List<CommnityMemberHiveEntity> communityMemberHiveEntities = data
+    List<CommunityMemberHiveEntity> communityMemberHiveEntities = data
         .communityUsers
         .map((e) => e.convertToCommnityMemberHiveEntity())
         .toList();
@@ -161,6 +169,32 @@ class CommunityRepoImpl extends CommunityRepo {
   }
 
   @override
+  Future<PageListData<List<AmityCommunity>, String>> queryCommunities(
+      GetCommunityRequest request) async {
+    final data = await communityApiInterface.getCommunityQuery(request);
+    final amityCommunity = await saveCommunity(data, isQuery: true);
+     final hash = request.getHashCode();
+    final nonce = AmityNonce.COMMUNITY_LIST;
+    final paging = data.paging;
+    int nextIndex = 0;
+    if (request.options?.token == null) {
+      await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;
+    }
+    data.communities.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.communityId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdRepo.savePagingId(pagingId);
+    });
+    return PageListData(amityCommunity, data.paging?.next ?? '');
+  }
+
+  @override
   Future<List<AmityCommunity>> getRecommendedCommunity(
       OptionsRequest request) async {
     final data = await communityApiInterface.getRecommendedCommunity(request);
@@ -182,12 +216,23 @@ class CommunityRepoImpl extends CommunityRepo {
   }
 
   @override
+  List<CommunityHiveEntity> getCommunityEntities(
+      RequestBuilder<GetCommunityRequest> request) {
+    return communityDbAdapter.getCommunityEntities(request);
+  }
+
+  @override
+  Future saveCommunityEntity(CommunityHiveEntity entity) {
+    return communityDbAdapter.saveCommunityEntity(entity);
+  }
+
+  @override
   Stream<List<AmityCommunity>> listenCommunity(
       RequestBuilder<GetCommunityRequest> request) {
     return communityDbAdapter.listenCommunityEntities(request).map((event) {
       final req = request.call();
       final List<AmityCommunity> list = [];
-     
+
       if (req.sortBy == AmityCommunitySortOption.LAST_CREATED.apiKey) {
         event.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
       } else if (req.sortBy == AmityCommunitySortOption.FIRST_CREATED.apiKey) {
@@ -220,7 +265,7 @@ class CommunityRepoImpl extends CommunityRepo {
       await deleteCommunity(objectId);
       return Future.value(null);
     }
-       
+
   }
 
   @override
@@ -246,5 +291,12 @@ class CommunityRepoImpl extends CommunityRepo {
   int getPostCount(String targetId, String feedType) {
     var feed =  communityFeedDbAdapter.getCommunityFeedByFeedType(targetId, feedType);
     return feed.postCount ?? 0;
+  }
+
+  @override
+  Stream<List<AmityCommunity>> listenCommunities(
+      RequestBuilder<GetCommunityRequest> request) {
+    final channels = communityDbAdapter.listenCommunityEntities(request);
+    return channels.map((event) => event.map((e) => e.convertToAmityCommunity()).toList());
   }
 }

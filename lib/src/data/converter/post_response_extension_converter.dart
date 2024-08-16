@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/mentionee_hive_entity_30.dart';
 
 ///
 extension PostResponseExtension on PostResponse {
@@ -35,8 +36,17 @@ extension PostResponseExtension on PostResponse {
       ..metadata = metadata
       ..reach = reach
       ..impression = impression
-      ..mentionees = mentionees
+      ..mentionees = mentionees.map((e) => e.convertToMentioneeHiveEntity()).toList()
       ..rawData = rawData;
+  }
+}
+
+extension MentioneeResponseExtension on Mentionee {
+  MentioneeHiveEntity convertToMentioneeHiveEntity() {
+    return MentioneeHiveEntity(
+      type: type,
+      userIds: userIds,
+    );
   }
 }
 

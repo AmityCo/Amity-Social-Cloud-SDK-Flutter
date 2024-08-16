@@ -1,10 +1,16 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:async';
+import 'dart:math';
 
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/paging_id_hive_entity_29.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
+import 'package:collection/collection.dart';
 
 /// [ChannelRepoImpl]
 class ChannelRepoImpl extends ChannelRepo {
@@ -14,10 +20,13 @@ class ChannelRepoImpl extends ChannelRepo {
   ///Db Adapter
   final DbAdapterRepo commonDbAdapter;
 
+  final PagingIdRepo pagingIdRepo;
+
   /// init [ChannelRepoImpl]
   ChannelRepoImpl({
     required this.channelApiInterface,
     required this.commonDbAdapter,
+    required this.pagingIdRepo,
   });
 
   @override
@@ -69,6 +78,24 @@ class ChannelRepoImpl extends ChannelRepo {
       GetChannelRequest request) async {
     final data = await channelApiInterface.getChannelQuery(request);
     final amityChannel = await data.saveToDb<AmityChannel>(commonDbAdapter);
+    final hash = request.getHashCode();
+    final nonce = AmityNonce.CHANNEL_LIST;
+    final paging = data.paging;
+    int nextIndex = 0;
+    if (request.options?.token == null) {
+      await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;
+    }
+    data.channels.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.channelId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdRepo.savePagingId(pagingId);
+    });
     return PageListData(amityChannel, data.paging?.next ?? '');
   }
 
@@ -86,5 +113,28 @@ class ChannelRepoImpl extends ChannelRepo {
     }
 
     await amityChannelEntity.save();
+  }
+
+  @override
+  Stream<List<AmityChannel>> listenChannels(
+      RequestBuilder<GetChannelRequest> request) {
+    final channels = commonDbAdapter.channelDbAdapter.listenChannelEntities(request);
+    return channels.map((event) => event.map((e) => e.convertToAmityChannel()).toList());
+  }
+
+  @override
+  List<ChannelHiveEntity> getChannelEntities(
+      RequestBuilder<GetChannelRequest> request) {
+    return commonDbAdapter.channelDbAdapter.getChannelEntities(request);
+  }
+
+  @override
+  ChannelHiveEntity? getChannelEntity(String channelId) {
+    return commonDbAdapter.channelDbAdapter.getEntity(channelId);
+  }
+
+  @override
+  Future saveChannelEntity(ChannelHiveEntity data) async {
+    await commonDbAdapter.channelDbAdapter.saveEntity(data);
   }
 }

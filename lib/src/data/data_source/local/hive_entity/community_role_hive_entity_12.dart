@@ -7,9 +7,20 @@ part 'community_role_hive_entity_12.g.dart';
 
 @HiveType(typeId: 12)
 class CommunityRoleHiveEntity extends HiveObject implements RoleObject {
+  @HiveField(0)
   String? communityId;
+
+  @HiveField(1)
   String? userId;
+
+  @HiveField(2)
   String? roleName;
+
+  CommunityRoleHiveEntity({
+    this.communityId,
+    this.userId,
+    this.roleName,
+  });
 
   @override
   int get hashCode => Object.hash(communityId, userId, roleName);

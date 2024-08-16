@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/usecase/community/community_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_observe_list_usecase.dart';
 
 class CommunityLiveCollection extends LiveCollection<AmityCommunity> {
   RequestBuilder<GetCommunityRequest> request;
@@ -15,7 +15,7 @@ class CommunityLiveCollection extends LiveCollection<AmityCommunity> {
       getFirstPageRequest() async {
     final params = request();
     params.options?.token = null;
-    return await serviceLocator<CommunityGetUsecase>().get(params);
+    return await serviceLocator<CommunityFetchListUseCase>().get(params);
   }
 
   @override
@@ -24,11 +24,11 @@ class CommunityLiveCollection extends LiveCollection<AmityCommunity> {
     final params = request();
     params.options?.token = token;
     params.options?.limit = null;
-    return await serviceLocator<CommunityGetUsecase>().get(params);
+    return await serviceLocator<CommunityFetchListUseCase>().get(params);
   }
 
   @override
   StreamController<List<AmityCommunity>> getStreamController() {
-    return serviceLocator<CommunityObserveUseCase>().listen(request);
+    return serviceLocator<CommunityObserveListUseCase>().listen(request);
   }
 }

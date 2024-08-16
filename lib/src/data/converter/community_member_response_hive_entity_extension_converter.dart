@@ -1,7 +1,7 @@
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/community_member_hive_entity_14.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
-extension CommunityMemberHiveEntityExtension on CommnityMemberHiveEntity {
+extension CommunityMemberHiveEntityExtension on CommunityMemberHiveEntity {
   AmityCommunityMember convertToAmityCommunityMember() {
     return AmityCommunityMember()
       ..communityId = communityId

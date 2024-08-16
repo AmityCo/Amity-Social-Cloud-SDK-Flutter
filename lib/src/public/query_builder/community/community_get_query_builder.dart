@@ -63,6 +63,7 @@ class CommunityGetQueryBuilder {
     return CommunityLiveCollection(request: (() => build(pageSize: pageSize)));
   }
 
+  @Deprecated("As it original design, this method will remove all communities cache from local storage before fetch the new one, Please use getLiveCollection instead")
   Future<PageListData<List<AmityCommunity>, String>> getPagingData(
       {String? token, int? limit}) async {
     GetCommunityRequest request = GetCommunityRequest();
