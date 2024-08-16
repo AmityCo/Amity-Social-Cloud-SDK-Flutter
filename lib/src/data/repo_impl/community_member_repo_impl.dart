@@ -125,7 +125,7 @@ class CommunityMemberRepoImpl extends CommunityMemberRepo {
     List<UserHiveEntity> userHiveEntities = data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
     //Convert to Community Member Hive Entity
-    List<CommnityMemberHiveEntity> communityMemberHiveEntities =
+    List<CommunityMemberHiveEntity> communityMemberHiveEntities =
         data.communityUsers.map((e) => e.convertToCommnityMemberHiveEntity()).toList();
 
     //Save the File Entity

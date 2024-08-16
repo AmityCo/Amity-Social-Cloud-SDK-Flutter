@@ -8,22 +8,37 @@ part 'post_data_hive_entity_7.g.dart';
 @HiveType(typeId: 7)
 class PostChildDataHiveEntity {
   /// Text
+  @HiveField(0)
   String? text;
 
   /// File Id
+  @HiveField(1)
   String? fileId;
 
   /// Thumbnail File Id for Video
+  @HiveField(2)
   String? thumbnailFileId;
 
   /// Video  File Id
+  @HiveField(3)
   Map<String, String>? videoFileId;
 
   /// Stream Id for Live Stream post
+  @HiveField(4)
   String? streamId;
 
   /// Poll Id for Poll Post
+  @HiveField(5)
   String? pollId;
+
+  PostChildDataHiveEntity({
+    this.text,
+    this.fileId,
+    this.thumbnailFileId,
+    this.videoFileId,
+    this.streamId,
+    this.pollId,
+  });
 
   /// Change object to Map
   Map<String, dynamic> toMap() {

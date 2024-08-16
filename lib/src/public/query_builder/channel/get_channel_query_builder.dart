@@ -1,3 +1,4 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
@@ -83,6 +84,25 @@ class GetChannelQueryBuilder {
   GetChannelQueryBuilder excludingTags(List<String> tags) {
     _excludingTags = tags;
     return this;
+  }
+
+  ChannelLiveCollection getLiveCollection() {
+    GetChannelRequest request = GetChannelRequest();
+
+    request.keyword = _keyword;
+    request.filter = _filter.value;
+    request.types = _types.map((e) => e.value).toList();
+    request.sortBy = _sortBy.value;
+    request.isDeleted = _isDeleted;
+
+    if (_tags != null && _tags!.isNotEmpty) {
+      request.tags = _tags;
+    }
+    if (_excludingTags != null && _excludingTags!.isNotEmpty) {
+      request.excludeTags = _excludingTags;
+    }
+
+    return ChannelLiveCollection(request: (() => request));
   }
 
   /// Get the paginated data for channel query

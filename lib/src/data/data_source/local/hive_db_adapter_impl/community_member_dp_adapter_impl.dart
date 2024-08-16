@@ -8,13 +8,13 @@ class CommunityMemberDbAdapterImpl extends CommunityMemberDbAdapter {
   late Box box;
 
   Future<CommunityMemberDbAdapterImpl> init() async {
-    Hive.registerAdapter(CommnityMemberHiveEntityAdapter(), override: true);
-    box = await Hive.openBox<CommnityMemberHiveEntity>('community_member_db');
+    Hive.registerAdapter(CommunityMemberHiveEntityAdapter(), override: true);
+    box = await Hive.openBox<CommunityMemberHiveEntity>('community_member_db');
     return this;
   }
 
   @override
-  CommnityMemberHiveEntity getCommunityMemberEntities(
+  CommunityMemberHiveEntity getCommunityMemberEntities(
       String communityId,
       List<String> roles,
       List<String> memberships,
@@ -24,7 +24,7 @@ class CommunityMemberDbAdapterImpl extends CommunityMemberDbAdapter {
   }
 
   @override
-  Future saveCommunityMemberEntity(CommnityMemberHiveEntity entity, UserHiveEntity? userEntity) async {
+  Future saveCommunityMemberEntity(CommunityMemberHiveEntity entity, UserHiveEntity? userEntity) async {
     if (userEntity != null) {
       // Determine if the user is deleted from user entity
       entity.isDeleted = userEntity.isDeleted;
@@ -39,17 +39,17 @@ class CommunityMemberDbAdapterImpl extends CommunityMemberDbAdapter {
   }
 
   @override
-  CommnityMemberHiveEntity? getCommunityMemberEntity(String id) {
+  CommunityMemberHiveEntity? getCommunityMemberEntity(String id) {
     return box.get(id);
   }
 
   @override
-  Future deleteCommunityMemberEntity(CommnityMemberHiveEntity entity) async {
+  Future deleteCommunityMemberEntity(CommunityMemberHiveEntity entity) async {
     await box.delete(entity.communityId! + entity.userId!);
   }
 
   @override
-  Stream<CommnityMemberHiveEntity> listenCommnunityMemberEntity(String id) {
+  Stream<CommunityMemberHiveEntity> listenCommnunityMemberEntity(String id) {
     return box.watch(key: id).map((event) => event.value);
   }
 }

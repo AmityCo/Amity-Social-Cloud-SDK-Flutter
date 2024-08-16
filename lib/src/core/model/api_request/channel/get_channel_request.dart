@@ -83,4 +83,9 @@ class GetChannelRequest {
         "sortBy": sortBy,
         "options": options?.toJson(),
       }..removeNullValue();
+
+  int getHashCode() {
+    final jsonString = (toJson()..remove('options')).toString();
+    return jsonString.hashCode;
+  }
 }

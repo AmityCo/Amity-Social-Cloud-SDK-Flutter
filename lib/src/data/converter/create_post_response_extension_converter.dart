@@ -29,7 +29,7 @@ extension CreatePostResponseExtension on CreatePostResponse {
     List<CommunityHiveEntity> communityHiveEntities =
         communities.map((e) => e.convertToCommunityHiveEntity()).toList();
 
-    List<CommnityMemberHiveEntity> communityUsersHiveEntities =
+    List<CommunityMemberHiveEntity> communityUsersHiveEntities =
         communityUsers.map((e) => e.convertToCommnityMemberHiveEntity()).toList();
 
     //Convert to User Hive Entity

@@ -47,10 +47,10 @@ class AuthenticationRepoImpl extends AuthenticationRepo {
     final amityUser = userHiveEntity.convertToAmityUser();
 
     //Keep the current session detail (service locator)
-    if (serviceLocator.isRegistered<SessionResponse>()) {
-      serviceLocator.unregister<SessionResponse>();
+    if (serviceLocator.isRegistered<AccountHiveEntity>()) {
+      serviceLocator.unregister<AccountHiveEntity>();
     }
-    serviceLocator.registerSingleton<SessionResponse>(data);
+    serviceLocator.registerSingleton<AccountHiveEntity>(accountHiveEntity);
 
     //Keep the current user in session (service locator)
     if (serviceLocator.isRegistered<AmityUser>()) {

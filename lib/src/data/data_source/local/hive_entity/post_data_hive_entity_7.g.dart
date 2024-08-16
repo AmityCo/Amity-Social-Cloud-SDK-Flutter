@@ -13,12 +13,36 @@ class PostChildDataHiveEntityAdapter
 
   @override
   PostChildDataHiveEntity read(BinaryReader reader) {
-    return PostChildDataHiveEntity();
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return PostChildDataHiveEntity(
+      text: fields[0] as String?,
+      fileId: fields[1] as String?,
+      thumbnailFileId: fields[2] as String?,
+      videoFileId: (fields[3] as Map?)?.cast<String, String>(),
+      streamId: fields[4] as String?,
+      pollId: fields[5] as String?,
+    );
   }
 
   @override
   void write(BinaryWriter writer, PostChildDataHiveEntity obj) {
-    writer.writeByte(0);
+    writer
+      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.text)
+      ..writeByte(1)
+      ..write(obj.fileId)
+      ..writeByte(2)
+      ..write(obj.thumbnailFileId)
+      ..writeByte(3)
+      ..write(obj.videoFileId)
+      ..writeByte(4)
+      ..write(obj.streamId)
+      ..writeByte(5)
+      ..write(obj.pollId);
   }
 
   @override

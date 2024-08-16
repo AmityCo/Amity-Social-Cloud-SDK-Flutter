@@ -1,5 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/mentionee_hive_entity_30.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 /// Post Response Hive Entity Extension
@@ -24,38 +25,38 @@ extension PostResponseHiveEntityExtension on PostHiveEntity {
     AmityPostData? amityPostData;
     switch (amityDataType) {
       case AmityDataType.TEXT:
-        amityPostData = TextData(postId: postId, text: data!.text);
+        amityPostData = TextData(postId: postId!, text: data!.text);
         break;
       case AmityDataType.IMAGE:
-        amityPostData = ImageData(postId: postId, fileId: data!.fileId);
+        amityPostData = ImageData(postId: postId!, fileId: data!.fileId);
         break;
       case AmityDataType.VIDEO:
         amityPostData = VideoData(
-          postId: postId,
+          postId: postId!,
           fileId: data!.thumbnailFileId,
           rawData: data?.videoFileId,
         );
         break;
       case AmityDataType.FILE:
-        amityPostData = FileData(postId: postId, fileId: data!.fileId);
+        amityPostData = FileData(postId: postId!, fileId: data!.fileId);
         break;
       case AmityDataType.LIVESTREAM:
         amityPostData = LiveStreamData(
-            postId: postId, streamId: data!.streamId, rawData: data!.toMap());
+            postId: postId!, streamId: data!.streamId, rawData: data!.toMap());
         break;
       case AmityDataType.POLL:
         amityPostData = PollData(
-            postId: postId, pollId: data!.pollId!, rawData: data!.toMap());
+            postId: postId!, pollId: data!.pollId!, rawData: data!.toMap());
         break;
       case AmityDataType.CUSTOM:
-        amityPostData = CustomData(postId: postId, rawData: rawData);
+        amityPostData = CustomData(postId: postId!, rawData: rawData);
         break;
     }
 
     List<AmityMentionee>? mentionees;
 
     if (this.mentionees != null) {
-      for (Mentionee mentionee in this.mentionees!) {
+      for (MentioneeHiveEntity mentionee in this.mentionees!) {
         if (mentionee.type == 'user') {
           mentionees =
               mentionee.userIds!.map((e) => AmityMentionee(userId: e)).toList();

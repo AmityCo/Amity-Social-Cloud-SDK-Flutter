@@ -5,7 +5,7 @@ class AccountDbAdapterImpl extends AccountDbAdapter {
   final DBClient dbClient;
 
   AccountDbAdapterImpl({required this.dbClient});
-  late Box box;
+  late Box<AccountHiveEntity> box;
   Future<AccountDbAdapterImpl> init() async {
     Hive.registerAdapter(AccountHiveEntityAdapter(), override: true);
     box = await Hive.openBox<AccountHiveEntity>('account_db');
@@ -39,5 +39,10 @@ class AccountDbAdapterImpl extends AccountDbAdapter {
   @override
   Stream<AccountHiveEntity?> listenAccounts() {
     return box.watch().map<AccountHiveEntity>((event) => event.value);
+  }
+
+  @override
+  List<AccountHiveEntity> getAccounts() {
+    return box.values.toList();
   }
 }

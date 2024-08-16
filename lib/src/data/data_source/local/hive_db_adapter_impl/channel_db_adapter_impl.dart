@@ -1,3 +1,5 @@
+import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/enum/amity_error.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
@@ -7,7 +9,7 @@ class ChannelDbAdapterImpl extends ChannelDbAdapter {
   final DBClient dbClient;
 
   /// Box
-  late Box box;
+  late Box<ChannelHiveEntity> box;
 
   /// init [ChannelDbAdapterImpl]
   ChannelDbAdapterImpl({required this.dbClient});
@@ -26,7 +28,11 @@ class ChannelDbAdapterImpl extends ChannelDbAdapter {
 
   @override
   ChannelHiveEntity getEntity(String id) {
-    return box.get(id);
+    try {
+      return box.get(id)!;
+    } catch (e) {
+      throw AmityException(message: "", code: AmityError.ITEM_NOT_FOUND.code);
+    }
   }
 
   @override
@@ -37,5 +43,22 @@ class ChannelDbAdapterImpl extends ChannelDbAdapter {
   @override
   Future saveEntity(ChannelHiveEntity data) async {
     await box.put(data.channelId, data);
+  }
+
+  @override
+  Stream<List<ChannelHiveEntity>> listenChannelEntities(
+      RequestBuilder<GetChannelRequest> request) {
+    return box.watch().map((event) => box.values
+      .where((channel) => channel != null)
+      .toList()
+      ..sort((a, b) => (b.lastActivity ?? DateTime.now()).compareTo((a.lastActivity ?? DateTime.now()))));
+    }
+
+  @override
+  List<ChannelHiveEntity> getChannelEntities(
+      RequestBuilder<GetChannelRequest> request) {
+    return box.values
+        .where((channels) => channels.isMatchingFilter(request.call()))
+        .toList();
   }
 }
