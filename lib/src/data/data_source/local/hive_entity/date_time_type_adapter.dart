@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 class DateTimeAdapter extends TypeAdapter<DateTime> {
   @override
-  final typeId = 32;
+  final typeId = 31;
 
   @override
   int write(BinaryWriter writer, DateTime obj) {

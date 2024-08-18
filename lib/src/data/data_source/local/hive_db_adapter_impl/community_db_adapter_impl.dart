@@ -10,7 +10,7 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   late Box<CommunityHiveEntity> box;
   Future<CommunityDbAdapterImpl> init() async {
     Hive.registerAdapter(CommunityHiveEntityAdapter(), override: true);
-    Hive.registerAdapter(DateTimeAdapter());
+    Hive.registerAdapter(DateTimeAdapter(), override: true);
     box = await Hive.openBox<CommunityHiveEntity>('community_db');
     return this;
   }
