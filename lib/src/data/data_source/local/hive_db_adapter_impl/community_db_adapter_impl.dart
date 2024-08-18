@@ -1,5 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/date_time_type_adapter.dart';
 import 'package:hive/hive.dart';
 
 class CommunityDbAdapterImpl extends CommunityDbAdapter {
@@ -9,6 +10,7 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   late Box<CommunityHiveEntity> box;
   Future<CommunityDbAdapterImpl> init() async {
     Hive.registerAdapter(CommunityHiveEntityAdapter(), override: true);
+    Hive.registerAdapter(DateTimeAdapter());
     box = await Hive.openBox<CommunityHiveEntity>('community_db');
     return this;
   }
