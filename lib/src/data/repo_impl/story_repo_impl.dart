@@ -102,6 +102,9 @@ class StoryRepoImpl extends StoryRepo {
       return amitStory[0];
     } catch (error) {
       entity.syncState = AmityStorySyncState.FAILED.value;
+
+      print("DELETE LOCAL STORY:  CREATE STORY ${entity.syncState} ${entity.referenceId} ${entity.storyId} ${entity.targetId} ${entity.targetType}");
+
       dbAdapterRepo.storyDbAdapter.saveStoryEntity(entity);
       entity = dbAdapterRepo.storyDbAdapter.getStoryEntity(entity.storyId!)!;
       storyTargetRepo.updateStoryTargetLocalLastStoryExpiresAt(
@@ -211,7 +214,7 @@ class StoryRepoImpl extends StoryRepo {
     return dbAdapterRepo.storyDbAdapter.getHighestStoryExpiresAt(
         targetType.value,
         targetId,
-        [AmityStorySyncState.SYNCING, AmityStorySyncState.SYNCED]);
+        [AmityStorySyncState.SYNCING, AmityStorySyncState.FAILED]);
   }
 
   @override

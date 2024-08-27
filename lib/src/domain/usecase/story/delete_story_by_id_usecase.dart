@@ -25,7 +25,10 @@ class DeleteStroyByIdUsecas extends UseCase<bool, StoryDeleteByIdRequest> {
               cacheStory!.targetType!, cacheStory!.targetId!));
     }
 
+    print("DELETE LOCAL STORY:  STORRRRY  CACHE ${cacheStory?.syncState} ${cacheStory?.storyId} ${cacheStory?.targetId} ${cacheStory?.targetType}");
+
     return storyRepo.deleteStoryById(params).then((value) {
+      print("DELETE LOCAL STORY: TARGET CACHE ${cacheStoryTarget?.uniqueId}");
       if (cacheStory != null) {
         if (cacheStory.storyId!.startsWith("LOCAL_")) {
           revertStoryTargetLocalLastExpires(cacheStoryTarget);
@@ -39,14 +42,15 @@ class DeleteStroyByIdUsecas extends UseCase<bool, StoryDeleteByIdRequest> {
 
   Future revertStoryTargetLocalLastExpires(
       StoryTargetHiveEntity? storyTarget) async {
+        print("DELETE LOCAL STORY: Target ${storyTarget?.uniqueId}");
     if (storyTarget != null) {
+      print("DELETE LOCAL STORY: highestStoryExpires BEFORE");
       var highestStoryExpires = storyRepo.getHighestStoryExpiresAt(
           AmityStoryTargetTypeExtension.enumOf(storyTarget.targetType!),
           storyTarget.targetId!);
+      print("DELETE LOCAL STORY: highestStoryExpires ${highestStoryExpires}");
 
-      if (highestStoryExpires == null) {
-        return Future.value(null);
-      }
+      print("DELETE LOCAL STORY: $highestStoryExpires");
 
       return storyRepoTraget.updateStoryTargetLocalLastStoryExpiresAt(
           AmityStoryTargetTypeExtension.enumOf(storyTarget.targetType!),
