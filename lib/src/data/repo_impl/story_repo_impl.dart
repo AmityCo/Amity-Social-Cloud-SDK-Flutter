@@ -10,7 +10,6 @@ import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/data/converter/story/create_story_response_extension.dart';
 import 'package:amity_sdk/src/data/converter/story/story_hive_extension_converter.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/story_hive_entity_27.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_api_interface.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
@@ -102,8 +101,6 @@ class StoryRepoImpl extends StoryRepo {
       return amitStory[0];
     } catch (error) {
       entity.syncState = AmityStorySyncState.FAILED.value;
-
-      print("DELETE LOCAL STORY:  CREATE STORY ${entity.syncState} ${entity.referenceId} ${entity.storyId} ${entity.targetId} ${entity.targetType}");
 
       dbAdapterRepo.storyDbAdapter.saveStoryEntity(entity);
       entity = dbAdapterRepo.storyDbAdapter.getStoryEntity(entity.storyId!)!;

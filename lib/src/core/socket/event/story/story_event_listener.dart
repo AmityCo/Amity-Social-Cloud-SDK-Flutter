@@ -6,7 +6,6 @@ import 'package:amity_sdk/src/domain/usecase/story/story_has_local_usecase.dart'
 abstract class StroyEventListener extends SocketEventListener {
   @override
   void processEvent(Map<String, dynamic> json) {
-    print('StoryEventListener: processEvent: json: $json');
     StoryMqttEvent? event;
     if (getEventName() == 'story.reactionAdded') {
       event = StoryMqttEvent.addReaction;
@@ -14,7 +13,6 @@ abstract class StroyEventListener extends SocketEventListener {
       event = StoryMqttEvent.removeReaction;
     }
     final data = CreateStoryResponse.fromJson(json );
-    print('StoryEventListener: processEvent: data: $data');
     data.saveToDb(serviceLocator() , event: event);
   }
 

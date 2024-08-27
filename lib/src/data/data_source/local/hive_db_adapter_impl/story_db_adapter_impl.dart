@@ -43,7 +43,6 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
 
   @override
   Future saveStoryEntity(StoryHiveEntity data) async {
-    print("Amity Story Story Entity ${data.myReactions}");
     if (data.referenceId != null) {
       var storyEntity = box.values.firstWhereOrNull((element) => element.referenceId == data.referenceId);
       if (storyEntity != null) {
@@ -77,10 +76,7 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
 
   @override
   DateTime? getHighestStoryExpiresAt(String targetType, String targetId, List<AmityStorySyncState> states) {
-    print("DELETE LOCAL STORY: highestStoryExpires COUNT $targetId $targetType $states");
-    print("DELETE LOCAL STORY: highestStoryExpires BOX ${box.values.length}");
     var stories = box.values.where((element) {
-      print("DELETE LOCAL STORY: highestStoryExpires element ${element.targetId} ${element.targetType} ${element.syncState}");
       if (targetId == element.targetId &&
           targetType == element.targetType &&
           states.contains(
@@ -94,13 +90,11 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
       }
     });
 
-    print("DELETE LOCAL STORY: highestStoryExpires COUNT $stories");
     if(stories.isEmpty){
       return null;
     }
     var dateTime = stories.sorted((a, b) => a.expiresAt!.compareTo(b.expiresAt ?? DateTime.now()) * -1).first.expiresAt;
-    print("DELETE LOCAL STORY: highestStoryExpires ${dateTime}");
-
+    
     return dateTime;
   }
 

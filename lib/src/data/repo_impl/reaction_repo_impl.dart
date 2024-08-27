@@ -1,5 +1,4 @@
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/data/converter/reaction_response_extension_converter.dart';
 import 'package:amity_sdk/src/data/converter/story/story_hive_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
@@ -132,15 +131,11 @@ class ReactionRepoImpl extends ReactionRepo {
             (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) + 1;
         // amityStoryLocalCopy.reactionsCount = (amityStoryLocalCopy.reactionsCount ?? 0 ) + 1;
         
-        print( "AMITY STORY REACTION COUNT -> ${amityStoryLocalCopy.reactions?.length}");
-        print( "AMITY STORY My Reaction -> ${amityStoryLocalCopy.myReactions?.length}");
         await dbAdapterRepo.storyDbAdapter
             .saveStoryEntity(amityStoryLocalCopy);
 
         await reactionApiInterface.addReaction(request);
-        print( "AMITY STORY My Reaction API CALLED");
         var amityStoryObject =  amityStoryLocalCopy.convertToAmityStory() as T;
-        print( "AMITY STORY My Reaction API CALLED - > ${(amityStoryObject as AmityStory).myReactions?.length}");
         return amityStoryObject;
       } catch (error) {
         

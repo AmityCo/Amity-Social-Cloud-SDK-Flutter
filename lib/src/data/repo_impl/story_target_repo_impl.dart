@@ -6,12 +6,10 @@ import 'package:amity_sdk/src/core/mapper/story_target_model_mapper.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_global_story_target_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_targets_by_targets_request.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
-import 'package:amity_sdk/src/core/utils/page_list_data.dart';
 import 'package:amity_sdk/src/data/converter/story_target/get_global_story_target_response_extension.dart';
 import 'package:amity_sdk/src/data/converter/story_target/get_target_by_target_response_extension.dart';
 import 'package:amity_sdk/src/data/converter/story_target/story_target_hive_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/story_target_hive_entity_28.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_target_api_interface.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 
@@ -151,7 +149,6 @@ class StoryTargetRepoImpl extends StoryTargetRepo {
 
     if (request.token==null &&request.isSmartState &&
         request.seenState == AmityGlobalStoryTargetsQueryOption.UNSEEN.value) {
-      print("GLOBAL STORY:   TOKEN ${request.token} DELETE TRIGGERED ${request.seenState}");
       dbAdapterRepo.storyTargetDbAdapter.deleteAllStoryTargetEntity();
     }
 
@@ -170,7 +167,6 @@ class StoryTargetRepoImpl extends StoryTargetRepo {
         request.isSmartState &&
         request.seenState == AmityGlobalStoryTargetsQueryOption.UNSEEN.value) {
       token = "next";
-      print("GLOBAL STORY: TOKEN NEXTED -----> $token");
     }
     //SEEN
 
@@ -184,9 +180,7 @@ class StoryTargetRepoImpl extends StoryTargetRepo {
         .map((event) {
       List<AmityStoryTarget> list = [];
       for (var element in event) {
-        print("ELEMENT LISTEN ALL STORY TARGETS $element.targetId");
         list.add(element.convertToAmityStoryTarget());
-        
       }
       return list;
     });

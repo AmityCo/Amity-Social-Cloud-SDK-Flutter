@@ -52,7 +52,6 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
       data.localLastStoryExpiresAt = storyTarget.localLastStoryExpiresAt;
       data.localLastStorySeenExpiresAt = storyTarget.localLastStorySeenExpiresAt;
     }
-    print("Saving Story Target Entity ${data.targetPublicId}");
     await box.put(data.uniqueId, data);
   }
 

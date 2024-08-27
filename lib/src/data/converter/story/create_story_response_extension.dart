@@ -55,11 +55,9 @@ extension CreateStoryResponseExtension on CreateStoryResponse {
         }
       }
       story?.reactionsCount = story?.reactionsCount == null ? 1 : story.reactionsCount ?? 0 + 1;
-      print('story?.reactionsCount in create  ${story?.reactionsCount}');
       await dbRepo.storyDbAdapter.saveStoryEntity(story!);
     } else if (event == StoryMqttEvent.removeReaction) {
 
-       print('story?.reactionsCount in removeReaction  ${story?.reactionsCount}');
       var haveUserReact = reactors.userId == AmityCoreClient.getCurrentUser().userId;
       if (haveUserReact) {
         if (story?.myReactions == null) {

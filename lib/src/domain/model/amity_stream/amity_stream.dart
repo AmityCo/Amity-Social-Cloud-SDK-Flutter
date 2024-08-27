@@ -64,7 +64,6 @@ class AmityRecordingData{
   AmityRecordingData(this.recordingData);
 
   String getUrl(AmityRecordingDataFormat format){
-    print((recordingData[format.name] as Recording).url);
     return (recordingData[format.name] as Recording).url! ;
    } 
 }
