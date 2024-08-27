@@ -93,7 +93,7 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
   Future updateStoryTargetLocalLastStoryExpiresAt(
       AmityStoryTargetType targetType,
       String targetId,
-      DateTime localLastStoryExpiresAt) {
+      DateTime? localLastStoryExpiresAt) {
     var storyTarget = box.values.firstWhere((element) =>
         element.targetId == targetId && element.targetType == targetType.value);
     storyTarget.localLastStoryExpiresAt = localLastStoryExpiresAt;

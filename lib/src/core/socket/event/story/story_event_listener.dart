@@ -6,9 +6,16 @@ import 'package:amity_sdk/src/domain/usecase/story/story_has_local_usecase.dart'
 abstract class StroyEventListener extends SocketEventListener {
   @override
   void processEvent(Map<String, dynamic> json) {
-    final data = CreateStoryResponse.fromJson(json);
-
-    data.saveToDb(serviceLocator());
+    print('StoryEventListener: processEvent: json: $json');
+    StoryMqttEvent? event;
+    if (getEventName() == 'story.reactionAdded') {
+      event = StoryMqttEvent.addReaction;
+    } else if (getEventName() == 'story.reactionRemoved') {
+      event = StoryMqttEvent.removeReaction;
+    }
+    final data = CreateStoryResponse.fromJson(json );
+    print('StoryEventListener: processEvent: data: $data');
+    data.saveToDb(serviceLocator() , event: event);
   }
 
   /// This method is used to check if the event should be processed or not.

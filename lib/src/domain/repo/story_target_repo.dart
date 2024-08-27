@@ -25,7 +25,7 @@ abstract class StoryTargetRepo
   Future updateStoryTargetLocalLastStoryExpiresAt(
     AmityStoryTargetType targetType,
     String targetId,
-    DateTime localLastStoryExpiresAt,
+    DateTime? localLastStoryExpiresAt,
   );
 
   Future updateStoryTargetLocalLastStorySeenExpiresAt(

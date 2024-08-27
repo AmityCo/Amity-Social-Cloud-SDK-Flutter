@@ -104,7 +104,7 @@ class StoryTargetRepoImpl extends StoryTargetRepo {
   Future updateStoryTargetLocalLastStoryExpiresAt(
       AmityStoryTargetType targetType,
       String targetId,
-      DateTime localLastStoryExpiresAt) {
+      DateTime? localLastStoryExpiresAt) {
     if (dbAdapterRepo.storyTargetDbAdapter.getStoryTarget(
             AmityStoryTarget.generateUniqueId(targetType.value, targetId)) !=
         null) {
@@ -147,10 +147,18 @@ class StoryTargetRepoImpl extends StoryTargetRepo {
   @override
   Future<PageListData<List<AmityStoryTarget>, String>> getGlobalFeed(
       GetGlobalStoryTargetRequest request) async {
+        // Delete all Stroy Targets
+
+    if (request.token==null &&request.isSmartState &&
+        request.seenState == AmityGlobalStoryTargetsQueryOption.UNSEEN.value) {
+      print("GLOBAL STORY:   TOKEN ${request.token} DELETE TRIGGERED ${request.seenState}");
+      dbAdapterRepo.storyTargetDbAdapter.deleteAllStoryTargetEntity();
+    }
+
+
     final data = await storyTargetApiInterface.queryGlobalFeed(request);
 
-    final amitStroyTarget =
-        await data.saveToDb<AmityStoryTarget>(dbAdapterRepo);
+    final amitStroyTarget = await data.saveToDb<AmityStoryTarget>(dbAdapterRepo);
 
 
     if(request.token == null && amitStroyTarget.isEmpty){
@@ -162,7 +170,7 @@ class StoryTargetRepoImpl extends StoryTargetRepo {
         request.isSmartState &&
         request.seenState == AmityGlobalStoryTargetsQueryOption.UNSEEN.value) {
       token = "next";
-      print("TOKEN NEXTED -----> $token");
+      print("GLOBAL STORY: TOKEN NEXTED -----> $token");
     }
     //SEEN
 
