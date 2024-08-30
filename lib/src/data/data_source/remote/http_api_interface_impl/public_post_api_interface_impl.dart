@@ -73,7 +73,6 @@ class PublicPostApiInterfaceImpl extends PublicPostApiInterface {
           await httpApiClient().get(POST_V4, queryParameters: request.toJson());
       return CreatePostResponse.fromJson(data.data);
     } on DioException catch (error) {
-      print("POST API ERROR ---> ${error.response!.data}");
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
       return Future.error(amityError.amityException());
     }

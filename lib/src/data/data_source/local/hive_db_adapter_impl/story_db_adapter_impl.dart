@@ -37,16 +37,14 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
 
   @override
   StoryHiveEntity? getStoryEntity(String storyId) {
-    var storyEntity =
-        box.values.firstWhere((element) => element.storyId == storyId);
+    var storyEntity = box.values.firstWhere((element) => element.storyId == storyId);
     return storyEntity;
   }
 
   @override
   Future saveStoryEntity(StoryHiveEntity data) async {
     if (data.referenceId != null) {
-      var storyEntity = box.values.firstWhereOrNull(
-          (element) => element.referenceId == data.referenceId);
+      var storyEntity = box.values.firstWhereOrNull((element) => element.referenceId == data.referenceId);
       if (storyEntity != null) {
         storyEntity.delete();
       }
@@ -57,15 +55,13 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
 
   @override
   Future updateSyncState(String storyId, String syncState) {
-    var storyEntity =
-        box.values.firstWhere((element) => element.storyId == storyId);
+    var storyEntity = box.values.firstWhere((element) => element.storyId == storyId);
     storyEntity.syncState = syncState;
     return box.put(storyId, storyEntity);
   }
 
   @override
-  Stream<List<StoryHiveEntity>> listenStoryEntities(
-      RequestBuilder<GetStoriesByTragetRequest> request) {
+  Stream<List<StoryHiveEntity>> listenStoryEntities(RequestBuilder<GetStoriesByTragetRequest> request) {
     return box.watch().map((event) => box.values.where((story) {
           return story.isMatchingFilter(request.call());
         }
@@ -79,22 +75,31 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
   }
 
   @override
-  DateTime? getHighestStoryExpiresAt(
-      String targetType, String targetId, List<AmityStorySyncState> states) {
-    return box.values
-        .where((element) =>
-            targetId == element.storyId &&
-            targetType == element.targetType &&
-            states.contains(
-                AmityStorySyncStateExtension.enumOf(element.syncState)))
-        .sorted((a, b) => a.expiresAt!.compareTo(b.expiresAt!) * -1)
-        .first
-        .expiresAt;
+  DateTime? getHighestStoryExpiresAt(String targetType, String targetId, List<AmityStorySyncState> states) {
+    var stories = box.values.where((element) {
+      if (targetId == element.targetId &&
+          targetType == element.targetType &&
+          states.contains(
+            AmityStorySyncStateExtension.enumOf(
+              element.syncState,
+            ),
+          )) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    if(stories.isEmpty){
+      return null;
+    }
+    var dateTime = stories.sorted((a, b) => a.expiresAt!.compareTo(b.expiresAt ?? DateTime.now()) * -1).first.expiresAt;
+    
+    return dateTime;
   }
 
   @override
-  int getStoryCount(
-      String targetType, String targetId, List<AmityStorySyncState> states) {
+  int getStoryCount(String targetType, String targetId, List<AmityStorySyncState> states) {
     var size = box.values.where(
       (element) {
         if (targetId == element.targetId &&
@@ -113,7 +118,7 @@ class StoryDbAdapterImpl extends StoryDbAdapter {
 
     return size;
   }
-  
+
   @override
   List<StoryHiveEntity> getStoriesBySyncStates(String targetType, String targetId, List<AmityStorySyncState> states) {
     var stories = box.values.where(

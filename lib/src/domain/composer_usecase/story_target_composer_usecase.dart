@@ -99,9 +99,7 @@ class StoryTargetComposerUseCase
       storyTarget.hasUnseen = computedHasUnseen;
       storyTarget.localSortingDate = localSortingDate;
 
-      // print("Updating story target: ${storyTarget.targetId} with hasUnseen: $computedHasUnseen and localSortingDate: $localSortingDate");
-
-       updateStoryTarget(storyTarget, computedHasUnseen, localSortingDate);
+      updateStoryTarget(storyTarget, computedHasUnseen, localSortingDate);
     }
   }
 

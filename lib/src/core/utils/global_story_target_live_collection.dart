@@ -20,9 +20,6 @@ class GlobalStoryTargetLiveCollection extends LiveCollection<AmityStoryTarget> {
     }
   }
 
-
-  
-
   @override
   Future<PageListData<List<AmityStoryTarget>, String>>
       getFirstPageRequest() async {
@@ -53,7 +50,6 @@ class GlobalStoryTargetLiveCollection extends LiveCollection<AmityStoryTarget> {
   @override
   Future<PageListData<List<AmityStoryTarget>, String>> getNextPageRequest(
       String? token) async {
-    print("getNextPageRequested ---> token: $token");
     GetGlobalStoryTargetRequest params = GetGlobalStoryTargetRequest();
     if (queryOption == AmityGlobalStoryTargetsQueryOption.SMART) {
       params.isSmartState = true;
@@ -73,14 +69,8 @@ class GlobalStoryTargetLiveCollection extends LiveCollection<AmityStoryTarget> {
     return await serviceLocator<GlobalStoryTargetsUsecase>().get(params);
   }
 
-
   @override
   StreamController<List<AmityStoryTarget>> getStreamController() {
-    
-
-
-    print("getStreamController -----> queryOption: $queryOption and queryOptionLocal: ${queryOptionLocal.value}");
-
     return serviceLocator<StoryTargetObserveUsecase>().listenAll(
         queryOption == AmityGlobalStoryTargetsQueryOption.SMART,
         queryOptionLocal);

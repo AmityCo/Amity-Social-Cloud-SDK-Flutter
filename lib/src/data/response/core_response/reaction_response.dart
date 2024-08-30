@@ -11,8 +11,8 @@ class ReactionResponse {
 
   factory ReactionResponse.fromJson(Map<String, dynamic> json) =>
       ReactionResponse(
-        referenceId: json["referenceId"],
-        referenceType: json["referenceType"],
+        referenceId: json["referenceId"]??"",
+        referenceType: json["referenceType"]??"",
         reactors: List<Reactor>.from(
             json["reactors"].map((x) => Reactor.fromJson(x))),
       );

@@ -9,6 +9,7 @@ class CreateStoryResponse {
   final List<CommunityResponse> communities;
   final List<CommunityUserResponse> communityUsers;
   final List<CommunityCategoryResponse> categories;
+  final List<Reactor> reactions; 
   final List<StoryTargetResponse> storyTargets;
 
   CreateStoryResponse(
@@ -16,6 +17,7 @@ class CreateStoryResponse {
       required this.comments,
       required this.users,
       required this.files,
+      required this.reactions,
       required this.communities,
       required this.communityUsers,
       required this.categories,
@@ -27,6 +29,11 @@ class CreateStoryResponse {
             ? []
             : List<StoryResponse>.from(
                 json["stories"].map((x) => StoryResponse.fromJson(x))),
+        reactions: json["reactions"] == null
+            ? []
+            : List<Reactor>.from(
+            json["reactions"].map((x) => Reactor.fromJson(x))),
+
         comments: json["comments"] == null
             ? []
             : List<CommentResponse>.from(
