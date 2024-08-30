@@ -44,10 +44,6 @@ class DeleteStroyByIdUsecas extends UseCase<bool, StoryDeleteByIdRequest> {
           AmityStoryTargetTypeExtension.enumOf(storyTarget.targetType!),
           storyTarget.targetId!);
 
-      if (highestStoryExpires == null) {
-        return Future.value(null);
-      }
-
       return storyRepoTraget.updateStoryTargetLocalLastStoryExpiresAt(
           AmityStoryTargetTypeExtension.enumOf(storyTarget.targetType!),
           storyTarget.targetId!,

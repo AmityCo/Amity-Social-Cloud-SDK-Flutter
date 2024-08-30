@@ -13,7 +13,7 @@ StoryTargetDbAdapter {
   Future updateStoryTargetLocalLastStoryExpiresAt(
     AmityStoryTargetType targetType,
     String targetId,
-    DateTime localLastStoryExpiresAt,
+    DateTime? localLastStoryExpiresAt,
   );
 
   StoryTargetHiveEntity? getStoryTargetEntity(String uniqueId);

@@ -1,5 +1,4 @@
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/data/converter/reaction_response_extension_converter.dart';
 import 'package:amity_sdk/src/data/converter/story/story_hive_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
@@ -124,20 +123,22 @@ class ReactionRepoImpl extends ReactionRepo {
         amityStoryLocalCopy.myReactions!.add(request.reactionName);
 
         /// Updated this information with RTE payload
-        amityStoryLocalCopy.reactionsCount =
-            (amityStoryLocalCopy.reactionsCount ?? 0) + 1;
+        // amityStoryLocalCopy.reactionsCount =
+        //     (amityStoryLocalCopy.reactionsCount ?? 0) + 1;
 
         amityStoryLocalCopy.reactions ??= {};
         amityStoryLocalCopy.reactions![request.reactionName] =
             (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) + 1;
-
+        // amityStoryLocalCopy.reactionsCount = (amityStoryLocalCopy.reactionsCount ?? 0 ) + 1;
+        
         await dbAdapterRepo.storyDbAdapter
             .saveStoryEntity(amityStoryLocalCopy);
 
         await reactionApiInterface.addReaction(request);
-
-        return amityStoryLocalCopy.convertToAmityStory() as T;
+        var amityStoryObject =  amityStoryLocalCopy.convertToAmityStory() as T;
+        return amityStoryObject;
       } catch (error) {
+        
         await dbAdapterRepo.storyDbAdapter.saveStoryEntity(amityStory);
         rethrow;
       }
