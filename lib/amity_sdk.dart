@@ -6,7 +6,6 @@ library amity_sdk;
 
 export 'src/core/enum/enum.dart';
 export 'src/core/error/amity_exception.dart';
-export 'src/core/utils/Story_live_collection.dart';
 export 'src/core/utils/channel_live_collection.dart';
 export 'src/core/utils/comment_live_collection.dart';
 export 'src/core/utils/community_live_collection.dart';
@@ -16,6 +15,7 @@ export 'src/core/utils/message_live_collection.dart';
 export 'src/core/utils/paging_controller.dart';
 export 'src/core/utils/post_live_collection.dart';
 export 'src/core/utils/reaction_live_collection.dart';
+export 'src/core/utils/story_live_collection.dart';
 export 'src/core/utils/story_target_live_collection.dart';
 export 'src/core/utils/stream_live_collection.dart';
 export 'src/domain/model/model.dart';
