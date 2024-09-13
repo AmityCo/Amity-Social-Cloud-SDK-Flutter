@@ -1,3 +1,6 @@
+## 0.50.0
+* Fix: Fix the story reaction count going to negative.
+
 ## 0.48.0
 * Feat: Channel Live Collection
 * Fix: Fix inconsistent behavior of Community Live Collection
