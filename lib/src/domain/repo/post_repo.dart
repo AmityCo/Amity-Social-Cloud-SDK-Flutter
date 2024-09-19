@@ -7,7 +7,6 @@ abstract class PostRepo  extends AmityObjectRepository<PostHiveEntity, AmityPost
   //Future Method
   Future<PageListData<List<AmityPost>, String>> queryPost(
       GetPostRequest request);
-  Stream<List<AmityPost>> listenPosts(RequestBuilder<GetPostRequest> request);
 
   Future<AmityPost> getPostById(String postId);
   Future<AmityPost> createPost(CreatePostRequest request);
@@ -28,4 +27,15 @@ abstract class PostRepo  extends AmityObjectRepository<PostHiveEntity, AmityPost
 
   /// Has Local Post
   bool hasLocalPost(String postId);
+
+  // Query posts and return pagination token only (response data is not included)
+  Future<PageListData<List<AmityPost>, String>> queryPostList(GetPostRequest request);
+
+  Stream<List<AmityPost>> listenPosts(
+    RequestBuilder<GetPostRequest> request);
+
+  Stream<List<PostHiveEntity>> listenAllPostEntities();
+  
+  List<PostHiveEntity> getPostEntities(
+    RequestBuilder<GetPostRequest> request);
 }

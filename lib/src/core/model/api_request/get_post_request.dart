@@ -63,4 +63,9 @@ class GetPostRequest {
         "tags": tags == null ? null : List<dynamic>.from(tags!.map((x) => x)),
         "matchingOnlyParentPost": matchingOnlyParentPost,
       }..removeWhere((key, value) => value == null);
+
+  int getHashCode() {
+    final jsonString = (toJson()..remove('options')).toString();
+    return jsonString.hashCode;
+  }
 }

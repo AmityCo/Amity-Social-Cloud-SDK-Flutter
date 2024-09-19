@@ -2,41 +2,56 @@ import 'dart:developer';
 
 import 'package:amity_sdk/src/core/socket/amity_socket.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/local/db_adapter/ad_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/analytics_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_target_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/tombstone_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/analytics_db_adapter_impl.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/pin_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_target_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/stream_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/tombstone_db_adapter_impl.dart';
+import 'package:amity_sdk/src/data/data_source/remote/api_interface/ad_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/community_notification_api_interface.dart';
+import 'package:amity_sdk/src/data/data_source/remote/api_interface/pin_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_target_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/stream_api_interface.dart';
+import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/ad_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/community_notification_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/pin_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/stream_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/ad_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/analytics_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/community_notification_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/network_settings_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/paging_id_repo_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/pin_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/story_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/story_target_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/stream_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/tombstone_repo_impl.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/advertiser_compose_use_case.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/network_ads_composer_usecase.dart';
+import 'package:amity_sdk/src/domain/composer_usecase/pinned_post_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/reaction_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/story_composer_usercase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/story_target_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/stream_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/ad_repo.dart';
 import 'package:amity_sdk/src/domain/repo/analytics_repo.dart';
 import 'package:amity_sdk/src/domain/repo/community_notification_repo.dart';
 import 'package:amity_sdk/src/domain/repo/network_settings_repo.dart';
 import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
+import 'package:amity_sdk/src/domain/repo/pin_repo.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 import 'package:amity_sdk/src/domain/repo/tombstone_repo.dart';
+import 'package:amity_sdk/src/domain/usecase/ads/get_advertiser_use_case.dart';
+import 'package:amity_sdk/src/domain/usecase/ads/get_network_ads_ucsecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_fetch_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
@@ -46,10 +61,18 @@ import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usec
 import 'package:amity_sdk/src/domain/usecase/community/community_observe_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
+import 'package:amity_sdk/src/domain/usecase/feed/custom_ranking_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/feed/custom_ranking_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/feed/global_feed_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/feed/global_feed_query_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/file/get_image_use_case.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_text_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_urls_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/pin/pinned_post_observe_query_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/pin/pinned_post_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/post/post_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/post/post_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/delete_story_by_id_usecase.dart';
@@ -63,6 +86,7 @@ import 'package:amity_sdk/src/domain/usecase/stream/stream_has_local_usecase.dar
 import 'package:amity_sdk/src/domain/usecase/user/get_reach_user_usecase.dart';
 import 'package:amity_sdk/src/functions/stream_function.dart';
 import 'package:amity_sdk/src/public/public.dart';
+import 'package:amity_sdk/src/public/repo/ads/amity_ad_repository.dart';
 import 'package:amity_sdk/src/public/repo/stream/stream_repository.dart';
 import 'package:amity_sdk_api/amity_sdk_api.dart';
 import 'package:get_it/get_it.dart';
@@ -161,34 +185,42 @@ class SdkServiceLocator {
     serviceLocator.registerSingletonAsync<StoryTargetDbAdapter>(
         () => StoryTargetDbAdapterImpl(dbClient: serviceLocator()).init(),
         dependsOn: [DBClient]);
+    serviceLocator.registerSingletonAsync<AdDbAdapter>(
+        () => AdDbAdapterImpl(dbClient: serviceLocator()).init(),
+        dependsOn: [DBClient]);
     serviceLocator.registerSingletonAsync<PagingIdDbAdapter>(
         () => PagingIdDbAdapterImpl(dbClient: serviceLocator()).init(),
+        dependsOn: [DBClient]);
+    serviceLocator.registerSingletonAsync<PinDbAdapter>(
+        () => PinDbAdapterImpl(dbClient: serviceLocator()).init(),
         dependsOn: [DBClient]);
 
     //Register Db adapter Repo which hold all the Db Adapters
     serviceLocator.registerLazySingleton<DbAdapterRepo>(
       () => DbAdapterRepo(
-          postDbAdapter: serviceLocator(),
-          commentDbAdapter: serviceLocator(),
-          communityDbAdapter: serviceLocator(),
-          communityFeedDbAdapter: serviceLocator(),
-          communityMemberDbAdapter: serviceLocator(),
-          feedDbAdapter: serviceLocator(),
-          fileDbAdapter: serviceLocator(),
-          userDbAdapter: serviceLocator(),
-          communityCategoryDbAdapter: serviceLocator(),
-          pollDbAdapter: serviceLocator(),
-          messageDbAdapter: serviceLocator(),
-          reactionDbAdapter: serviceLocator(),
-          channelDbAdapter: serviceLocator(),
-          channelUserDbAdapter: serviceLocator(),
-          tombstoneDbAdapter: serviceLocator(),
-          streamDbAdapter: serviceLocator(),
-          analyticsDbAdapter: serviceLocator(),
-          storyDbAdapter: serviceLocator(),
-          storyTargetDbAdapter: serviceLocator(),
-          pagingIdDbAdapter: serviceLocator(),
-        ),
+        postDbAdapter: serviceLocator(),
+        commentDbAdapter: serviceLocator(),
+        communityDbAdapter: serviceLocator(),
+        communityFeedDbAdapter: serviceLocator(),
+        communityMemberDbAdapter: serviceLocator(),
+        feedDbAdapter: serviceLocator(),
+        fileDbAdapter: serviceLocator(),
+        userDbAdapter: serviceLocator(),
+        communityCategoryDbAdapter: serviceLocator(),
+        pollDbAdapter: serviceLocator(),
+        messageDbAdapter: serviceLocator(),
+        reactionDbAdapter: serviceLocator(),
+        channelDbAdapter: serviceLocator(),
+        channelUserDbAdapter: serviceLocator(),
+        tombstoneDbAdapter: serviceLocator(),
+        streamDbAdapter: serviceLocator(),
+        analyticsDbAdapter: serviceLocator(),
+        storyDbAdapter: serviceLocator(),
+        storyTargetDbAdapter: serviceLocator(),
+        adDbAdapter: serviceLocator(),
+        pagingIdDbAdapter: serviceLocator(),
+        pinDbAdapter: serviceLocator(),
+      ),
     );
 
     //-data_source/remote/
@@ -251,6 +283,10 @@ class SdkServiceLocator {
         () => StoryApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<StoryTargetApiInterface>(
         () => StoryTargetApiInterfaceImpl(httpApiClient: serviceLocator()));
+    serviceLocator.registerLazySingleton<AdApiInterface>(
+        () => AdApiInterfaceImpl(httpApiClient: serviceLocator()));
+    serviceLocator.registerLazySingleton<PinApiInterface>(
+        () => PinApiInterfaceImpl(httpApiClient: serviceLocator()));
 
     // Local Data Source
 
@@ -284,6 +320,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<PostRepo>(() => PostRepoImpl(
           publicPostApiInterface: serviceLocator(),
           dbAdapterRepo: serviceLocator(),
+          pagingIdRepo: serviceLocator(),
         ));
     serviceLocator.registerLazySingleton<CommentRepo>(() => CommentRepoImpl(
         commentApiInterface: serviceLocator(),
@@ -296,16 +333,16 @@ class SdkServiceLocator {
         ));
     serviceLocator.registerLazySingleton<CommunityRepo>(
       () => CommunityRepoImpl(
-          communityApiInterface: serviceLocator(),
-          communityDbAdapter: serviceLocator(),
-          commentDbAdapter: serviceLocator(),
-          userDbAdapter: serviceLocator(),
-          fileDbAdapter: serviceLocator(),
-          communityCategoryDbAdapter: serviceLocator(),
-          communityFeedDbAdapter: serviceLocator(),
-          communityMemberDbAdapter: serviceLocator(),
-          pagingIdRepo: serviceLocator(),
-        ),
+        communityApiInterface: serviceLocator(),
+        communityDbAdapter: serviceLocator(),
+        commentDbAdapter: serviceLocator(),
+        userDbAdapter: serviceLocator(),
+        fileDbAdapter: serviceLocator(),
+        communityCategoryDbAdapter: serviceLocator(),
+        communityFeedDbAdapter: serviceLocator(),
+        communityMemberDbAdapter: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
+      ),
     );
     serviceLocator.registerLazySingleton<CommunityMemberRepo>(() =>
         CommunityMemberRepoImpl(
@@ -330,6 +367,7 @@ class SdkServiceLocator {
 
     serviceLocator
         .registerLazySingleton<GlobalFeedRepo>(() => GlobalFeedRepoImpl(
+              pagingIdRepo: serviceLocator(),
               feedApiInterface: serviceLocator(),
               dbAdapterRepo: serviceLocator(),
             ));
@@ -417,8 +455,18 @@ class SdkServiceLocator {
           dbAdapterRepo: serviceLocator()),
     );
 
+    serviceLocator.registerLazySingleton<AdRepository>(() => AdRepositoryImpl(
+          adApiInterface: serviceLocator(),
+          dbAdapterRepo: serviceLocator(),
+        ));
+
     serviceLocator.registerLazySingleton<PagingIdRepo>(
       () => PagingIdRepoImpl(commonDbAdapter: serviceLocator()),
+    );
+
+    serviceLocator.registerLazySingleton<PinRepo>(
+      () => PinRepoImpl(
+          pinApiInterface: serviceLocator(), dbAdapterRepo: serviceLocator()),
     );
 
     //-UserCase
@@ -541,8 +589,8 @@ class SdkServiceLocator {
               communityRepo: serviceLocator(),
               communityComposerUsecase: serviceLocator(),
             ));
-    serviceLocator
-        .registerLazySingleton<CommunityFetchListUseCase>(() => CommunityFetchListUseCase(
+    serviceLocator.registerLazySingleton<CommunityFetchListUseCase>(
+        () => CommunityFetchListUseCase(
               communityRepo: serviceLocator(),
             ));
     serviceLocator.registerLazySingleton<CommunityDeleteUseCase>(
@@ -615,7 +663,7 @@ class SdkServiceLocator {
               userComposerUsecase: serviceLocator(),
               fileComposerUsecase: serviceLocator(),
               communityRepo: serviceLocator(),
-              communityMemberRepo:  serviceLocator(),
+              communityMemberRepo: serviceLocator(),
               communityComposerUsecase: serviceLocator(),
             ));
     serviceLocator.registerLazySingleton<CommentComposerUsecase>(() =>
@@ -633,7 +681,6 @@ class SdkServiceLocator {
         .registerLazySingleton<PostCreateUsecase>(() => PostCreateUsecase(
               postRepo: serviceLocator(),
               postComposerUsecase: serviceLocator(),
-
             ));
 
     serviceLocator
@@ -765,7 +812,7 @@ class SdkServiceLocator {
         CommunityObserveListUseCase(
             communityRepo: serviceLocator(),
             pagingIdRepo: serviceLocator(),
-            communityComposerUsecase: serviceLocator())); 
+            communityComposerUsecase: serviceLocator()));
 
     serviceLocator.registerLazySingleton<CommunityObserveUseCase>(() =>
         CommunityObserveUseCase(
@@ -847,9 +894,12 @@ class SdkServiceLocator {
             streamRepo: serviceLocator(),
             streamComposerUseCase: serviceLocator()));
 
-    serviceLocator.registerLazySingleton<PostObserveUseCase>(() =>
-        PostObserveUseCase(
-            postRepo: serviceLocator(), postComposerUsecase: serviceLocator()));
+    serviceLocator
+        .registerLazySingleton<PostObserveUseCase>(() => PostObserveUseCase(
+              postRepo: serviceLocator(),
+              pagingIdRepo: serviceLocator(),
+              postComposerUsecase: serviceLocator(),
+            ));
 
     serviceLocator.registerLazySingleton<CommentObserveUseCase>(() =>
         CommentObserveUseCase(
@@ -980,23 +1030,96 @@ class SdkServiceLocator {
         StoryTargetObserveUsecase(
             storyTargetRepo: serviceLocator(),
             storyTargetComposerUseCase: serviceLocator()));
-    serviceLocator.registerLazySingleton<ChannelObserveListUseCase>(() =>
-      ChannelObserveListUseCase(
+    serviceLocator.registerLazySingleton<ChannelObserveListUseCase>(
+      () => ChannelObserveListUseCase(
         channelRepo: serviceLocator(),
         pagingIdRepo: serviceLocator(),
         channelComposerUsecase: serviceLocator(),
       ),
     );
-    serviceLocator.registerLazySingleton<ChannelFetchListUseCase>(() =>
-      ChannelFetchListUseCase(
+    serviceLocator.registerLazySingleton<ChannelFetchListUseCase>(
+      () => ChannelFetchListUseCase(
         channelRepo: serviceLocator(),
       ),
     );
-    serviceLocator.registerLazySingleton<ChannelUpdateLastActivityUsecase>(() =>
-      ChannelUpdateLastActivityUsecase(
+    serviceLocator.registerLazySingleton<ChannelUpdateLastActivityUsecase>(
+      () => ChannelUpdateLastActivityUsecase(
         channelRepo: serviceLocator(),
       ),
     );
+    serviceLocator.registerLazySingleton<PinnedPostComposerUsecase>(
+      () => PinnedPostComposerUsecase(
+        pinRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        userRepo: serviceLocator(),
+        postComposerUsecase: serviceLocator(),
+        userComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<PinnedPostQueryUseCase>(
+      () => PinnedPostQueryUseCase(
+        pinRepo: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<PinnedPostObserveQueryUseCase>(
+      () => PinnedPostObserveQueryUseCase(
+        pinRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
+        pinnedPostComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<PostQueryUsecase>(
+      () => PostQueryUsecase(
+        postRepo: serviceLocator(),
+        postComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<GlobalFeedQueryUsecase>(
+      () => GlobalFeedQueryUsecase(
+        globalFeedRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        postComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<GlobalFeedObserveUseCase>(
+      () => GlobalFeedObserveUseCase(
+        globalFeedRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        postComposerUsecase: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<CustomRankingQueryUsecase>(
+      () => CustomRankingQueryUsecase(
+        globalFeedRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        postComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<CustomRankingObserveUseCase>(
+      () => CustomRankingObserveUseCase(
+        globalFeedRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        postComposerUsecase: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
+      ),
+    );
+
+    serviceLocator.registerLazySingleton<GetImageUseCase>(
+        () => GetImageUseCase(fileRepo: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<AdvertiserComposerUseCase>(
+        () => AdvertiserComposerUseCase(fileRepo: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<GetAdvertiserUseCase>(
+        () => GetAdvertiserUseCase(adRepo: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<NetworkAdsComposerUseCase>(
+        () => NetworkAdsComposerUseCase(fileRepo: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<GetNetworkAdsUseCase>(
+        () => GetNetworkAdsUseCase(adRepo: serviceLocator()));
 
     //-data_source/remote/
     serviceLocator
@@ -1019,6 +1142,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton(() => StreamRepository());
     serviceLocator.registerLazySingleton(() => AmityStoryRepository());
     serviceLocator.registerLazySingleton(() => AmityReactionRepository());
+    serviceLocator.registerLazySingleton(() => AmityAdRepository());
 
     //MQTT Client
     serviceLocator.registerLazySingleton<AmityMQTT>(

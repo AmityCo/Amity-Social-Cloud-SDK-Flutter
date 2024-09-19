@@ -5,7 +5,7 @@ import 'package:amity_sdk/src/core/model/api_request/get_reach_user_request.dart
 
 abstract class AnalyticsRepo {
   Future saveAnalyticsEvent(String contentId, String contentType,
-      String activityType, AnalyticsEventSyncPriority syncPriority);
+      String activityType, AnalyticsEventSyncPriority syncPriority, Map<String, dynamic>? metadata);
   void deleteAllAnalyticsEvents();
   Future sendAnalyticsEvents(AnalyticsEventSyncPriority syncPriority);
   Future<PageListData<List<AmityUser>, String>> getViewedUsers(GetReachUserRequest request);

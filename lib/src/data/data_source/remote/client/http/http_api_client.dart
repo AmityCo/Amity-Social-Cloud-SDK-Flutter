@@ -5,6 +5,8 @@ import 'dart:developer';
 // import 'dart:io';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/core_client.dart';
+import 'package:amity_sdk/src/core/session/model/app_event.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/public/amity_core_client.dart';
@@ -52,6 +54,7 @@ class HttpApiClient {
             handler.resolve(value);
           });
         }).onError((error, stackTrace) {
+          CoreClient.onAppEvent(AppEvent.TokenExpire);
           handler.next(e);
         });
         return;

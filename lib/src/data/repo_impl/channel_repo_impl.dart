@@ -7,7 +7,6 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/data/data.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/paging_id_hive_entity_29.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
 import 'package:collection/collection.dart';
@@ -76,13 +75,14 @@ class ChannelRepoImpl extends ChannelRepo {
   @override
   Future<PageListData<List<AmityChannel>, String>> getChannelQuery(
       GetChannelRequest request) async {
-    final data = await channelApiInterface.getChannelQuery(request);
-    final amityChannel = await data.saveToDb<AmityChannel>(commonDbAdapter);
     final hash = request.getHashCode();
     final nonce = AmityNonce.CHANNEL_LIST;
-    final paging = data.paging;
     int nextIndex = 0;
-    if (request.options?.token == null) {
+    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    final data = await channelApiInterface.getChannelQuery(request);
+    final paging = data.paging;
+    final amityChannel = await data.saveToDb<AmityChannel>(commonDbAdapter);
+    if (isFirstPage) {
       await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
     } else {
       nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;

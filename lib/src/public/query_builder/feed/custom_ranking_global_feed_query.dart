@@ -23,5 +23,9 @@ class AmityCustomRankingGlobalFeedQuery{
     return data;
   }
 
+  CustomRankingLiveCollection getLiveCollection() {
+    return CustomRankingLiveCollection(request: () => GetGlobalFeedRequest());
+  }
+
 
 }

@@ -24,6 +24,9 @@ class CommunityObserveListUseCase
       RequestBuilder<GetCommunityRequest> request) {
     final hash = request().getHashCode();
     final streamController = StreamController<List<AmityCommunity>>();
+
+    _onChanges(streamController, request);
+
     communityRepo.listenCommunities(request).listen((event) async {
       _onChanges(streamController, request);
     });
@@ -49,14 +52,17 @@ class CommunityObserveListUseCase
     } else {
       final communityIds = pagingIds.map((e) => e.id).toList();
       final communities = communityEntities
-        .where((community) => communityIds.contains(community.communityId))
-        .map((e) => e.convertToAmityCommunity())
-        .toList()
-        ..sort((a, b) {   
-          var positionA = pagingIds.firstWhere((p) => p.id == a.communityId).position ?? 0;
-          var positionB = pagingIds.firstWhere((p) => p.id == b.communityId).position ?? 0;
+          .where((community) => communityIds.contains(community.communityId))
+          .map((e) => e.convertToAmityCommunity())
+          .toList()
+        ..sort((a, b) {
+          var positionA =
+              pagingIds.firstWhere((p) => p.id == a.communityId).position ?? 0;
+          var positionB =
+              pagingIds.firstWhere((p) => p.id == b.communityId).position ?? 0;
           return positionA.compareTo(positionB);
         });
+
       Stream.fromIterable(communities).forEach((element) async {
         element = await communityComposerUsecase.get(element);
       });

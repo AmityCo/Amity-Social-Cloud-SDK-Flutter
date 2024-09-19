@@ -1,8 +1,8 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/session/event_bus/app_event_bus.dart';
 import 'package:amity_sdk/src/core/session/event_bus/session_life_cycle_event_bus.dart';
 import 'package:amity_sdk/src/core/session/event_bus/session_state_event_bus.dart';
 import 'package:amity_sdk/src/core/session/model/session_life_cycle.dart';
-import 'package:amity_sdk/src/core/session/model/session_state.dart';
 import 'package:amity_sdk/src/core/session/transformer/session_life_cycle_transformer.dart';
 import 'package:amity_sdk/src/core/session/transformer/session_state_transformer.dart';
 

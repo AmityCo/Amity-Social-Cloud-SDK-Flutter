@@ -1,29 +1,29 @@
 import 'dart:async';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/query_pinned_post_request.dart';
+import 'package:amity_sdk/src/core/utils/pinned_post_live_collection.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/usecase/post/post_live_object_usecase.dart';
+import 'package:amity_sdk/src/domain/model/amity_pinned_post.dart';
 import 'package:amity_sdk/src/public/public.dart';
 import 'package:amity_sdk/src/public/query_builder/post/post_get_live_object.dart';
 
 /// Post Repo to get [AmityPost]
 class PostRepository {
-
   PostGetLiveObject live = PostGetLiveObject();
-
 
   /* begin_public_function 
   id: post.get, poll.get, post.get_by_ids
   */
   /// get composed [AmityPost] for the psot
-  @Deprecated("Use AmitySocialClient.newPostRepository().live.getPost(postId) instead")
+  @Deprecated(
+      "Use AmitySocialClient.newPostRepository().live.getPost(postId) instead")
   Future<AmityPost> getPost(String postId) {
     return serviceLocator<GetPostByIdUseCase>().get(postId);
   }
   /* end_public_function */
 
-
-  // /* begin_public_function 
+  // /* begin_public_function
   // id: post.get, poll.get, post.get_by_ids
   // */
   // /// get composed [AmityPost] for the psot
@@ -68,7 +68,9 @@ class PostRepository {
   /// Review the [AmityPost], Accept/denied
   PostReviewQueryBuilder reviewPost({required String postId}) {
     return PostReviewQueryBuilder(
-        postApproveUsecase: serviceLocator(), postDeclineUsecase: serviceLocator(), postId: postId);
+        postApproveUsecase: serviceLocator(),
+        postDeclineUsecase: serviceLocator(),
+        postId: postId);
   }
 
   /// Get [AmityReaction] for the post Id
@@ -85,5 +87,12 @@ class PostRepository {
   }
   /* end_public_function */
 
-
+  PinnedPostLiveCollection getPinnedPosts(
+      {required String communityId,
+      String? placement,
+      AmityPinSortByOptions sortByOptions = AmityPinSortByOptions.lastPinned}) {
+    request() => QueryPinnedPostRequest(
+        targetId: communityId, targetType: "community", placement: placement);
+    return PinnedPostLiveCollection(request: request);
+  }
 }

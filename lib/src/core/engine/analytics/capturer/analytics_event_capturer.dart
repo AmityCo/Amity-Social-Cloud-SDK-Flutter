@@ -17,6 +17,7 @@ class AnalyticsEventCapturer {
 
   void captureEvent(
     String contentId,
+    [Map<String, dynamic>? metadata = null]
   ) {
     var recentCapturedEvents = recentCaptured[contentId];
     if (recentCapturedEvents == null) {
@@ -29,7 +30,7 @@ class AnalyticsEventCapturer {
       }
     }
     serviceLocator<AnalyticsRepo>()
-        .saveAnalyticsEvent(contentId, contentType, eventType, syncPriority)
+        .saveAnalyticsEvent(contentId, contentType, eventType, syncPriority, metadata)
         .then((value) => recentCaptured[contentId] = DateTime.now());
   }
 }

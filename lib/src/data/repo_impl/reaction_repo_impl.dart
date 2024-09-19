@@ -122,14 +122,12 @@ class ReactionRepoImpl extends ReactionRepo {
         amityStoryLocalCopy.myReactions ??= [];
         amityStoryLocalCopy.myReactions!.add(request.reactionName);
 
-        /// Updated this information with RTE payload
-        // amityStoryLocalCopy.reactionsCount =
-        //     (amityStoryLocalCopy.reactionsCount ?? 0) + 1;
+        amityStoryLocalCopy.reactionsCount =
+            (amityStoryLocalCopy.reactionsCount ?? 0) + 1;
 
         amityStoryLocalCopy.reactions ??= {};
         amityStoryLocalCopy.reactions![request.reactionName] =
             (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) + 1;
-        // amityStoryLocalCopy.reactionsCount = (amityStoryLocalCopy.reactionsCount ?? 0 ) + 1;
         
         await dbAdapterRepo.storyDbAdapter
             .saveStoryEntity(amityStoryLocalCopy);

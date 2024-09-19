@@ -1,5 +1,7 @@
+import 'package:amity_sdk/src/data/data_source/local/db_adapter/ad_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/analytics_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/db_adapter.dart';
+import 'package:amity_sdk/src/data/data_source/local/db_adapter/pin_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_target_db_adapter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/stream_db_adapter.dart';
@@ -65,7 +67,12 @@ class DbAdapterRepo {
   /// Story Target Db Adapter
   final StoryTargetDbAdapter storyTargetDbAdapter;
 
+    /// Story Target Db Adapter
+  final AdDbAdapter adDbAdapter;
+
   final PagingIdDbAdapter pagingIdDbAdapter;
+
+  final PinDbAdapter pinDbAdapter;
 
   /// Init DbAdapter Repo
   DbAdapterRepo({
@@ -88,6 +95,8 @@ class DbAdapterRepo {
     required this.analyticsDbAdapter,
     required this.storyDbAdapter,
     required this.storyTargetDbAdapter,
+    required this.adDbAdapter,
     required this.pagingIdDbAdapter,
+    required this.pinDbAdapter,
   });
 }

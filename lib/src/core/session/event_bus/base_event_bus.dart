@@ -6,7 +6,7 @@ class BaseEventBus<T>{
   T? currentEvent;
   StreamController<T> controller = StreamController<T>();
 
-  Stream observe(){
+  Stream<T> observe(){
     stream ??= controller.stream.asBroadcastStream();
     return stream!;
   }

@@ -1,7 +1,7 @@
 
 
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/session/model/session_life_cycle.dart';
-import 'package:amity_sdk/src/core/session/model/session_state.dart';
 
 class SessionLifeCycleTransformer {
   static final SessionLifeCycleTransformer _instance = SessionLifeCycleTransformer._internal();
@@ -13,15 +13,12 @@ class SessionLifeCycleTransformer {
   SessionLifeCycleTransformer._internal();
   
   SessionLifeCycle? transform(SessionState currentSessionState) {
-     switch (currentSessionState) {
-      case SessionState.TokenExpired:
-        return SessionLifeCycle.HandleTokenExpire;
-      case SessionState.Terminated:
-        return SessionLifeCycle.Destroy;
-      case SessionState.NotLoggedIn:
-        return SessionLifeCycle.Destroy;
-      default:
-        return null;
+    if (currentSessionState == SessionState.TokenExpired) {
+      return SessionLifeCycle.HandleTokenExpire;
+    } else if (currentSessionState.isTerminated() || currentSessionState == SessionState.NotLoggedIn) {
+      return SessionLifeCycle.Destroy;
+    } else {
+      return null;
     }
   }
 }

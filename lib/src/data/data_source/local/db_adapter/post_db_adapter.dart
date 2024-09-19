@@ -14,4 +14,12 @@ abstract class PostDbAdapter {
   Stream<List<PostHiveEntity>> listenPostEntities(
       RequestBuilder<GetPostRequest> request);
 
+  List<PostHiveEntity> getPostEntities(
+    RequestBuilder<GetPostRequest> request);
+
+  Stream<List<PostHiveEntity>> listenAllPostEntities();
+
+  List<PostHiveEntity> getAllPostEntities();
+  
+  Future savePostEntities(List<PostHiveEntity> data);
 }

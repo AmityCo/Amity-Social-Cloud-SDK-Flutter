@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_global_feed_request.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/core/utils/page_list_data.dart';
 import 'package:amity_sdk/src/data/data.dart';
-import 'package:amity_sdk/src/domain/model/amity_post.dart';
 import 'package:amity_sdk/src/domain/repo/global_feed_repo.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
+import 'package:collection/collection.dart';
 
 /// Global Feed Repo Impl
 class GlobalFeedRepoImpl extends GlobalFeedRepo {
@@ -14,9 +18,14 @@ class GlobalFeedRepoImpl extends GlobalFeedRepo {
   /// Common Db Adapter
   final DbAdapterRepo dbAdapterRepo;
 
+  final PagingIdRepo pagingIdRepo;
+
   /// Init Global Feed Repo Impl
-  GlobalFeedRepoImpl(
-      {required this.feedApiInterface, required this.dbAdapterRepo});
+  GlobalFeedRepoImpl({
+    required this.feedApiInterface,
+    required this.dbAdapterRepo,
+    required this.pagingIdRepo,
+  });
 
   @override
   Future<PageListData<List<AmityPost>, String>> getGlobalFeed(
@@ -85,9 +94,10 @@ class GlobalFeedRepoImpl extends GlobalFeedRepo {
 
     return Future.value();
   }
-  
+
   @override
-  Future<PageListData<List<AmityPost>, String>> getCustomPostRanking(GetGlobalFeedRequest request) async {
+  Future<PageListData<List<AmityPost>, String>> getCustomPostRanking(
+      GetGlobalFeedRequest request) async {
     final data = await feedApiInterface.getCustomPostRanking(request);
 
     //Save the feed sequence in to feed db
@@ -98,5 +108,62 @@ class GlobalFeedRepoImpl extends GlobalFeedRepo {
     final amitPosts = await data.saveToDb<AmityPost>(dbAdapterRepo);
 
     return PageListData(amitPosts, data.paging!.next ?? '');
+  }
+
+  @override
+  Stream<List<AmityPost>> listenPostsChanges(
+      RequestBuilder<GetGlobalFeedRequest> request) {
+    final entities = dbAdapterRepo.postDbAdapter.listenAllPostEntities();
+
+    // For notify changes from post db only
+    return entities.map((event) => []);
+  }
+
+  @override
+  List<PostHiveEntity> getFeedPostEntities(
+      RequestBuilder<GetGlobalFeedRequest> request) {
+    return dbAdapterRepo.postDbAdapter.getAllPostEntities();
+  }
+
+  @override
+  Future<PageListData<List<AmityPost>, String>> queryGlobalFeed(
+    GetGlobalFeedRequest request,
+    bool isCustomRanking,
+  ) async {
+    final nonce = isCustomRanking
+        ? AmityNonce.CUSTOM_RANKING_FEED
+        : AmityNonce.GLOBAL_FEED;
+    final hash = request.getHashCode();
+    final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
+    int nextIndex = 0;
+    final isFirstPage = request.token == null && (request.limit ?? 0) > 0;
+    //TODO: request.options.token is gone after call data.saveToDb, might cause further issue in the future
+    final data = isCustomRanking
+        ? await feedApiInterface.getCustomPostRanking(request)
+        : await feedApiInterface.getGlobalFeed(request);
+    await data.saveToDb(dbAdapterRepo);
+    if (isFirstPage) {
+      await pagingIdDbAdapter.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo
+              .getPagingIdEntities(nonce.value, hash)
+              .map((e) => (e.position ?? 0))
+              .toList()
+              .reduce(max)) +
+          1;
+    }
+    data.posts.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.postId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdDbAdapter.savePagingIdEntity(pagingId);
+    });
+
+    // Return token for the next page only
+    // the live collection will get the result through the observe usecase
+    return PageListData([], data.paging?.next ?? '');
   }
 }

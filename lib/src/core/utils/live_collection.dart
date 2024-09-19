@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/extension/stream_controller_extendion.dart';
 
 typedef RequestBuilder<T> = T Function();
 
@@ -26,6 +27,8 @@ abstract class LiveCollection<Model> {
   /// Listen to live collection
   StreamController<List<Model>> getStreamController();
 
+  final StreamController<bool> _loadingStateStream = StreamController<bool>();
+
   /// On Error Callback
   Function(Object? error, StackTrace stackTrace)? _onErrorCallback;
 
@@ -34,16 +37,30 @@ abstract class LiveCollection<Model> {
     _onErrorCallback = onErrorCallback;
   }
 
+  LiveCollection() {
+    _loadingStateStream.add(true);
+  }
+
   /// Load next page for live collection
   Future loadNext() async {
+    if(!_isFirstPage && !hasNextPage()) {
+      return;
+    }
+
     if (!isFetching) {
       isFetching = true;
+      _loadingStateStream.add(true);
+      _loadingStateStream.addData(true);
       if (_isFirstPage) {
         return await getFirstPageRequest().then((value) {
           currentToken = value.token;
           isFetching = false;
+          _loadingStateStream.addData(false);
           _isFirstPage = false;
         }).onError((error, stackTrace) {
+          isFetching = false;
+          _loadingStateStream.addData(false);
+          _isFirstPage = false;
           if (_onErrorCallback != null) {
             _onErrorCallback!(error, stackTrace);
           }
@@ -52,8 +69,11 @@ abstract class LiveCollection<Model> {
         return await getNextPageRequest(currentToken).then((value) {
           currentToken = value.token;
           isFetching = false;
+          _loadingStateStream.addData(false);
           _isFirstPage = false;
         }).onError((error, stackTrace) {
+          isFetching = false;
+          _loadingStateStream.addData(false);
           if (_onErrorCallback != null) {
             _onErrorCallback!(error, stackTrace);
           }
@@ -64,7 +84,8 @@ abstract class LiveCollection<Model> {
 
   /// Check if live collection have next page
   bool hasNextPage() {
-    final hasNextToken = currentToken != null && (currentToken ?? '').isNotEmpty;
+    final hasNextToken =
+        currentToken != null && (currentToken ?? '').isNotEmpty;
     return hasNextToken && !_isFirstPage;
   }
 
@@ -73,6 +94,17 @@ abstract class LiveCollection<Model> {
     currentToken = null;
     isFetching = false;
     _isFirstPage = true;
+    _loadingStateStream.addData(false);
     return true;
+  }
+
+  /// Observe Loading State
+  Stream<bool> observeLoadingState() {
+    return _loadingStateStream.stream;
+  }
+
+  Future<void> dispose() async {
+    await _loadingStateStream.close();
+    return getStreamController().close();
   }
 }

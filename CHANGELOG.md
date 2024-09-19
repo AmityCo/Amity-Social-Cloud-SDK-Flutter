@@ -1,5 +1,16 @@
+## 0.51.0
+* Feat: Introduce ability to observe client session state
+* Feat: Introduce ability to observe Live Collection loading state
+* Feat: Post Live Collection
+* Feat: Global feed Live Collection
+* Feat: Custom ranking global feed Live Collection
+* Feat: Pinned post Live Collection
+
 ## 0.50.0
-* Fix: Fix the story reaction count going to negative.
+* Fix: Fix invalid story reaction count
+
+## 0.49.0
+* Fix: Handle story issues
 
 ## 0.48.0
 * Feat: Channel Live Collection

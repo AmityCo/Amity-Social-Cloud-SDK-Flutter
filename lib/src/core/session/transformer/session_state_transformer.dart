@@ -1,5 +1,5 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/session/model/app_event.dart';
-import 'package:amity_sdk/src/core/session/model/session_state.dart';
 
 class SessionStateTransformer {
   static final SessionStateTransformer _instance =
@@ -23,7 +23,7 @@ class SessionStateTransformer {
       case AppEvent.LoggingIn:
         if (currentSessionState == SessionState.NotLoggedIn ||
             currentSessionState == SessionState.Established ||
-            currentSessionState == SessionState.Terminated) {
+            currentSessionState.isTerminated()) {
           return SessionState.Establishing;
         }
         break;
@@ -50,7 +50,7 @@ class SessionStateTransformer {
       case AppEvent.TerminationCodeReceive:
         if (currentSessionState == SessionState.Established ||
             currentSessionState == SessionState.TokenExpired) {
-          return SessionState.Terminated;
+          return Terminated();
         }
         break;
       case AppEvent.TokenExpire:

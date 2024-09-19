@@ -67,7 +67,7 @@ extension CreateStoryResponseExtension on CreateStoryResponse {
         }
       }
       await dbRepo.reactionDbAdapter.saveReactionEntity(reactors.convertToReactionHiveEntity(AmityReactionReferenceType.STORY.toString(), story!.storyId!));
-      story?.reactionsCount = story?.reactionsCount == null ? 0 : story.reactionsCount ?? 0 - 1;
+      story?.reactionsCount = story?.reactionsCount == null ? 0 : story.reactionsCount ?? 0;
       await dbRepo.storyDbAdapter.saveStoryEntity(story!);
     }
     }

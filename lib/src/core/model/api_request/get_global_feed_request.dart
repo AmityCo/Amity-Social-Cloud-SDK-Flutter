@@ -18,4 +18,8 @@ class GetGlobalFeedRequest extends PaginatedApiRequest {
 
   @override
   int get hashCode => 'GLOBAL_FEED_${dataTypes?.join('_')}'.hashCode;
+
+  int getHashCode() {
+    return hashCode;
+  }
 }

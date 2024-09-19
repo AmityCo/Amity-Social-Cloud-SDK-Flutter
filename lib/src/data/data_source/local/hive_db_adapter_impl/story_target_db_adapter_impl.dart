@@ -67,7 +67,7 @@ class StoryTargetDbAdapterImpl extends StoryTargetDbAdapter {
 
   @override
   Stream<StoryTargetHiveEntity> listenStoryTargetEntity(String uniqueId) {
-    return box.watch(key: uniqueId).map((event) => event.value);
+    return box.watch(key: uniqueId).where((event) => event !=null && event.value != null).map((event) => event.value);
   }
 
   @override
