@@ -24,7 +24,7 @@ class MessageRepoImpl extends MessageRepo {
     //the up to date data for each messages
     final isFirstPageRequest = ((request.options?.last ?? 0) > 0) || ((request.options?.before ?? 0) > 0);
     if (request.options?.token == null && isFirstPageRequest) {
-      await dbAdapterRepo.messageDbAdapter.deleteMessagesByChannelId(request.channelId);
+      await dbAdapterRepo.messageDbAdapter.deleteMessagesByChannelId(request.subChannelId);
     }
     final amitMessages = await data.saveToDb<AmityMessage>(dbAdapterRepo);
     final String token;
@@ -61,7 +61,7 @@ class MessageRepoImpl extends MessageRepo {
     final entity = request.convertToMessageEntity();
 
     /// Calculate the highest channel segment number for the channel id
-    entity.channelSegment = dbAdapterRepo.messageDbAdapter.getHighestChannelSagment(request.channelId) + 1;
+    entity.channelSegment = dbAdapterRepo.messageDbAdapter.getHighestChannelSagment(request.subchannelId) + 1;
 
     try {
       entity.syncState = AmityMessageSyncState.SYNCING;
@@ -100,7 +100,7 @@ class MessageRepoImpl extends MessageRepo {
     final entity = request.convertToMessageEntity();
 
     /// Calculate the highest channel segment number for the channel id
-    entity.channelSegment = dbAdapterRepo.messageDbAdapter.getHighestChannelSagment(request.channelId) + 1;
+    entity.channelSegment = dbAdapterRepo.messageDbAdapter.getHighestChannelSagment(request.subchannelId) + 1;
 
     try {
       // Create file Entity, update it for local preview

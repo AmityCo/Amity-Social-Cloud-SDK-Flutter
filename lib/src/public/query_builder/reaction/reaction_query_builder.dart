@@ -1,3 +1,4 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/model/api_request/reaction_request.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/add_reaction_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/remove_reaction_usecase.dart';
@@ -29,7 +30,9 @@ class AddReactionQueryBuilder<T> {
     ReactionRequest reactionRequest = ReactionRequest(
         referenceId: _referenceId,
         referenceType: _referenceType,
-        reactionName: reaction);
+        reactionName: reaction,
+        referenceVersion:  (_referenceType == AmityReactionReferenceType.MESSAGE.value) ? "5" : null
+        );
     return _addReactionUsecase.getWithType<T>(reactionRequest);
   }
   /* end_public_function */
@@ -42,6 +45,7 @@ class AddReactionQueryBuilder<T> {
     ReactionRequest reactionRequest = ReactionRequest(
         referenceId: _referenceId,
         referenceType: _referenceType,
+        referenceVersion:  (_referenceType == AmityReactionReferenceType.MESSAGE.value) ? "5" : null,
         reactionName: reaction);
     return _removeReactionUsecase.getWithType<T>(reactionRequest);
   }

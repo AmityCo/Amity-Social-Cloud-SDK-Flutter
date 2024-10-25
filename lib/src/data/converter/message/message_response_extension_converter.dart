@@ -11,10 +11,11 @@ extension MessageResponseExtensionConverter on MessageResponse {
       ..channelId = channelId
       ..userId = userId
       ..type = type
+      ..subChannelId = subChannelId
       ..data = data.convertToMesageDataHiveEntity()
       ..channelSegment = channelSegment
       ..parentId = parentId
-      ..fileId = fileId
+      ..fileId = data.convertToMesageDataHiveEntity().fileId
       ..tags = tags
       ..metadata = metadata
       ..flagCount = flagCount

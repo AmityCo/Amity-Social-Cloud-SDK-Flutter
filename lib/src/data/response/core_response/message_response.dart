@@ -7,9 +7,9 @@ class MessageResponse {
     required this.messageId,
     required this.channelId,
     required this.userId,
-    required this.type,
+    this.type,
     required this.data,
-    required this.channelSegment,
+    this.channelSegment,
     required this.parentId,
     required this.fileId,
     required this.tags,
@@ -18,14 +18,15 @@ class MessageResponse {
     required this.hashFlag,
     required this.childrenNumber,
     required this.reactionsCount,
-    required this.reactions,
+    this.reactions,
     required this.myReactions,
     required this.latestReaction,
     required this.isDeleted,
     required this.createdAt,
     required this.updatedAt,
-    required this.editedAt,
+    this.editedAt,
     required this.mentionees,
+    this.subChannelId,
   });
 
   /// Message ID
@@ -34,17 +35,19 @@ class MessageResponse {
   /// Channel ID
   final String channelId;
 
+  final String? subChannelId;
+
   /// User ID
   final String userId;
 
   /// Type
-  final String type;
+  String? type;
 
   /// Message Data
   final MessageDataResponse data;
 
   /// Channel Segment
-  final int channelSegment;
+  int? channelSegment;
 
   /// Parent ID
   final String? parentId;
@@ -71,7 +74,7 @@ class MessageResponse {
   final int reactionsCount;
 
   /// Reactions
-  final Map<String, int> reactions;
+  Map<String, int>? reactions;
 
   /// My Reaction
   List<String>? myReactions;
@@ -89,7 +92,7 @@ class MessageResponse {
   final DateTime updatedAt;
 
   /// Edited At
-  final DateTime editedAt;
+  DateTime? editedAt;
 
   /// Mentions
   final List<Mentionee> mentionees;
@@ -99,10 +102,11 @@ class MessageResponse {
       MessageResponse(
         messageId: json["messageId"],
         channelId: json["channelId"],
-        userId: json["userId"],
-        type: json["type"],
+        subChannelId: json["messageFeedId"],
+        userId: json["creatorPublicId"] ?? json["userId"],
+        type: json["dataType"],
         data: MessageDataResponse.fromJson(json["data"]),
-        channelSegment: json["channelSegment"],
+        channelSegment: json["segment"],
         parentId: json["parentId"],
         fileId: json["fileId"],
         tags: List<String>.from(json["tags"].map((x) => x)),
@@ -111,9 +115,9 @@ class MessageResponse {
         hashFlag: json["hashFlag"] == null
             ? null
             : HashFlag.fromJson(json["hashFlag"]),
-        childrenNumber: json["childrenNumber"],
-        reactionsCount: json["reactionsCount"],
-        reactions: Map.from(json["reactions"]),
+        childrenNumber: json["childrenNumber"] ?? 0 ,
+        reactionsCount: json["reactionsCount"]??0,
+        reactions: json["reactions"]!=null ? Map.from(json["reactions"]) : null,
         myReactions: json["myReactions"] == null
             ? null
             : List<String>.from(json["myReactions"].map((x) => x)),
@@ -121,9 +125,9 @@ class MessageResponse {
         isDeleted: json["isDeleted"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
-        editedAt: DateTime.parse(json["editedAt"]),
-        mentionees: List<Mentionee>.from(
-            json["mentionees"].map((x) => Mentionee.fromJson(x))),
+        editedAt: json["editedAt"]!=null ?DateTime.parse(json["editedAt"]) : null,
+        mentionees: json["mentionees"]!=null? List<Mentionee>.from(
+            json["mentionees"].map((x) => Mentionee.fromJson(x))): [],
       );
 
   /// Convert [MessageResponse] to Map
@@ -131,11 +135,12 @@ class MessageResponse {
         "messageId": messageId,
         "channelId": channelId,
         "userId": userId,
-        "type": type,
+        "dataType": type,
         "data": data.toJson(),
-        "channelSegment": channelSegment,
+        "segment": channelSegment,
         "parentId": parentId,
         "fileId": fileId,
+        "messageFeedId": subChannelId,
         "tags": List<dynamic>.from(tags.map((x) => x)),
         "metadata": metadata,
         "flagCount": flagCount,
@@ -150,7 +155,7 @@ class MessageResponse {
         "isDeleted": isDeleted,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
-        "editedAt": editedAt.toIso8601String(),
+        "editedAt": editedAt?.toIso8601String(),
         "mentionees": List<dynamic>.from(mentionees.map((x) => x.toJson())),
       };
 
@@ -174,6 +179,7 @@ class MessageResponse {
     Map<String, dynamic>? latestReaction,
     bool? isDeleted,
     DateTime? createdAt,
+    String? subChannelId,
     DateTime? updatedAt,
     DateTime? editedAt,
     List<Mentionee>? mentionees,
@@ -184,6 +190,7 @@ class MessageResponse {
       userId: userId ?? this.userId,
       type: type ?? this.type,
       data: data ?? this.data,
+      subChannelId: subChannelId ?? this.subChannelId,
       channelSegment: channelSegment ?? this.channelSegment,
       parentId: parentId ?? this.parentId,
       fileId: fileId ?? this.fileId,

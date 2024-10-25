@@ -13,6 +13,17 @@ class MessageRepository {
   }
   /* end_public_function */
 
+
+
+  MessageGetQueryBuilder newGetMessages(String subchannelId) {
+    return MessageGetQueryBuilder(serviceLocator<MessageQueryUseCase>(), subchannelId);
+  }
+
+
+  AmityMessageCreateDataTypeSelector newCreateMessage(String subchannelId) {
+    return AmityMessageCreateTargetSelector(useCase: serviceLocator<MessageCreateUsecase>()).channelId(subchannelId);
+  }
+
   /*  begin_public_function
   id: message.get
   */

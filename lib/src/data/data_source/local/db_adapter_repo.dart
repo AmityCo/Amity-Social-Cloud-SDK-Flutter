@@ -74,6 +74,8 @@ class DbAdapterRepo {
 
   final PinDbAdapter pinDbAdapter;
 
+  final SubChannelDbAdapter subChannelDbAdapter;
+
   /// Init DbAdapter Repo
   DbAdapterRepo({
     required this.postDbAdapter,
@@ -98,5 +100,6 @@ class DbAdapterRepo {
     required this.adDbAdapter,
     required this.pagingIdDbAdapter,
     required this.pinDbAdapter,
+    required this.subChannelDbAdapter,
   });
 }

@@ -17,7 +17,7 @@ String createMessageRequestToJson(CreateMessageRequest data) => json.encode(data
 class CreateMessageRequest {
   /// init [CreateMessageRequest]
   CreateMessageRequest({
-    required this.channelId,
+    required this.subchannelId,
     this.messageId,
     this.userId,
     this.type,
@@ -25,12 +25,14 @@ class CreateMessageRequest {
     this.fileId,
     this.parentId,
     this.metadata,
+    this.dataType,
     this.tags,
     this.mentionees,
+    this.referenceId
   });
 
   /// Channel ID
-  final String channelId;
+  final String subchannelId;
 
   /// Message ID
   String? messageId;
@@ -50,6 +52,11 @@ class CreateMessageRequest {
   /// Parent Id
   String? parentId;
 
+  /// Reference Id
+  String? referenceId;
+
+  String?  dataType; 
+
   /// Metadata
   Map<String, dynamic>? metadata;
 
@@ -63,36 +70,42 @@ class CreateMessageRequest {
   File? uri;
 
   factory CreateMessageRequest.fromJson(Map<String, dynamic> json) => CreateMessageRequest(
-        channelId: json["channelId"],
+        subchannelId: json["messageFeedId"],
         messageId: json["messageId"],
+        dataType : json["dataType"],
         type: json["type"],
         data: json["data"] == null ? null : CreateMessageData.fromJson(json["data"]),
         fileId: json["fileId"],
         parentId: json["parentId"],
         metadata: json["metadata"],
+        referenceId: json["referenceId"],
         tags: List<String>.from(json["tags"].map((x) => x)),
         mentionees: List<AmityMentioneeTarget>.from(json["mentionees"].map((x) => AmityMentioneeTarget.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() {
     return {
-      "channelId": channelId,
+      "messageFeedId": subchannelId,
       "messageId": messageId,
       "type": type,
-      "data": data == null ? null : data!.toJson(),
+      "referenceId": referenceId,
+      "data": data?.toJson(),
       "fileId": fileId,
       "parentId": parentId,
+      "dataType": dataType,
       "metadata": metadata,
-      "tags": tags == null ? null : List<dynamic>.from(tags!.map((x) => x)),
+      "tags": tags == null ? null : tags!.isEmpty ? [] : List<dynamic>.from(tags!.map((x) => x)),
       "mentionees": mentionees == null ? null : List<dynamic>.from(mentionees!.map((x) => x.toJson())),
-    }..removeNullValue();
+    }..removeWhere(
+        (key, value) => value == null,
+    );
   }
 
   /// Conver [CreateMessageRequest] to [MessageHiveEntity]
   MessageHiveEntity convertToMessageEntity() {
     return MessageHiveEntity()
       ..messageId = messageId
-      ..channelId = channelId
+      ..channelId = subchannelId
       ..userId = userId
       ..type = type
       ..data = data!.convertToMessageDataEntity()

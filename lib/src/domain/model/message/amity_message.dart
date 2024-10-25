@@ -10,6 +10,9 @@ class AmityMessage {
   /// Channel ID
   String? channelId;
 
+  /// Channel ID
+  String? subChannelId;
+
   /// User ID
   String? userId;
 

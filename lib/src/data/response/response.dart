@@ -13,3 +13,4 @@ export 'get_reaction_response.dart';
 export 'mqtt_payload_response.dart';
 export 'session_response.dart';
 export 'users_response.dart';
+export 'create_sub_channel_response.dart';

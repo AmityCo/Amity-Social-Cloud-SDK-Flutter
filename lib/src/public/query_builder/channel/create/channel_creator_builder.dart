@@ -56,6 +56,10 @@ class ChannelCreatorBuilder {
     request.avatarFileId = _avatarFileId;
     request.tags = _tags;
     request.metadata = _metadata;
+
+
+
+    print('Creating Channel with request: ${_channelId}');
     return usecase.get(request);
   }
 }

@@ -14,7 +14,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
       MessageQueryRequest request) async {
     try {
       final data = await httpApiClient()
-          .get(MESSAGE_V3, queryParameters: request.toJson());
+          .get(MESSAGE_V5, queryParameters: request.toJson());
       return CreateMessageResponse.fromJson(data.data);
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
@@ -27,7 +27,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
       CreateMessageRequest request) async {
     try {
       final data =
-          await httpApiClient().post(MESSAGE_V3, data: request.toJson());
+          await httpApiClient().post(MESSAGE_V5, data: request.toJson());
       return CreateMessageResponse.fromJson(data.data);
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
@@ -40,7 +40,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
       CreateMessageRequest request) async {
     try {
       final data = await httpApiClient()
-          .put('$MESSAGE_V3/${request.messageId}', data: request.toJson());
+          .put('$MESSAGE_V5/${request.messageId}', data: request.toJson());
       return CreateMessageResponse.fromJson(data.data);
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
@@ -52,7 +52,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
   Future deleteMessage(String messageId) async {
     try {
       await httpApiClient()
-          .delete('$MESSAGE_V3/$messageId', data: {'messageId': messageId});
+          .delete('$MESSAGE_V5/$messageId', data: {'messageId': messageId});
       return;
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
@@ -64,7 +64,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
   Future<CreateMessageResponse> getMessage(String messageId) async {
     try {
       final data = await httpApiClient().get(
-        '$MESSAGE_V3/$messageId',
+        '$MESSAGE_V5/$messageId',
       );
       return CreateMessageResponse.fromJson(data.data);
     } on DioException catch (error) {
@@ -76,7 +76,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
   @override
   Future isFlaggedByMe(String messageId) async {
     try {
-      await httpApiClient().get('$MESSAGE_V3/$messageId/isFlaggedByMe',
+      await httpApiClient().get('$MESSAGE_V5/$messageId/isFlaggedByMe',
           queryParameters: {'messageId': messageId});
       return;
     } on DioException catch (error) {
@@ -89,7 +89,7 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
   Future<CreateMessageResponse> flagMessage(String messageId) async {
     try {
       final data = await httpApiClient()
-          .post('$MESSAGE_V3/$messageId/flag', data: {'messageId': messageId});
+          .post('$MESSAGE_V5/$messageId/flags', data: {'messageId': messageId});
       return CreateMessageResponse.fromJson(data.data);
     } on DioException catch (error) {
       final amityError = AmityErrorResponse.fromJson(error.response!.data);
@@ -100,7 +100,20 @@ class MessageApiInterfaceImpl extends MessageApiInterface {
   @override
   Future<CreateMessageResponse> unFlagMessage(String messageId) async {
     try {
-      final data = await httpApiClient().delete('$MESSAGE_V3/$messageId/unflag',
+      final data = await httpApiClient().delete('$MESSAGE_V5/$messageId/flags',
+          data: {'messageId': messageId});
+      return CreateMessageResponse.fromJson(data.data);
+    } on DioException catch (error) {
+      final amityError = AmityErrorResponse.fromJson(error.response!.data);
+      return Future.error(amityError.amityException());
+    }
+  }
+
+
+  @override
+  Future<CreateMessageResponse> createMessageInFeed(String messageId) async {
+    try {
+      final data = await httpApiClient().delete('$MESSAGE_V5/$messageId/unflag',
           data: {'messageId': messageId});
       return CreateMessageResponse.fromJson(data.data);
     } on DioException catch (error) {

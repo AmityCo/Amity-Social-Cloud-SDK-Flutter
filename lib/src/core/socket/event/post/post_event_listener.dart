@@ -8,7 +8,6 @@ abstract class PostEventListener extends SocketEventListener {
   @override
   void processEvent(Map<String, dynamic> json) {
     final data = CreatePostResponse.fromJson(json);
-
     data.saveToDb(serviceLocator());
   }
 

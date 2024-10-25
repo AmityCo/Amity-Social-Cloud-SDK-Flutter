@@ -19,6 +19,7 @@ export 'src/core/utils/pinned_post_live_collection.dart';
 export 'src/core/utils/post_live_collection.dart';
 export 'src/core/utils/reaction_live_collection.dart';
 export 'src/core/utils/story_live_collection.dart';
+export 'src/core/utils/sub_channel_live_collection.dart';
 export 'src/core/utils/story_target_live_collection.dart';
 export 'src/core/utils/stream_live_collection.dart';
 export 'src/domain/model/model.dart';

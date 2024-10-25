@@ -39,4 +39,7 @@ abstract class ChannelRepo {
 
   /// Save Channel Entity
   Future saveChannelEntity(ChannelHiveEntity data);
+
+  /// Has Channel in Local
+  bool hasInLocal(String channelId);
 }

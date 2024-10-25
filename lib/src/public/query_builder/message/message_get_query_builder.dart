@@ -19,7 +19,7 @@ class MessageGetQueryBuilder {
   /// [MessageGetQueryBuilder]
   MessageGetQueryBuilder(MessageQueryUseCase useCase, String channelId) {
     _useCase = useCase;
-    _request = MessageQueryRequest(channelId: channelId);
+    _request = MessageQueryRequest(subChannelId: channelId);
   }
 
   /// includeDeleted

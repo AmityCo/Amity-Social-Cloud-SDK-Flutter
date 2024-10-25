@@ -5,11 +5,8 @@ import 'package:amity_sdk/src/data/converter/story/story_response_extension_conv
 import 'package:amity_sdk/src/data/converter/story_target/story_target_reposnse_conveter_extension.dart';
 import 'package:amity_sdk/src/data/converter/user_response_extension_converter.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/story_hive_entity_27.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/story_target_hive_entity_28.dart';
 import 'package:amity_sdk/src/data/response/create_story_response.dart';
 import 'package:amity_sdk/src/data/converter/reaction_response_extension_converter.dart';
-import 'package:collection/collection.dart';
 
 enum StoryMqttEvent { addReaction, removeReaction }
 
@@ -48,13 +45,13 @@ extension CreateStoryResponseExtension on CreateStoryResponse {
        await dbRepo.reactionDbAdapter.saveReactionEntity(reactors.convertToReactionHiveEntity(AmityReactionReferenceType.STORY.toString(), story!.storyId!));
       var haveUserReact = reactors.userId == AmityCoreClient.getCurrentUser().userId;
       if (haveUserReact) {
-        if (story?.myReactions == null) {
-          story?.myReactions = [reactors.reactionName];
+        if (story.myReactions == null) {
+          story.myReactions = [reactors.reactionName];
         } else {
-          story?.myReactions!.add(reactors.reactionName);
+          story.myReactions!.add(reactors.reactionName);
         }
       }
-      story?.reactionsCount = story?.reactionsCount == null ? 1 : story.reactionsCount ?? 0 + 1;
+      story.reactionsCount = story.reactionsCount == null ? 1 : story.reactionsCount ?? 0 + 1;
       await dbRepo.storyDbAdapter.saveStoryEntity(story!);
     } else if (event == StoryMqttEvent.removeReaction) {
 

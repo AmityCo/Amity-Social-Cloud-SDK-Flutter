@@ -108,6 +108,12 @@ class ChannelMemberRepoImpl extends ChannelMemberRepo {
   }
 
   @override
+  Future handleMembershipBan(String channelId, String userId) {
+    commonDbAdapter.messageDbAdapter.softDeleteFromChannelByUserId(channelId, userId);
+    return commonDbAdapter.channelUserDbAdapter.updateMembership(channelId, userId, "banned");
+  }
+
+  @override
   Future muteMember(UpdateChannelMembersRequest request) async {
     await channelMemberApiInterface.muteMember(request);
 

@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/extension/stream_controller_extendion.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
+import 'package:amity_sdk/src/data/data.dart';
+import 'package:amity_sdk/src/data/data_source/data_source.dart';
+import 'package:amity_sdk/src/domain/usecase/paging/paging_id_insert_usecase.dart';
 
 typedef RequestBuilder<T> = T Function();
 
@@ -29,6 +33,8 @@ abstract class LiveCollection<Model> {
 
   final StreamController<bool> _loadingStateStream = StreamController<bool>();
 
+  StreamController<PagingIdHiveEntity>? interactorStream;
+
   /// On Error Callback
   Function(Object? error, StackTrace stackTrace)? _onErrorCallback;
 
@@ -39,6 +45,7 @@ abstract class LiveCollection<Model> {
 
   LiveCollection() {
     _loadingStateStream.add(true);
+    _startInteractor();
   }
 
   /// Load next page for live collection
@@ -103,8 +110,28 @@ abstract class LiveCollection<Model> {
     return _loadingStateStream.stream;
   }
 
+  StreamController<PagingIdHiveEntity> observeNewItem() {
+    return StreamController();
+  }
+
+  void _startInteractor() {
+    interactorStream = observeNewItem();
+    interactorStream?.stream.listen((pagingId) async {
+      await serviceLocator<PagingIdInsertUsecase>().process(pagingId);
+    });
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.UNKNOWN;
+  }
+
+  int getHash() {
+    return 0;
+  }
+
   Future<void> dispose() async {
     await _loadingStateStream.close();
+    await interactorStream?.close();
     return getStreamController().close();
   }
 }

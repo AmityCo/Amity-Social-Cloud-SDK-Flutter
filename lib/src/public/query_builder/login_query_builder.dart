@@ -62,7 +62,11 @@ class LoginQueryBuilder {
         // Publish "Logging in" event when user is logging in for the first time
         _appEventBus!.publish(AppEvent.LoggingIn);
 
+      } else {
+        onSessionEstablished(_sessionLifeCycleEventBus!);
+        _appEventBus!.publish(AppEvent.LoginSuccess);
       }
+
     } else {
 
       // Publish "Logging in" event when user is logging in for the first time

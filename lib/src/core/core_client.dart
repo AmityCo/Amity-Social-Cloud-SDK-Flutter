@@ -99,12 +99,12 @@ class CoreClient {
     _sessionStateEventBus;
     _sessionStateManager ??= SessionStateManager(
         appEventBus: _appEventBus!,
-        sessionStateEventBus: _sessionStateEventBus!,
+        sessionStateEventBus: _sessionStateEventBus,
         sessionLifeCycleEventBus: _sessionLifeCycleEventBus!);
 
     analyticsEngine = AnalyticsEngine(
       sessionLifeCycleEventBus: _sessionLifeCycleEventBus!,
-      sessionStateEventBus: _sessionStateEventBus!,
+      sessionStateEventBus: _sessionStateEventBus,
     );
   }
 
@@ -117,6 +117,7 @@ class CoreClient {
   static Future<void> logout() async {
     //terminate current activeSocket
     serviceLocator<AmitySocket>().terminate();
+    serviceLocator<AmityMQTT>().disconnect();
     _sessionLifeCycleEventBus!.publish(SessionLifeCycle.Destroy);
     _appEventBus!.publish(AppEvent.ManualLogout);
     //close all the hive boxes and wipe the data

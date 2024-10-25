@@ -16,7 +16,7 @@ void main() {
   final mockMessageApiInterface = MockMessageApiInterface();
 
   setUpAll(() async {
-    registerFallbackValue(CreateMessageRequest(channelId: channelId));
+    registerFallbackValue(CreateMessageRequest(subchannelId: channelId));
 
     await AmityCoreClientMockSetup.setup();
 

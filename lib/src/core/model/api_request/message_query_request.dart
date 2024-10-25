@@ -16,7 +16,7 @@ String messageQueryRequestToJson(MessageQueryRequest data) =>
 class MessageQueryRequest {
   /// init [MessageQueryRequest]
   MessageQueryRequest(
-      {required this.channelId,
+      {required this.subChannelId,
       this.type,
       this.parentId,
       this.filterByParentId,
@@ -28,7 +28,7 @@ class MessageQueryRequest {
       this.stackFromEnd});
 
   /// Channel ID
-  final String channelId;
+  final String subChannelId;
 
   /// Type
   String? type;
@@ -60,7 +60,7 @@ class MessageQueryRequest {
   /// [MessageQueryRequest]
   factory MessageQueryRequest.fromJson(Map<String, dynamic> json) =>
       MessageQueryRequest(
-        channelId: json["channelId"],
+        subChannelId: json["messageFeedId"],
         type: json["type"],
         parentId: json["parentId"],
         filterByParentId: json["filterByParentId"],
@@ -73,7 +73,7 @@ class MessageQueryRequest {
 
   /// Convert [MessageQueryRequest] to Map
   Map<String, dynamic> toJson() => {
-        "channelId": channelId,
+        "messageFeedId": subChannelId,
         "type": type,
         "parentId": parentId,
         "filterByParentId": filterByParentId,

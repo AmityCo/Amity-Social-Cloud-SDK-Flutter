@@ -8,8 +8,7 @@ extension MessageHiveExtensionConverter on MessageHiveEntity {
   ///
   AmityMessage convertToAmityMessage() {
     //Data type
-    AmityMessageDataType amityMessageDataType =
-        AmityMessageDataTypeExtension.enumOf(type!);
+    AmityMessageDataType amityMessageDataType = type!=null ? AmityMessageDataTypeExtension.enumOf(type!) : AmityMessageDataType.TEXT;
 
     AmityMessageData? amityMessageData;
     switch (amityMessageDataType) {
@@ -84,7 +83,7 @@ extension MessageHiveExtensionConverter on MessageHiveEntity {
   }
 
   bool isMatchingFilter(MessageQueryRequest filter) {
-    return channelId == filter.channelId &&
+    return (subChannelId == filter.subChannelId) &&
         _isDeletedCondition(filter) &&
         _parentCondition(filter) &&
         _typeCondition(filter) &&

@@ -7,7 +7,7 @@ class ChannelUserDbAdapterImpl extends ChannelUserDbAdapter {
   final DBClient dbClient;
 
   /// Box
-  late Box box;
+  late Box<ChannelUserHiveEntity> box;
 
   /// init [ChannelUserDbAdapterImpl]
   ChannelUserDbAdapterImpl({required this.dbClient});
@@ -27,6 +27,15 @@ class ChannelUserDbAdapterImpl extends ChannelUserDbAdapter {
   @override
   ChannelUserHiveEntity? getEntity(String id) {
     return box.get(id);
+  }
+
+  @override
+  Future updateMembership(String channelId, String userId, String membership) async {
+    final entity = box.get("${channelId}_$userId");
+    if (entity != null) {
+      entity.membership = membership;
+      await box.put("${channelId}_$userId", entity);
+    }
   }
 
   @override
