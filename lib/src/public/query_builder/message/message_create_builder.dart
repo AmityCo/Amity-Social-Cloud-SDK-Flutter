@@ -13,6 +13,7 @@ class AmityMessageCreateTargetSelector {
 
   String? _channelId;
   String? _parentId;
+  String? _subChannel;
 
   /// Init [AmityMessageCreateTargetSelector]
   AmityMessageCreateTargetSelector({required MessageCreateUsecase useCase}) {
@@ -22,6 +23,11 @@ class AmityMessageCreateTargetSelector {
   /// Channel ID
   AmityMessageCreateDataTypeSelector channelId(String channelId) {
     _channelId = channelId;
+    return AmityMessageCreateDataTypeSelector(useCase: _useCase, channelId: _channelId!);
+  }
+
+  AmityMessageCreateDataTypeSelector subchannelId(String subChannelID) {
+    _subChannel = subChannelID;
     return AmityMessageCreateDataTypeSelector(useCase: _useCase, channelId: _channelId!);
   }
 
@@ -263,11 +269,13 @@ abstract class AmityMessageCreator {
   Future<AmityMessage> send() async {
     // throw UnimplementedError();
 
-    CreateMessageRequest request = CreateMessageRequest(channelId: _channelId);
+    CreateMessageRequest request = CreateMessageRequest(subchannelId: _channelId);
 
     if (_parentId != null) {
       request.parentId = _parentId!;
     }
+
+    request.referenceId = Uuid().v4();
 
     request.type = getDataType().value;
 
@@ -284,6 +292,8 @@ abstract class AmityMessageCreator {
     if (_metadata != null) {
       request.metadata = _metadata;
     }
+
+    request.dataType = getDataType().value;
 
     // Added the Message Id
     request.messageId = Uuid().v4();

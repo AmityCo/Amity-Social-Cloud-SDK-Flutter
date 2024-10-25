@@ -1,4 +1,3 @@
-import 'package:amity_sdk/src/src.dart';
 
 enum TombstoneModelType {
   USER,
@@ -13,7 +12,7 @@ enum TombstoneModelType {
   STORY_TARGET,
   COMMENT,
   POLL,
-  UNKNOWN
+  UNKNOWN,
 }
 
 extension TombStoneTypeExtension on TombstoneModelType {

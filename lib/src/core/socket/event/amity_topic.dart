@@ -21,6 +21,14 @@ abstract class AmityTopic {
 
   factory AmityTopic.STORY(AmityStory story) = AmityTopicStory;
 
+  factory AmityTopic.SUB_CHANNEL(AmitySubChannel story) = AmityTopicSubChannel;
+
+  factory AmityTopic.SMART_CHANNEL(String networkId, String userId) = AmityTopicSmartChannel;
+
+  factory AmityTopic.SMART_SUBCHANNEL(String networkId, String userId) = AmityTopicSmartSubchannel;
+
+  factory AmityTopic.SMART_MESSAGE(String networkId, String userId) = AmityTopicSmartMessage;
+
   /// Generate topic
   String generateTopic();
 
@@ -91,6 +99,18 @@ class AmityTopicComment extends AmityTopic {
   }
 }
 
+
+
+class AmityTopicSubChannel extends AmityTopic {
+  final AmitySubChannel amitySubChannel;
+  AmityTopicSubChannel(this.amitySubChannel) : super._('sub_channel', amitySubChannel.channelId!, "");
+
+  @override
+  String generateTopic() {
+    return '${amitySubChannel.path}/#';
+  }
+}
+
 /// Amity Topic for Community
 class AmityTopicCommunity extends AmityTopic {
   final AmityCommunity amityCommunity;
@@ -111,5 +131,45 @@ class AmityTopicCommunity extends AmityTopic {
       case AmityCommunityEvents.STORIES_AND_COMMENTS:
         return "${amityCommunity.path!}/story/#";
     }
+  }
+}
+
+///  Amity Topic for Smart channel
+class AmityTopicSmartChannel extends AmityTopic {
+  String networkId;
+  String userId;
+
+  AmityTopicSmartChannel(this.networkId, this.userId) : super._('smart_channel', networkId, "");
+
+  @override
+  String generateTopic() {
+    return "${networkId}/smartfeed/${userId}/channels";
+  }
+}
+
+///  Amity Topic for Smart Subchannel
+class AmityTopicSmartSubchannel extends AmityTopic {
+  String networkId;
+  String userId;
+
+  AmityTopicSmartSubchannel(this.networkId, this.userId) : super._('smart_subchannel', networkId, "");
+
+  @override
+  String generateTopic() {
+    return "${networkId}/smartfeed/${userId}/messagefeeds";
+  }
+}
+
+
+///  Amity Topic for Smart message
+class AmityTopicSmartMessage extends AmityTopic {
+  String networkId;
+  String userId;
+
+  AmityTopicSmartMessage(this.networkId, this.userId) : super._('smart_message', networkId, "");
+
+  @override
+  String generateTopic() {
+    return "${networkId}/smartfeed/${userId}/messages";
   }
 }

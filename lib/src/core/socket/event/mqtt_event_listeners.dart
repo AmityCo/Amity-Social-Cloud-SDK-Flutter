@@ -1,10 +1,22 @@
+import 'package:amity_sdk/src/core/socket/event/channel/channel_banned_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_created_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_deleted_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_joined_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_left_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_members_added_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_members_removed_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_unbanned_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/channel/channel_updated_event_listener.dart';
 import 'package:amity_sdk/src/core/socket/event/event.dart';
 import 'package:amity_sdk/src/core/socket/event/post/post_approved_event_listener.dart';
 import 'package:amity_sdk/src/core/socket/event/post/post_declined_event_listener.dart';
-import 'package:amity_sdk/src/core/socket/event/story/story_reaction_added_event_listerner.dart';
 import 'package:amity_sdk/src/core/socket/event/story/story_create_event_listener.dart';
 import 'package:amity_sdk/src/core/socket/event/story/story_delete_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/story/story_reaction_added_event_listerner.dart';
 import 'package:amity_sdk/src/core/socket/event/story/story_reaction_removed_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/subchannel/subchannel_create_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/subchannel/subchannel_delete_event_listener.dart';
+import 'package:amity_sdk/src/core/socket/event/subchannel/subchannel_update_event_listener.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 
 class MqttEventListeners {
@@ -45,13 +57,27 @@ class MqttEventListeners {
     CommunityUserBannedEventListener(),
     CommunityUserUnbannedEventListener(),
 
-    // Stories 
+    // Stories
     StoryCreateEventListener(),
     StoryDeleteEventListener(),
     StoryReactionAddedEventListener(),
     StoryReactionRemovedEventListener(),
-    
 
+    // SubChannel
+    SubChannelCreateEventListener(),
+    SubChannelUpdateEventListener(),
+    SubChannelDeleteEventListener(),
+
+    //Channel
+    ChannelCreatedEventListener(),
+    ChannelUpdatedEventListener(),
+    ChannelDeletedEventListener(),
+    ChannelMembersAddedEventListener(),
+    ChannelMembersRemovedEventListener(),
+    ChannelBannedEventListener(),
+    ChannelUnbannedEventListener(),
+    ChannelJoinedEventListener(),
+    ChannelLeftEventListener(),
   ]);
 
   SocketEventListener? getEvent(String eventType) =>

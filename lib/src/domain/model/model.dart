@@ -33,3 +33,4 @@ export 'follow/follow.dart';
 export 'message/message.dart';
 export 'session/session_state.dart';
 export 'story_target_search_info.dart';
+export 'sub_channel/amity_sub_channel.dart';

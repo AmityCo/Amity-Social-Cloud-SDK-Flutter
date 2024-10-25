@@ -43,7 +43,7 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
   @override
   Future deleteMessagesByChannelId(String channelId) async {
     box.values
-        .where((element) => element.channelId == channelId)
+        .where((element) => element.subChannelId == channelId)
         .forEach((element) {
       box.delete(element.messageId);
     });
@@ -72,7 +72,7 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
   int getHighestChannelSagment(String channelId) {
     return box.values
         .where((element) =>
-            element.channelId == channelId &&
+            element.subChannelId == channelId &&
             element.parentId == null &&
             (element.syncState == AmityMessageSyncState.SYNCING ||
                 element.syncState == AmityMessageSyncState.SYNCED))
@@ -81,5 +81,16 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
             (previousValue, element) => element.channelSegment! > previousValue
                 ? element.channelSegment!
                 : previousValue);
+  }
+
+  @override
+  void softDeleteFromChannelByUserId(String channelId, String userId) {
+    box.values
+        .where((element) =>
+            element.channelId == channelId && element.userId == userId)
+        .forEach((element) {
+      element.isDeleted = true;
+      box.put(element.messageId, element);
+    });
   }
 }

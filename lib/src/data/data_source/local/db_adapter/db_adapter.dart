@@ -18,3 +18,4 @@ export 'poll_db_adapter.dart';
 export 'post_db_adapter.dart';
 export 'reaction_db_adapter.dart';
 export 'user_db_adapter.dart';
+export 'sub_channel_db_adapter.dart';

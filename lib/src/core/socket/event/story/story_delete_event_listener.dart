@@ -1,7 +1,5 @@
 import 'package:amity_sdk/src/core/service_locator/service_locator.dart';
 import 'package:amity_sdk/src/core/socket/event/story/story_event_listener.dart';
-import 'package:amity_sdk/src/data/converter/story/create_story_response_extension.dart';
-import 'package:amity_sdk/src/data/converter/story/story_response_extension_converter.dart';
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/story_db_adapter.dart';
 import 'package:amity_sdk/src/data/response/create_story_response.dart';
 

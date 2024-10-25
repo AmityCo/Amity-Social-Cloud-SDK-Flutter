@@ -1,4 +1,3 @@
-import 'package:amity_sdk/src/core/extension/extension.dart';
 
 class NotifiableEventsRequest {
   String? name;

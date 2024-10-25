@@ -13,6 +13,9 @@ class MessageHiveEntity extends  EkoObject {
   /// Channel ID
   String? channelId;
 
+  /// Subchannel ID
+  String? subChannelId;
+
   /// User ID
   String? userId;
 
@@ -85,6 +88,7 @@ class MessageHiveEntity extends  EkoObject {
     this.userId,
     this.type,
     this.data,
+    this.subChannelId,
     this.channelSegment,
     this.parentId,
     this.fileId,
@@ -115,6 +119,7 @@ class MessageHiveEntity extends  EkoObject {
     String? userId,
     String? type,
     MessageDataHiveEntity? data,
+    String? subChannelId,
     int? channelSegment,
     String? parentId,
     String? fileId,
@@ -142,6 +147,7 @@ class MessageHiveEntity extends  EkoObject {
       channelSegment: channelSegment ?? this.channelSegment,
       parentId: parentId ?? this.parentId,
       fileId: fileId ?? this.fileId,
+      subChannelId: subChannelId ?? this.subChannelId,
       tags: tags ?? this.tags,
       metadata: metadata ?? this.metadata,
       flagCount: flagCount ?? this.flagCount,

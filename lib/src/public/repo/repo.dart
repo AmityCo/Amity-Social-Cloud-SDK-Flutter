@@ -11,3 +11,4 @@ export 'sub_set/sub_set.dart';
 export 'user_repository.dart';
 export 'amity_story_repository.dart';
 export 'amity_reaction_repository.dart';
+export 'sub_channel_repository.dart';

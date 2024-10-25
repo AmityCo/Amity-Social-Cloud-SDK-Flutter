@@ -23,4 +23,6 @@ class AmitySocialClient {
 
   /// New Reaction Repo
   static AmityReactionRepository newReactionRepository() => serviceLocator<AmityReactionRepository>();
+
+  static AmitySubChannelRepository newSubChannelRepository() => serviceLocator<AmitySubChannelRepository>();
 }

@@ -89,6 +89,9 @@ class _$AmityUploadResultCopyWithImpl<T, $Res,
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -111,6 +114,8 @@ class __$$AmityUploadInProgressImplCopyWithImpl<T, $Res>
       $Res Function(_$AmityUploadInProgressImpl<T>) _then)
       : super(_value, _then);
 
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -159,7 +164,9 @@ class _$AmityUploadInProgressImpl<T> implements AmityUploadInProgress<T> {
   @override
   int get hashCode => Object.hash(runtimeType, uploadInfo, cancelToken);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AmityUploadInProgressImplCopyWith<T, _$AmityUploadInProgressImpl<T>>
@@ -252,7 +259,10 @@ abstract class AmityUploadInProgress<T> implements AmityUploadResult<T> {
 
   AmityUploadInfo get uploadInfo;
   CancelToken get cancelToken;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AmityUploadInProgressImplCopyWith<T, _$AmityUploadInProgressImpl<T>>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -275,6 +285,8 @@ class __$$AmityUploadCompleteImplCopyWithImpl<T, $Res>
       $Res Function(_$AmityUploadCompleteImpl<T>) _then)
       : super(_value, _then);
 
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -314,7 +326,9 @@ class _$AmityUploadCompleteImpl<T> implements AmityUploadComplete<T> {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(file));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AmityUploadCompleteImplCopyWith<T, _$AmityUploadCompleteImpl<T>>
@@ -405,7 +419,10 @@ abstract class AmityUploadComplete<T> implements AmityUploadResult<T> {
       _$AmityUploadCompleteImpl<T>;
 
   T get file;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AmityUploadCompleteImplCopyWith<T, _$AmityUploadCompleteImpl<T>>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -427,6 +444,8 @@ class __$$AmityUploadErrorImplCopyWithImpl<T, $Res>
       $Res Function(_$AmityUploadErrorImpl<T>) _then)
       : super(_value, _then);
 
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -465,7 +484,9 @@ class _$AmityUploadErrorImpl<T> implements AmityUploadError<T> {
   @override
   int get hashCode => Object.hash(runtimeType, error);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AmityUploadErrorImplCopyWith<T, _$AmityUploadErrorImpl<T>> get copyWith =>
@@ -556,7 +577,10 @@ abstract class AmityUploadError<T> implements AmityUploadResult<T> {
       _$AmityUploadErrorImpl<T>;
 
   AmityException get error;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AmityUploadErrorImplCopyWith<T, _$AmityUploadErrorImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -575,6 +599,9 @@ class __$$AmityUploadCancelImplCopyWithImpl<T, $Res>
   __$$AmityUploadCancelImplCopyWithImpl(_$AmityUploadCancelImpl<T> _value,
       $Res Function(_$AmityUploadCancelImpl<T>) _then)
       : super(_value, _then);
+
+  /// Create a copy of AmityUploadResult
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc

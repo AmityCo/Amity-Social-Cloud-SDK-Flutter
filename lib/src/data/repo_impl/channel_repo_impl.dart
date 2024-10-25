@@ -137,4 +137,15 @@ class ChannelRepoImpl extends ChannelRepo {
   Future saveChannelEntity(ChannelHiveEntity data) async {
     await commonDbAdapter.channelDbAdapter.saveEntity(data);
   }
+
+  @override
+  bool hasInLocal(String channelId) {
+    ChannelHiveEntity? channel;
+    try {
+      channel = commonDbAdapter.channelDbAdapter.getEntity(channelId);
+    } catch (e) {
+      // When fail to get channel from cache let the channel be null
+    }
+    return channel != null;
+  }
 }

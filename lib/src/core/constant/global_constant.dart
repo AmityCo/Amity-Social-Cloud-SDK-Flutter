@@ -68,6 +68,7 @@ const UNREGISTER_NOTIFICATION_V1_URL = 'v1/notification';
 /// Message API v3 Base Url
 const MESSAGE_V3 = 'api/v3/messages';
 const MESSAGE_V1 = 'api/v1/messages';
+const MESSAGE_V5 = 'api/v5/messages';
 
 const CHANNELS_V2 = 'api/v2/channels';
 const CHANNEL_V2 = 'api/v2/channel';
@@ -82,7 +83,7 @@ const UNBAN = 'unban';
 
 const MAX_FILE_SIZE = 1073741824; // 1GB
 
-// Stream 
+// Stream
 const STREAM_V3 = 'api/v3/video-streaming';
 
 
@@ -107,3 +108,6 @@ const VALIDATE_TEXT = "api/v3/blocklists/verify";
 // notifications
 const NOTIFICATION_SETTINGS = "api/v3/notification/setting";
 const PINNED_POST_QUERY = "api/v1/pinned-posts/communities/";
+
+const MESSAGE_FEED_V5 = "api/v5/message-feeds";
+

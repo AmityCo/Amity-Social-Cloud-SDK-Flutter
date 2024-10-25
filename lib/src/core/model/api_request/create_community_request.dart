@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:amity_sdk/amity_sdk.dart';
 
 CreateCommunityRequest createPostRequestFromJson(String str) =>
     CreateCommunityRequest.fromJson(json.decode(str));

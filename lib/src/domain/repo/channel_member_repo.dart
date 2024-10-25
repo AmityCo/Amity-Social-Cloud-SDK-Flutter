@@ -36,6 +36,9 @@ abstract class ChannelMemberRepo {
   /// Unban Member
   Future unbanMember(UpdateChannelMembersRequest request);
 
+  /// Handle Membership Ban
+  Future handleMembershipBan(String channelId, String userId);
+
   /// Get Member
   Future<AmityChannelMember> getMember(String id, String userId);
 

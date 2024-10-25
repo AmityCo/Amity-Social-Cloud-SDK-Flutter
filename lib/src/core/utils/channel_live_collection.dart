@@ -2,13 +2,26 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecase.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
+import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_new_item_usecase.dart';
 
 class ChannelLiveCollection extends LiveCollection<AmityChannel> {
   RequestBuilder<GetChannelRequest> request;
 
   ChannelLiveCollection({required this.request});
+
+  @override
+  AmityNonce getNonce() {
+    return AmityNonce.CHANNEL_LIST;
+  }
+
+  @override
+  int getHash() {
+    return request().getHashCode();
+  }
 
   @override
   Future<PageListData<List<AmityChannel>, String>>
@@ -33,5 +46,10 @@ class ChannelLiveCollection extends LiveCollection<AmityChannel> {
   @override
   StreamController<List<AmityChannel>> getStreamController() {
     return serviceLocator<ChannelObserveListUseCase>().listen(request);
+  }
+
+  @override
+  StreamController<PagingIdHiveEntity> observeNewItem() {
+    return serviceLocator<ChannelObserveNewItemUseCase>().listen(request);
   }
 }

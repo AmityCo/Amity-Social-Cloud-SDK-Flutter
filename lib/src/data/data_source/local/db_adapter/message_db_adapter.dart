@@ -27,4 +27,7 @@ abstract class MessageDbAdapter {
 
   /// get the highest channel sagment for the channel Id
   int getHighestChannelSagment(String channelId);
+
+  /// Soft delete message from channel by user Id to handle channel banned event
+  void softDeleteFromChannelByUserId(String channelId, String userId);
 }

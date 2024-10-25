@@ -40,7 +40,7 @@ class AmityMessageUpdateQueryBuilder {
   /// Update Amity Message
   Future<AmityMessage> update() async {
     CreateMessageRequest request =
-        CreateMessageRequest(channelId: channelId, messageId: messageId);
+        CreateMessageRequest(subchannelId: channelId, messageId: messageId);
 
     if (_text != null) {
       request.data = CreateMessageData(text: _text);

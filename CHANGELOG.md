@@ -1,3 +1,11 @@
+## 0.52.0
+* Feat: Introduce Subchannel
+* Feat: Migrate Message to MessageV5
+* Feat: Support auto subscribe to smartfeed RTE
+* Feat: Introduce Channel Real-Time Events
+* Feat: Introduce Subchannel Real-Time Events
+* Fix: Fix MQTT connection stability on iOS devices
+
 ## 0.51.0
 * Feat: Introduce ability to observe client session state
 * Feat: Introduce ability to observe Live Collection loading state
