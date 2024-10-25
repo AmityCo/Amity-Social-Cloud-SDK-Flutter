@@ -97,9 +97,13 @@ const STORIES_SEEN = 'api/v4/stories/seen';
 const STORIES_BY_TARGETS = 'api/v4/stories-by-targets';
 const STORIES_TARGETS_GLOBAL = 'api/v5/me/global-story-targets';
 
+// ads
+const NETWORK_ADS = 'api/v1/ads/me';
 
+// blocklists
 const VALIDATE_URL = "api/v3/allowlists/verify";
 const VALIDATE_TEXT = "api/v3/blocklists/verify";
 
+// notifications
 const NOTIFICATION_SETTINGS = "api/v3/notification/setting";
-
+const PINNED_POST_QUERY = "api/v1/pinned-posts/communities/";

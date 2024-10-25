@@ -81,11 +81,11 @@ class StoryComposerUseCase extends UseCase<AmityStory, AmityStory> {
 
 
 
-  Future<AmityImage> getImageFile(AmityStory story) async {
-    var fileProperties =
-        await fileRepo.getFileByIdFromDb(getImageId(story.rawData));
-    return AmityImage(fileProperties);
-  }
+      Future<AmityImage> getImageFile(AmityStory story) async {
+        var fileProperties =
+            await fileRepo.getFileByIdFromDb(getImageId(story.rawData));
+        return AmityImage(fileProperties);
+      }
 
   Future<AmityImage> getThumbnailFile(AmityStory story) async {
     var fileProperties =

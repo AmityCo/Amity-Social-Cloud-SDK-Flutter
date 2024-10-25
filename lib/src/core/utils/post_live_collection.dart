@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
-import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/usecase/post/post_observe_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/post/post_query_usecase.dart';
 
 class PostLiveCollection extends LiveCollection<AmityPost> {
   RequestBuilder<GetPostRequest> request;
@@ -14,7 +14,8 @@ class PostLiveCollection extends LiveCollection<AmityPost> {
   Future<PageListData<List<AmityPost>, String>> getFirstPageRequest() async {
     final params = request();
     params.options?.token = null;
-    return await serviceLocator<PostGetUsecase>().get(params);
+    params.options?.limit = defaultPageSize;
+    return await serviceLocator<PostQueryUsecase>().get(params);
   }
 
   @override
@@ -23,7 +24,7 @@ class PostLiveCollection extends LiveCollection<AmityPost> {
     final params = request();
     params.options?.token = token;
     params.options?.limit = null;
-    return await serviceLocator<PostGetUsecase>().get(params);
+    return await serviceLocator<PostQueryUsecase>().get(params);
   }
 
   @override

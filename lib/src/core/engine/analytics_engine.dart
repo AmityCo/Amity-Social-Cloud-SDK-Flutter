@@ -1,3 +1,4 @@
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/engine/analytics/analytics_event_syncer.dart';
 import 'package:amity_sdk/src/core/engine/analytics/capturer/analytics_event_capturer.dart';
@@ -7,7 +8,6 @@ import 'package:amity_sdk/src/core/engine/analytics/capturer/view_story_event_ca
 import 'package:amity_sdk/src/core/session/component/session_component.dart';
 import 'package:amity_sdk/src/core/session/event_bus/session_life_cycle_event_bus.dart';
 import 'package:amity_sdk/src/core/session/event_bus/session_state_event_bus.dart';
-import 'package:amity_sdk/src/core/session/model/session_state.dart';
 import 'package:amity_sdk/src/domain/repo/analytics_repo.dart';
 
 class AnalyticsEngine extends SessionComponent {

@@ -55,4 +55,8 @@ class AmityGlobalFeedQuery {
 
     return _usecase.listen(request);
   }
+
+  GlobalFeedLiveCollection getLiveCollection() {
+    return GlobalFeedLiveCollection(request: () => GetGlobalFeedRequest());
+  }
 }

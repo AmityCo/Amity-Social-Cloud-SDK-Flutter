@@ -1,13 +1,10 @@
-
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
-
 
 part 'analytics_event_hive_entity_24.g.dart';
 
 @HiveType(typeId: 24)
-class AnalyticsEventHiveEntity  extends EkoObject{
-
+class AnalyticsEventHiveEntity extends EkoObject {
   String? eventId;
 
   String? userId;
@@ -19,11 +16,11 @@ class AnalyticsEventHiveEntity  extends EkoObject{
   String? activityType;
 
   String? syncPriority;
-  
+
+  Map<String, dynamic>? metadata;
+
   @override
   String? getId() {
     return eventId;
   }
-
-
 }

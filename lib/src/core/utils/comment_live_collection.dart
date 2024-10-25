@@ -14,6 +14,7 @@ class CommentLiveCollection extends LiveCollection<AmityComment> {
   Future<PageListData<List<AmityComment>, String>> getFirstPageRequest() async {
     final params = request();
     params.options?.token = null;
+    params.options?.limit = defaultPageSize;
     return await serviceLocator<CommentQueryUseCase>().get(params);
   }
 

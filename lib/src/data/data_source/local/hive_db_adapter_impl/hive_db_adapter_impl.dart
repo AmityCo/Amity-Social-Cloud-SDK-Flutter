@@ -1,4 +1,5 @@
 export 'account_db_adapter_impl.dart';
+export 'ad_db_adapter_impl.dart';
 export 'channel_db_adapter_impl.dart';
 export 'channel_user_db_adapter_impl.dart';
 export 'comment_db_adater_impl.dart';

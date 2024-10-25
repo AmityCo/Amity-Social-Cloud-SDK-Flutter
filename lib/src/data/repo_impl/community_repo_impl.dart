@@ -48,7 +48,9 @@ class CommunityRepoImpl extends CommunityRepo {
 
   @override
   Future<AmityCommunity?> getCommunityById(String communityId) async {
-    return communityDbAdapter.getCommunityEntity(communityId)?.convertToAmityCommunity();
+    return communityDbAdapter
+        .getCommunityEntity(communityId)
+        ?.convertToAmityCommunity();
   }
 
   @override
@@ -80,8 +82,71 @@ class CommunityRepoImpl extends CommunityRepo {
     return amityCommunity.first;
   }
 
-  Future<List<AmityCommunity>> saveCommunity(
-      CreateCommunityResponse data, {bool isQuery = false}) async {
+  Future saveCommunities(CreateCommunityResponse data) async {
+    //Convert to File Hive Entity
+    //we have save the file first, since every object depends on file
+    List<FileHiveEntity> fileHiveEntities =
+        data.files.map((e) => e.convertToFileHiveEntity()).toList();
+
+    //Convert to User Hive Entity
+    List<UserHiveEntity> userHiveEntities =
+        data.users.map((e) => e.convertToUserHiveEntity()).toList();
+
+    //Conver to category hive entity
+    List<CommunityCategoryHiveEntity> communityCategoryHiveEnties = data
+        .categories
+        .map((e) => e.convertToCommunityCategoryHiveEntity())
+        .toList();
+
+    //Conver to Feed hive entity
+    List<CommunityFeedHiveEntity> communityFeedHiveEnties =
+        data.feeds.map((e) => e.convertToCommunityFeedHiveEntity()).toList();
+
+    //Conver to Feed hive entity
+    List<CommunityHiveEntity> communityHiveEnties =
+        data.communities.map((e) => e.convertToCommunityHiveEntity()).toList();
+
+    //Convert to Community Member Hive Entity
+    List<CommunityMemberHiveEntity> communityMemberHiveEntities = data
+        .communityUsers
+        .map((e) => e.convertToCommnityMemberHiveEntity())
+        .toList();
+
+    //Save the File Entity
+    for (var e in fileHiveEntities) {
+      await fileDbAdapter.saveFileEntity(e);
+    }
+
+    //Save the User Entity
+    for (var e in userHiveEntities) {
+      await userDbAdapter.saveUserEntity(e);
+    }
+
+    //Save the Community Category Entity
+    for (var e in communityCategoryHiveEnties) {
+      await communityCategoryDbAdapter.saveCommunityCategoryEntity(e);
+    }
+
+    //Save the Community Feed Entity
+    for (var e in communityFeedHiveEnties) {
+      await communityFeedDbAdapter.saveCommunityFeedEntity(e);
+    }
+
+    //Save the Community  Entity
+    await communityDbAdapter.saveCommunityEntities(communityHiveEnties);
+
+    //Save the Community Member Entity
+    for (var e in communityMemberHiveEntities) {
+      final UserHiveEntity? user = userHiveEntities
+          .firstWhereOrNull((element) => element.userId == e.userId);
+      await communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
+    }
+
+    return communityHiveEnties.map((e) => e.convertToAmityCommunity()).toList();
+  }
+
+  Future<List<AmityCommunity>> saveCommunity(CreateCommunityResponse data,
+      {bool isQuery = false}) async {
     //Convert to File Hive Entity
     //we have save the file first, since every object depends on file
     List<FileHiveEntity> fileHiveEntities =
@@ -141,7 +206,8 @@ class CommunityRepoImpl extends CommunityRepo {
 
     //Save the Community Member Entity
     for (var e in communityMemberHiveEntities) {
-      final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
+      final UserHiveEntity? user = userHiveEntities
+          .firstWhereOrNull((element) => element.userId == e.userId);
       await communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
     }
 
@@ -160,8 +226,7 @@ class CommunityRepoImpl extends CommunityRepo {
   Future<PageListData<List<AmityCommunity>, String>> getCommunityQuery(
       GetCommunityRequest request) async {
     if (request.options?.token == null) {
-      await communityDbAdapter
-          .deleteCommunityEntities();
+      await communityDbAdapter.deleteCommunityEntities();
     }
     final data = await communityApiInterface.getCommunityQuery(request);
     final amityCommunity = await saveCommunity(data, isQuery: true);
@@ -171,16 +236,22 @@ class CommunityRepoImpl extends CommunityRepo {
   @override
   Future<PageListData<List<AmityCommunity>, String>> queryCommunities(
       GetCommunityRequest request) async {
-    final data = await communityApiInterface.getCommunityQuery(request);
-    final amityCommunity = await saveCommunity(data, isQuery: true);
-     final hash = request.getHashCode();
+    final hash = request.getHashCode();
     final nonce = AmityNonce.COMMUNITY_LIST;
-    final paging = data.paging;
     int nextIndex = 0;
+    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    final data = await communityApiInterface.getCommunityQuery(request);
+    final paging = data.paging;
+    await saveCommunities(data);
     if (request.options?.token == null) {
       await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
     } else {
-      nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;
+      nextIndex = (pagingIdRepo
+              .getPagingIdEntities(nonce.value, hash)
+              .map((e) => (e.position ?? 0))
+              .toList()
+              .reduce(max)) +
+          1;
     }
     data.communities.forEachIndexed((index, element) async {
       final pagingId = PagingIdHiveEntity(
@@ -191,7 +262,7 @@ class CommunityRepoImpl extends CommunityRepo {
       );
       await pagingIdRepo.savePagingId(pagingId);
     });
-    return PageListData(amityCommunity, data.paging?.next ?? '');
+    return PageListData([], data.paging?.next ?? '');
   }
 
   @override
@@ -265,7 +336,6 @@ class CommunityRepoImpl extends CommunityRepo {
       await deleteCommunity(objectId);
       return Future.value(null);
     }
-
   }
 
   @override
@@ -289,14 +359,18 @@ class CommunityRepoImpl extends CommunityRepo {
 
   @override
   int getPostCount(String targetId, String feedType) {
-    var feed =  communityFeedDbAdapter.getCommunityFeedByFeedType(targetId, feedType);
-    return feed.postCount ?? 0;
+    try {
+      var feed =  communityFeedDbAdapter.getCommunityFeedByFeedType(targetId, feedType);
+      return feed.postCount ?? 0;
+    } catch (e) {
+      return 0;
+    }
   }
 
   @override
   Stream<List<AmityCommunity>> listenCommunities(
       RequestBuilder<GetCommunityRequest> request) {
-    final channels = communityDbAdapter.listenCommunityEntities(request);
-    return channels.map((event) => event.map((e) => e.convertToAmityCommunity()).toList());
+    final communities = communityDbAdapter.listenCommunityEntities(request);
+    return communities.map((event) => event.map((e) => e.convertToAmityCommunity()).toList());
   }
 }

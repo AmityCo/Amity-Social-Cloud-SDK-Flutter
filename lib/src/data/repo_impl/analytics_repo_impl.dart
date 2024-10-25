@@ -29,7 +29,8 @@ class AnalytcisRepoImpl extends AnalyticsRepo {
 
   @override
   Future saveAnalyticsEvent(String contentId, String contentType,
-      String activityType, AnalyticsEventSyncPriority syncPriority) async {
+      String activityType, AnalyticsEventSyncPriority syncPriority,
+      [Map<String, dynamic>? metadata = null]) async {
     var recentEvent = dbAdapterRepo.analyticsDbAdapter.getByIdNow(contentId);
     if (recentEvent != null) {
       if (DateTime.now().difference(recentEvent.getCreatedAt()!).inSeconds <
@@ -44,7 +45,7 @@ class AnalytcisRepoImpl extends AnalyticsRepo {
       await dbAdapterRepo.analyticsDbAdapter.deleteOldestEvent();
     }
     var event =
-        createAnalyticEvent(contentId, contentType, activityType, syncPriority);
+        createAnalyticEvent(contentId, contentType, activityType, syncPriority, metadata);
     await dbAdapterRepo.analyticsDbAdapter.saveAnalyticsEvents([event]);
   }
 
@@ -93,7 +94,8 @@ class AnalytcisRepoImpl extends AnalyticsRepo {
       String contentId,
       String contentType,
       String activityType,
-      AnalyticsEventSyncPriority syncPriority) {
+      AnalyticsEventSyncPriority syncPriority,
+      Map<String, dynamic>? metadata) {
     return AnalyticsEventHiveEntity()
       ..eventId = const Uuid().v1()
       ..userId = AmityCoreClient.getUserId()
@@ -101,6 +103,7 @@ class AnalytcisRepoImpl extends AnalyticsRepo {
       ..contentType = contentType
       ..activityType = activityType
       ..syncPriority = syncPriority.apiKey
+      ..metadata = metadata
       ..setCreatedAt(DateTime.now())
       ..setUpdatedAt(DateTime.now());
   }

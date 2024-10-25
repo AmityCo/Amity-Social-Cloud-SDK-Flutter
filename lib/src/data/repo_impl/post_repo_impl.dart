@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/mapper/post_model_mapper.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
+import 'package:collection/collection.dart';
 
 /// Post Repo
 class PostRepoImpl extends PostRepo
@@ -16,10 +19,14 @@ class PostRepoImpl extends PostRepo
   /// Common Db Adapter
   final DbAdapterRepo dbAdapterRepo;
 
+  // Paging Id Repository
+  final PagingIdRepo pagingIdRepo;
+
   /// Init Post Repo Impl
   PostRepoImpl({
     required this.publicPostApiInterface,
     required this.dbAdapterRepo,
+    required this.pagingIdRepo,
   });
 
   @override
@@ -56,10 +63,8 @@ class PostRepoImpl extends PostRepo
 
     ///Get the post from DB and update the delete flag to true
     final amityPostDb = dbAdapterRepo.postDbAdapter.getPostEntity(postId)!;
-
-    amityPostDb
-      ..isDeleted = true
-      ..save();
+    amityPostDb.isDeleted = true;
+    dbAdapterRepo.postDbAdapter.savePostEntity(amityPostDb);
 
     return data;
   }
@@ -189,28 +194,48 @@ class PostRepoImpl extends PostRepo
   }
 
   @override
-  Stream<List<AmityPost>> listenPosts(RequestBuilder<GetPostRequest> request) {
-    return dbAdapterRepo.postDbAdapter.listenPostEntities(request).map((event) {
-      final req = request.call();
-      final List<AmityPost> list = [];
-      for (var element in event) {
-        // Temprorary Solution 
-        // Todo: Introduce Query Stream and remove this 
-        if (req.dataTypes == null) {
-          if (element.parentPostId != null) {
-            continue;
-          }
-        } 
-        list.add(element.convertToAmityPost());
-      }
-
-      if (req.sortBy == AmityPostSortOption.LAST_CREATED.apiKey) {
-        list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
-      } else {
-        list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * 1);
-      }
-
-      return list;
+  Future<PageListData<List<AmityPost>, String>> queryPostList(GetPostRequest request) async {
+    final nonce = AmityNonce.POST_LIST;
+    final hash = request.getHashCode();
+    final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
+    int nextIndex = 0;
+    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    //TODO: request.options.token is gone after call data.saveToDb, might cause further issue in the future
+    final data = await publicPostApiInterface.queryPost(request);
+    await data.saveToDb(dbAdapterRepo);
+    if (isFirstPage) {
+      await pagingIdDbAdapter.deletePagingIdByHash(nonce.value, hash);
+    }else {
+    nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;
+    }
+    data.posts.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.postId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdDbAdapter.savePagingIdEntity(pagingId);
     });
+
+    return PageListData([], data.paging?.next ?? '');
   }
+
+  @override
+  Stream<List<AmityPost>> listenPosts(
+    RequestBuilder<GetPostRequest> request) {
+      final entities = dbAdapterRepo.postDbAdapter.listenPostEntities(request);
+        return entities.map((event) => event.map((e) => e.convertToAmityPost()).toList());
+    }
+  
+  @override
+  Stream<List<PostHiveEntity>>listenAllPostEntities() {
+    return dbAdapterRepo.postDbAdapter.listenAllPostEntities();
+  }
+  
+  @override
+  List<PostHiveEntity> getPostEntities(
+    RequestBuilder<GetPostRequest> request) {
+      return dbAdapterRepo.postDbAdapter.getPostEntities(request);
+    }
 }

@@ -1,6 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/date_time_type_adapter.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/date_time_type_adapter_31.dart';
 import 'package:hive/hive.dart';
 
 class CommunityDbAdapterImpl extends CommunityDbAdapter {
@@ -21,10 +21,16 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
   }
 
   @override
+  Future saveCommunityEntities(List<CommunityHiveEntity> entities) async {
+    await box.putAll(
+        Map.fromEntries(entities.map((e) => MapEntry(e.communityId, e))));
+  }
+
+  @override
   Future saveCommunityEntity(CommunityHiveEntity entity) async {
-    final cachedEntity = getCommunityEntity(entity.communityId!);    
+    final cachedEntity = getCommunityEntity(entity.communityId!);
     if (cachedEntity != null) {
-      // If cache exist we update queryTimestamp and use cachd isJoined.      
+      // If cache exist we update queryTimestamp and use cachd isJoined.
       entity.isJoined ??= cachedEntity.isJoined;
       entity.queryTimestamp = cachedEntity.queryTimestamp;
     }
@@ -33,26 +39,30 @@ class CommunityDbAdapterImpl extends CommunityDbAdapter {
 
   @override
   Stream<CommunityHiveEntity> listenCommunityEntity(String communityId) {
-    return box.watch(key: communityId).where((event) { return event != null && event.value != null; }).map((event) => event.value);
+    return box.watch(key: communityId).where((event) {
+      return event != null && event.value != null;
+    }).map((event) => event.value);
   }
 
   @override
   List<CommunityHiveEntity> getCommunityEntities(
       RequestBuilder<GetCommunityRequest> request) {
-    return box.values.where((community) => community.isMatchingFilter(request.call())).toList();
+    return box.values
+        .where((community) => community.isMatchingFilter(request.call()))
+        .toList();
   }
 
   @override
   Stream<List<CommunityHiveEntity>> listenCommunityEntities(
       RequestBuilder<GetCommunityRequest> request) {
-    return box.watch().map((event) => box.values
-        .where((community) => community.isMatchingFilter(request.call()))
-        .toList());
+    return box.watch().map((event) => box.values.where((community) {
+          return community.isMatchingFilter(request.call());
+        }).toList());
   }
 
   @override
   Future deleteCommunityEntities() async {
-    box.values.toList().forEach((element) {      
+    box.values.toList().forEach((element) {
       element.delete();
     });
     return;

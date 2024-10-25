@@ -65,4 +65,27 @@ class PostDbAdapterImpl extends PostDbAdapter {
     });
     return;
   }
+
+  @override
+  List<PostHiveEntity> getPostEntities(
+    RequestBuilder<GetPostRequest> request) {
+      return box.values
+        .where((entity) => entity.isMatchingFilter(request.call()))
+        .toList();
+    }
+
+  @override
+  Stream<List<PostHiveEntity>> listenAllPostEntities() {
+    return box.watch().map((event) => box.values.toList());
+  }
+
+  @override
+  List<PostHiveEntity> getAllPostEntities() {
+    return box.values.toList();
+  }
+
+  @override
+  Future savePostEntities(List<PostHiveEntity> data) {
+    return box.addAll(data);
+  }
 }
