@@ -1,3 +1,6 @@
+## 0.52.1
+* Fix: Exclude deleted posts from global feed and custom post ranking Live Collection
+
 ## 0.52.0
 * Feat: Introduce Subchannel
 * Feat: Migrate Message to MessageV5
