@@ -7,7 +7,22 @@ class MessageRepository {
   /*  begin_public_function
   id: message.query
   */
-  /// Get Messages
+  /// Query messages with the given channelId.
+  ///
+  /// **Deprecated**: Use [newGetMessages] instead to query messages.
+  ///
+  /// This function is maintained for backward compatibility but is no longer
+  /// recommended for use in new implementations.
+  ///
+  /// Note: This function only supports system generated channelId.
+  /// In case of custom channelId, replace with AmityChannel.defaultSubChannelId
+  ///
+  /// Example:
+  /// ```dart
+  /// var defaultSubChannelId = channel.defaultSubChannelId;
+  /// getMessages(defaultSubChannelId);
+  /// ```
+  @Deprecated("Now only support system generated channelId. In case of custom channelId, replace with channel.defaultSubChannelId")
   MessageGetQueryBuilder getMessages(String channelId) {
     return MessageGetQueryBuilder(serviceLocator<MessageQueryUseCase>(), channelId);
   }

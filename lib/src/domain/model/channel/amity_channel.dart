@@ -10,6 +10,9 @@ class AmityChannel {
   /// Channel ID
   String? channelId;
 
+  /// SubChannel ID
+  String? defaultSubChannelId;
+
   /// Display Name
   String? displayName;
 

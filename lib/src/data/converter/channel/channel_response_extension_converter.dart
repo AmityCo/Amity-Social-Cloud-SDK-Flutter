@@ -6,6 +6,7 @@ extension ChannelResponseExtensionConverter on ChannelResponse {
   ChannelHiveEntity convertToChannelHiveEntity() {
     return ChannelHiveEntity()
       ..channelId = channelId
+      ..defaultSubChannelId = defaultMessageFeedId
       ..isDistinct = isDistinct
       ..metadata = metadata
       ..type = type

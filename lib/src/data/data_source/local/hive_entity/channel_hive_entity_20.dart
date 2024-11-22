@@ -10,6 +10,10 @@ class ChannelHiveEntity extends HiveObject{
   @HiveField(0)
   String? channelId;
 
+  /// Default SubChannel Id
+  @HiveField(0)
+  String? defaultSubChannelId;
+
   /// Is Distinct
   @HiveField(1)
   bool? isDistinct;
