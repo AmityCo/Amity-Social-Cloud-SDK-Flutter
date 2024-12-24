@@ -8,6 +8,7 @@ extension MessageDataResponseExtensionConverter on MessageDataResponse {
     return MessageDataHiveEntity()
       ..text = text
       ..fileId = fileId
-      ..caption = caption;
+      ..caption = caption
+      ..thumbnailFileId = thumbnailFileId;
   }
 }

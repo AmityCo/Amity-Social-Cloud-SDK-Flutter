@@ -21,11 +21,9 @@ class ChannelMemberComposerUsecase
 
   @override
   Future<AmityChannelMember> get(AmityChannelMember params) async {
-    final channel = await channelRepo.getChannelById(params.channelId!);
-    params.displayName = channel.displayName;
-
     final rawUser = await userRepo.getUserByIdFromDb(params.userId!);
     params.user = await userComposerUsecase.get(rawUser);
+    params.displayName = rawUser.displayName;
     return params;
   }
 }

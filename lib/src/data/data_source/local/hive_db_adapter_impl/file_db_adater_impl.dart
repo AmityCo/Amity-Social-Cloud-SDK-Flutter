@@ -21,4 +21,10 @@ class FileDbAdapterImpl extends FileDbAdapter {
   Future saveFileEntity(FileHiveEntity entity) async {
     await box.put(entity.fileId, entity);
   }
+
+  @override
+  Future saveFileEntities(List<FileHiveEntity> entities) async {
+    final files = { for (var e in entities) e.fileId : e };
+    await box.putAll(files);
+  }
 }

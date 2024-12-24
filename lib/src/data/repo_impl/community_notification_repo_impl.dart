@@ -10,8 +10,6 @@ class CommunityNotificationRepoImpl extends CommunityNotificationRepo{
 
   CommunityNotificationRepoImpl({required this.communityNotificationApiInterface});
 
-
-
   @override
   Future<AmityCommunityNotificationSettings> getSetting(GetNotificationSettingsRequest request) async  {
     var communityNotificationResponse = await communityNotificationApiInterface.getSetting(request);

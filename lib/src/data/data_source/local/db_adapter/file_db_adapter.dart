@@ -3,4 +3,5 @@ import 'package:amity_sdk/src/data/data_source/local/hive_entity/file_hive_entit
 abstract class FileDbAdapter {
   Future saveFileEntity(FileHiveEntity entity);
   FileHiveEntity? getFileEntity(String fileId);
+  Future saveFileEntities(List<FileHiveEntity> entities);
 }

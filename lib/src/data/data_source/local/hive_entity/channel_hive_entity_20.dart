@@ -1,17 +1,18 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
 part 'channel_hive_entity_20.g.dart';
 
 /// Data Field for Channel
 @HiveType(typeId: 20)
-class ChannelHiveEntity extends HiveObject{
+class ChannelHiveEntity extends EkoObject{
   /// Channel Id
   @HiveField(0)
   String? channelId;
 
   /// Default SubChannel Id
-  @HiveField(0)
+  @HiveField(21)
   String? defaultSubChannelId;
 
   /// Is Distinct
@@ -121,4 +122,9 @@ class ChannelHiveEntity extends HiveObject{
     this.avatarFileId,
     this.isDeleted,
   });
+  
+  @override
+  String? getId() {
+    return channelId;
+  }
 }

@@ -20,6 +20,21 @@ class MessageFileComposerUsecase
         params.fileInfo = image;
       }
 
+      if (params is MessageVideoData) {
+        try {
+          params.fileInfo = AmityFile(fileProperties);
+          final thumbnailFileId = params.rawData?["thumbnailFileId"] as String?;
+          if (thumbnailFileId != null) {
+            final thumbnailFileProperties =
+                await fileRepo.getFileByIdFromDb(thumbnailFileId);
+            final thumbnailImageFile = AmityImage(thumbnailFileProperties);
+            params.thumbnailImageFile = thumbnailImageFile;
+          }
+        } catch (e) {
+          // Fail to parse thumbnail
+        }
+      }
+
       // if (params is VideoData) {
       //   final thumbnailFile = AmityImage(fileProperties);
       //   // params.thumbnail = thumbnailFile;

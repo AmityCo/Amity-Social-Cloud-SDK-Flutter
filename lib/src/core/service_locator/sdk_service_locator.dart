@@ -15,17 +15,22 @@ import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/story_
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/stream_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_db_adapter_impl/tombstone_db_adapter_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/ad_api_interface.dart';
+import 'package:amity_sdk/src/data/data_source/remote/api_interface/channel_notification_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/community_notification_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/pin_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_api_interface.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/story_target_api_interface.dart';
-import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/ad_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/stream_api_interface.dart';
+import 'package:amity_sdk/src/data/data_source/remote/api_interface/user_notification_api_interface.dart';
+import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/ad_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/channel_notification_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/community_notification_api_interface_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/pin_api_interface_impl.dart';
-import 'package:amity_sdk/src/data/repo_impl/ad_repo_impl.dart';
 import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/stream_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/data_source/remote/http_api_interface_impl/user_notification_api_interface_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/ad_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/analytics_repo_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/channel_notification_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/community_notification_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/network_settings_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/paging_id_repo_impl.dart';
@@ -35,6 +40,7 @@ import 'package:amity_sdk/src/data/repo_impl/story_target_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/stream_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/subchannel_repo_impl.dart';
 import 'package:amity_sdk/src/data/repo_impl/tombstone_repo_impl.dart';
+import 'package:amity_sdk/src/data/repo_impl/user_notification_repo_impl.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/advertiser_compose_use_case.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/network_ads_composer_usecase.dart';
 import 'package:amity_sdk/src/domain/composer_usecase/pinned_post_composer_usecase.dart';
@@ -45,6 +51,7 @@ import 'package:amity_sdk/src/domain/composer_usecase/stream_composer_usecase.da
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/ad_repo.dart';
 import 'package:amity_sdk/src/domain/repo/analytics_repo.dart';
+import 'package:amity_sdk/src/domain/repo/channel_notification_repo.dart';
 import 'package:amity_sdk/src/domain/repo/community_notification_repo.dart';
 import 'package:amity_sdk/src/domain/repo/network_settings_repo.dart';
 import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
@@ -52,6 +59,7 @@ import 'package:amity_sdk/src/domain/repo/pin_repo.dart';
 import 'package:amity_sdk/src/domain/repo/story_target_repo.dart';
 import 'package:amity_sdk/src/domain/repo/sub_channel_repo.dart';
 import 'package:amity_sdk/src/domain/repo/tombstone_repo.dart';
+import 'package:amity_sdk/src/domain/repo/user_notification_repo.dart';
 import 'package:amity_sdk/src/domain/usecase/ads/get_advertiser_use_case.dart';
 import 'package:amity_sdk/src/domain/usecase/ads/get_network_ads_ucsecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_fetch_list_usecase.dart';
@@ -59,6 +67,7 @@ import 'package:amity_sdk/src/domain/usecase/channel/channel_has_local_usecase.d
 import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/member/channel_members_get_cache_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usecase.dart';
@@ -71,6 +80,9 @@ import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dar
 import 'package:amity_sdk/src/domain/usecase/feed/global_feed_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/global_feed_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/file/get_image_use_case.dart';
+import 'package:amity_sdk/src/domain/usecase/message/message_fetch_use_case.dart';
+import 'package:amity_sdk/src/domain/usecase/message/message_observe_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/message/message_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_text_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_urls_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/paging/paging_id_insert_usecase.dart';
@@ -96,6 +108,8 @@ import 'package:amity_sdk/src/domain/usecase/subchannel/sub_channel_has_local_us
 import 'package:amity_sdk/src/domain/usecase/subchannel/sub_channel_obsever_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/subchannel/sub_channel_update_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/user/get_reach_user_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/user/user_fetch_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/user/user_observe_list_usecase.dart';
 import 'package:amity_sdk/src/functions/stream_function.dart';
 import 'package:amity_sdk/src/public/public.dart';
 import 'package:amity_sdk/src/public/repo/ads/amity_ad_repository.dart';
@@ -252,6 +266,9 @@ class SdkServiceLocator {
             amityCoreClientOption: configServiceLocator()));
     serviceLocator.registerLazySingleton<UserApiInterface>(
         () => UserApiInterfaceImpl(httpApiClient: serviceLocator()));
+    serviceLocator.registerLazySingleton<UserNotificationApiInterface>(
+        () => UserNotificationApiInterfaceImpl(
+            httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<AnalyticsApiInterface>(
         () => AnalyticsApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<FollowApiInterface>(
@@ -276,6 +293,9 @@ class SdkServiceLocator {
         () => CommunityMemberApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<CommunityNotificationApiInterface>(
         () => CommunityNotificationApiInterfaceImpl(
+            httpApiClient: serviceLocator()));
+    serviceLocator.registerLazySingleton<ChannelNotificationApiInterface>(
+        () => ChannelNotificationApiInterfaceImpl(
             httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<NotificationApiInterface>(() =>
         NotificationApiInterfaceImpl(
@@ -324,7 +344,11 @@ class SdkServiceLocator {
         userDbAdapter: serviceLocator(),
         fileDbAdapter: serviceLocator(),
         followDbAdapter: serviceLocator(),
-        followInfoDbAdapter: serviceLocator()));
+        followInfoDbAdapter: serviceLocator(),
+        pagingIdRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<UserNotificationRepo>(() =>
+        UserNotificationRepoImpl(
+            userNotificationApiInterface: serviceLocator()));
     serviceLocator.registerLazySingleton<FollowRepo>(() => FollowRepoImpl(
           followWApiInterface: serviceLocator(),
           followInfoDbAdapter: serviceLocator(),
@@ -412,7 +436,9 @@ class SdkServiceLocator {
       () => MessageRepoImpl(
           dbAdapterRepo: serviceLocator(),
           messageApiInterface: serviceLocator(),
-          fileRepo: serviceLocator()),
+          fileRepo: serviceLocator(),
+          channelRepo: serviceLocator(),
+          pagingIdRepo: serviceLocator()),
     );
     serviceLocator.registerLazySingleton<StreamRepo>(
       () => StreamRepoImpl(
@@ -446,6 +472,9 @@ class SdkServiceLocator {
         channelApiInterface: serviceLocator(),
       ),
     );
+    serviceLocator.registerLazySingleton<ChannelNotificationRepo>(() =>
+        ChannelNotificationRepoImpl(
+            channelNotificationApiInterface: serviceLocator()));
     serviceLocator.registerLazySingleton<ChannelMemberRepo>(
       () => ChannelMemberRepoImpl(
         commonDbAdapter: serviceLocator(),
@@ -528,6 +557,17 @@ class SdkServiceLocator {
             userRepo: serviceLocator(), userComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<UserGlobalPermissionCheckUsecase>(
         () => UserGlobalPermissionCheckUsecase(userRepo: serviceLocator()));
+
+    serviceLocator.registerLazySingleton<UserFetchListUseCase>(
+      () => UserFetchListUseCase(
+        userRepo: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<UserObserveListUseCase>(() =>
+        UserObserveListUseCase(
+            userRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator(),
+            userComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<AcceptFollowUsecase>(
         () => AcceptFollowUsecase(followRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<DeclineFollowUsecase>(
@@ -875,6 +915,18 @@ class SdkServiceLocator {
         MessageQueryUseCase(
             messageRepo: serviceLocator(),
             messageComposerUsecase: serviceLocator()));
+    serviceLocator.registerLazySingleton<MessageFetchUseCase>(() =>
+        MessageFetchUseCase(
+            messageRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<MessageObserveListUseCase>(() =>
+        MessageObserveListUseCase(
+            messageRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator(),
+            messageComposerUsecase: serviceLocator()));
+    serviceLocator.registerLazySingleton<MessageObserveNewItemUseCase>(() =>
+        MessageObserveNewItemUseCase(
+            messageRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<StreamQueryUseCase>(() =>
         StreamQueryUseCase(
             streamRepo: serviceLocator(),
@@ -973,6 +1025,10 @@ class SdkServiceLocator {
             ));
     serviceLocator.registerLazySingleton<ChannelMemberGetUsecase>(() =>
         ChannelMemberGetUsecase(
+            channelMemberRepo: serviceLocator(),
+            channelMemberComposerUsecase: serviceLocator()));
+    serviceLocator.registerLazySingleton<ChannelGetMembersFromCacheUsecase>(() =>
+        ChannelGetMembersFromCacheUsecase(
             channelMemberRepo: serviceLocator(),
             channelMemberComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<ChannelMemberQueryUsecase>(() =>

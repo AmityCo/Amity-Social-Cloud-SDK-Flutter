@@ -4,6 +4,7 @@ import 'package:amity_sdk/src/data/data.dart';
 class MessageResponse {
   /// init [MessageResponse]
   MessageResponse({
+    this.referenceId,
     required this.messageId,
     required this.channelId,
     required this.userId,
@@ -28,6 +29,8 @@ class MessageResponse {
     required this.mentionees,
     this.subChannelId,
   });
+
+  final String? referenceId;
 
   /// Message ID
   final String messageId;
@@ -80,7 +83,7 @@ class MessageResponse {
   List<String>? myReactions;
 
   /// Latest Reaction
-  final Map<String, dynamic>? latestReaction;
+  Map<String, dynamic>? latestReaction;
 
   /// Is Deleted
   final bool isDeleted;
@@ -100,6 +103,7 @@ class MessageResponse {
   /// [MessageResponse]
   factory MessageResponse.fromJson(Map<String, dynamic> json) =>
       MessageResponse(
+        referenceId: json["referenceId"],
         messageId: json["messageId"],
         channelId: json["channelId"],
         subChannelId: json["messageFeedId"],
@@ -132,6 +136,7 @@ class MessageResponse {
 
   /// Convert [MessageResponse] to Map
   Map<String, dynamic> toJson() => {
+        "referenceId": referenceId,
         "messageId": messageId,
         "channelId": channelId,
         "userId": userId,
@@ -160,6 +165,7 @@ class MessageResponse {
       };
 
   MessageResponse copyWith({
+    String? referenceId,
     String? messageId,
     String? channelId,
     String? userId,
@@ -185,6 +191,7 @@ class MessageResponse {
     List<Mentionee>? mentionees,
   }) {
     return MessageResponse(
+      referenceId: referenceId ?? this.referenceId,
       messageId: messageId ?? this.messageId,
       channelId: channelId ?? this.channelId,
       userId: userId ?? this.userId,

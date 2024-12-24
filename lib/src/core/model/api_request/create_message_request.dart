@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:amity_sdk/src/core/core.dart';
+
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/message_data_hive_entity_19.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/message_hive_entity_18.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
@@ -104,14 +105,16 @@ class CreateMessageRequest {
   /// Conver [CreateMessageRequest] to [MessageHiveEntity]
   MessageHiveEntity convertToMessageEntity() {
     return MessageHiveEntity()
+      ..uniqueId = messageId
       ..messageId = messageId
-      ..channelId = subchannelId
+      ..subChannelId = subchannelId
       ..userId = userId
       ..type = type
-      ..data = data!.convertToMessageDataEntity()
+      ..data = data!.convertToMessageDataEntity(dataType, messageId!)
       ..parentId = parentId
       ..fileId = fileId
       ..tags = tags
+      ..createdAt = DateTime.now()
       ..metadata = metadata; //def
   }
 }
@@ -143,9 +146,10 @@ class CreateMessageData {
       }..removeWhere((key, value) => value == null);
 
   /// Convert [CreateMessageData] to [MessageDataHiveEntity]
-  MessageDataHiveEntity convertToMessageDataEntity() {
+  MessageDataHiveEntity convertToMessageDataEntity(String? dataType, String messageId) {
     return MessageDataHiveEntity()
       ..text = text
+      ..fileId = messageId
       ..caption = caption;
   }
 }

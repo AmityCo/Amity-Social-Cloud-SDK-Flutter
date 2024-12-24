@@ -16,28 +16,40 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
   /// Init [MessageDbAdapterImpl]
   Future<MessageDbAdapter> init() async {
     Hive.registerAdapter(MessageHiveEntityAdapter(), override: true);
+    Hive.registerAdapter(MessageDataHiveEntityAdapter(), override: true);
     box = await Hive.openBox<MessageHiveEntity>('Message_db');
     return this;
   }
 
   @override
   Future deleteMessageEntity(MessageHiveEntity data) async {
-    await box.delete(data.messageId);
+    await box.delete(data.uniqueId);
+  }
+
+  @override
+  Future deleteMessageEntityByUniqueId(String uniqueId) async {
+    await box.delete(uniqueId);
   }
 
   @override
   Future saveMessageEntity(MessageHiveEntity data) async {
-    await box.put(data.messageId, data);
+    await box.put(data.uniqueId, data);
   }
 
   @override
-  MessageHiveEntity? getMessageEntity(String messageId) {
-    return box.get(messageId);
+  MessageHiveEntity? getMessageEntity(String uniqueId) {
+    return box.get(uniqueId);
   }
 
   @override
-  Stream<MessageHiveEntity> listenMessageEntity(String messageId) {
-    return box.watch(key: messageId).map((event) => event.value);
+  Stream<MessageHiveEntity> listenMessageEntity(String uniqueId) {
+    return box.watch(key: uniqueId).map((event) => event.value);
+  }
+
+  List<MessageHiveEntity> getMessageEntities(RequestBuilder<MessageQueryRequest> request) {
+    return box.values
+    .where((messages) => messages.isMatchingFilter(request.call()))
+    .toList();
   }
 
   @override
@@ -64,7 +76,7 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
   @override
   List<MessageHiveEntity> getUnsendMessages() {
     return box.values
-        .where((element) => element.syncState == AmityMessageSyncState.SYNCING)
+        .where((element) => element.syncState != AmityMessageSyncState.SYNCED.value)
         .toList();
   }
 
@@ -74,8 +86,8 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
         .where((element) =>
             element.subChannelId == channelId &&
             element.parentId == null &&
-            (element.syncState == AmityMessageSyncState.SYNCING ||
-                element.syncState == AmityMessageSyncState.SYNCED))
+            (element.syncState == AmityMessageSyncState.SYNCING.value ||
+                element.syncState == AmityMessageSyncState.SYNCED.value))
         .fold<int>(
             0,
             (previousValue, element) => element.channelSegment! > previousValue
@@ -92,5 +104,15 @@ class MessageDbAdapterImpl extends MessageDbAdapter {
       element.isDeleted = true;
       box.put(element.messageId, element);
     });
+  }
+
+  @override
+  Future updateUnsyncedMessagesToFailed() async {
+    final unsyncMessagesMap = {
+      for (var element in box.values.where((element) => element.syncState != AmityMessageSyncState.SYNCED.value))
+      if (element.uniqueId != null)
+        element.uniqueId!: element..syncState = AmityMessageSyncState.FAILED.value
+    };
+    await box.putAll(unsyncMessagesMap);
   }
 }

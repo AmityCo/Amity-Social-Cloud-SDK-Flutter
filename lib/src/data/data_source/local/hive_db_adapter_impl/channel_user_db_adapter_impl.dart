@@ -57,4 +57,9 @@ class ChannelUserDbAdapterImpl extends ChannelUserDbAdapter {
     }
     box.put(data.id, data);
   }
+
+  @override
+  List<ChannelUserHiveEntity> getMembers(String channelId) {
+    return box.values.where((element) => element.channelId == channelId).toList();
+  }
 }

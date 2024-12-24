@@ -80,7 +80,6 @@ class ChannelRepoImpl extends ChannelRepo {
     int nextIndex = 0;
     final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
     final data = await channelApiInterface.getChannelQuery(request);
-    final paging = data.paging;
     final amityChannel = await data.saveToDb<AmityChannel>(commonDbAdapter);
     if (isFirstPage) {
       await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
@@ -130,7 +129,11 @@ class ChannelRepoImpl extends ChannelRepo {
 
   @override
   ChannelHiveEntity? getChannelEntity(String channelId) {
-    return commonDbAdapter.channelDbAdapter.getEntity(channelId);
+    try {
+      return commonDbAdapter.channelDbAdapter.getEntity(channelId);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override

@@ -22,5 +22,6 @@ export 'src/core/utils/story_live_collection.dart';
 export 'src/core/utils/sub_channel_live_collection.dart';
 export 'src/core/utils/story_target_live_collection.dart';
 export 'src/core/utils/stream_live_collection.dart';
+export 'src/core/utils/user_live_collection.dart';
 export 'src/domain/model/model.dart';
 export 'src/public/public.dart';

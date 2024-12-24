@@ -33,7 +33,7 @@ extension CreateSubChannelResponseExtension on CreateSubChannelResponse {
     }
 
     for (var e in messageHiveEntity) {
-      e.syncState = AmityMessageSyncState.SYNCED;
+      e.syncState = AmityMessageSyncState.SYNCED.value;
       await dbRepo.messageDbAdapter.saveMessageEntity(e);
     }
 

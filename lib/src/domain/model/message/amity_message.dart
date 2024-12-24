@@ -4,6 +4,8 @@ import 'package:amity_sdk/src/domain/domain.dart';
 
 /// [AmityMessage]
 class AmityMessage {
+  String? uniqueId;
+
   /// Message ID
   String? messageId;
 
@@ -81,7 +83,7 @@ class AmityMessage {
 
   @override
   String toString() {
-    return 'AmityMessage(messageId: $messageId, channelId: $channelId, userId: $userId, parentId: $parentId, channelSegment: $channelSegment, childrenNumber: $childrenNumber, isDeleted: $isDeleted, readByCount: $readByCount, flagCount: $flagCount, amityTags: $amityTags, myReactions: $myReactions, reactions: $reactions, reactionCount: $reactionCount, user: $user,syncState: $syncState, metadata: $metadata, mentionees: $mentionees, createdAt: $createdAt, updatedAt: $updatedAt, editedAt: $editedAt)';
+    return 'AmityMessage(uniqueId: $uniqueId, messageId: $messageId, channelId: $channelId, userId: $userId, parentId: $parentId, channelSegment: $channelSegment, childrenNumber: $childrenNumber, isDeleted: $isDeleted, readByCount: $readByCount, flagCount: $flagCount, amityTags: $amityTags, myReactions: $myReactions, reactions: $reactions, reactionCount: $reactionCount, user: $user,syncState: $syncState, metadata: $metadata, mentionees: $mentionees, createdAt: $createdAt, updatedAt: $updatedAt, editedAt: $editedAt)';
   }
 }
 
@@ -170,6 +172,21 @@ class MessageAudioData extends AmityMessageData {
 
   @override
   String toString() => 'MessageFileData(fileId: $fileId)';
+}
+
+class MessageVideoData extends AmityMessageData {
+  AmityImage? thumbnailImageFile;
+
+  MessageVideoData(
+      {required String messageId, String? fileId, required Map<String, dynamic> rawData})
+      : super(messageId: messageId, fileId: fileId, rawData: rawData);
+
+  AmityVideo getVideo() {
+    return AmityVideo(fileInfo.getFileProperties!);
+  }
+
+  @override
+  String toString() => 'MessageVideoData(fileId: $fileId)';
 }
 
 /// [MessageCustomData]

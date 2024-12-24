@@ -5,6 +5,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:collection/collection.dart';
 
 /// Amity User
 class AmityUser {
@@ -47,6 +48,9 @@ class AmityUser {
   /// Flag to check if user ban globally
   bool? isGlobalBan;
 
+  /// Flag to check if user is deleted
+  bool? isDeleted;
+
   /// User created date
   DateTime? createdAt;
 
@@ -70,6 +74,7 @@ class AmityUser {
       'flagCount': flagCount,
       'metadata': metadata,
       'isGlobalBan': isGlobalBan,
+      'isDeleted': isDeleted,
       'createdAt': createdAt?.millisecondsSinceEpoch,
       'updatedAt': updatedAt?.millisecondsSinceEpoch,
     };
@@ -80,7 +85,7 @@ class AmityUser {
 
   @override
   String toString() {
-    return 'AmityUser(id: $id, userId: $userId, roles: $roles, displayName: $displayName, description: $description, avatarFileId: $avatarFileId, avatarUrl: $avatarUrl, avatarCustomUrl: $avatarCustomUrl, flagCount: $flagCount, hashFlag: $hashFlag, metadata: $metadata, isGlobalBan: $isGlobalBan, createdAt: $createdAt, updatedAt: $updatedAt, flaggedByMe: $_flaggedByMe)';
+    return 'AmityUser(id: $id, userId: $userId, roles: $roles, displayName: $displayName, description: $description, avatarFileId: $avatarFileId, avatarUrl: $avatarUrl, avatarCustomUrl: $avatarCustomUrl, flagCount: $flagCount, hashFlag: $hashFlag, metadata: $metadata, isGlobalBan: $isGlobalBan, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, flaggedByMe: $_flaggedByMe)';
   }
 
   StreamController<AmityUser> get listen {
@@ -109,5 +114,11 @@ class AmityUser {
             .mightContains(AmityCoreClient.getUserId());
   }
   //* end_public_function */
+
+  @override bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AmityUser && MapEquality().equals(other.toMap(), toMap());
+  }
 
 }

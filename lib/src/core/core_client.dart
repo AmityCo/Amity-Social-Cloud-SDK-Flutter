@@ -133,6 +133,7 @@ class CoreClient {
   //call the function 'login(String userId)' to restore a connection
   static void disconnect() {
     serviceLocator<AmitySocket>().terminate();
+    serviceLocator<AmityMQTT>().disconnect();
   }
 
   ///Check if user is logged in
@@ -206,8 +207,7 @@ class CoreClient {
   static _intialCleanUp() {
     // Remove all the Syncing State Message (Unsend messages)
     serviceLocator<MessageDbAdapter>()
-        .getUnsendMessages()
-        .forEach((element) => element.delete());
+        .updateUnsyncedMessagesToFailed();
   }
 
   static AnalyticsEngine? getAnalyticsEngine() {

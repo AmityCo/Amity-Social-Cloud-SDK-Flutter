@@ -3,6 +3,8 @@ import 'package:amity_sdk/src/data/data_source/local/hive_entity/paging_id_hive_
 abstract class PagingIdDbAdapter {
   
   Future savePagingIdEntity(PagingIdHiveEntity data);
+  
+  Future savePagingIdEntities(List<PagingIdHiveEntity> data);
 
   List<PagingIdHiveEntity> getPagingIdEntities(int nonce, int hash);
 

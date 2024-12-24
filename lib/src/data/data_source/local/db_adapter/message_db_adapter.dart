@@ -9,6 +9,8 @@ abstract class MessageDbAdapter {
   /// Delete Message Entity
   Future deleteMessageEntity(MessageHiveEntity data);
 
+  Future deleteMessageEntityByUniqueId(String uniqueId);
+
   /// get message entity with message ID
   MessageHiveEntity? getMessageEntity(String messageId);
 
@@ -17,6 +19,10 @@ abstract class MessageDbAdapter {
 
   /// Listen Message Entities
   Stream<List<MessageHiveEntity>> listenMessageEntities(
+      RequestBuilder<MessageQueryRequest> request);
+
+  /// get message entities caches
+  List<MessageHiveEntity> getMessageEntities(
       RequestBuilder<MessageQueryRequest> request);
 
   /// delete all message with in the channel
@@ -30,4 +36,7 @@ abstract class MessageDbAdapter {
 
   /// Soft delete message from channel by user Id to handle channel banned event
   void softDeleteFromChannelByUserId(String channelId, String userId);
+
+  /// To clean up the unsynced messages when the user logged in to use sdk
+  Future updateUnsyncedMessagesToFailed();
 }

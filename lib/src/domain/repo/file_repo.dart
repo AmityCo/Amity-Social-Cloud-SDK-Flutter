@@ -13,7 +13,7 @@ abstract class FileRepo {
   Future<AmityUploadResult<AmityImage>> uploadImage(UploadFileRequest request);
   StreamController<AmityUploadResult<AmityImage>> uploadImageStream(UploadFileRequest request);
   Future<AmityUploadResult<AmityAudio>> uploadAudio(UploadFileRequest request);
-  Future<AmityUploadResult<AmityVideo>> uploadVidoe(UploadFileRequest request);
+  Future<AmityUploadResult<AmityVideo>> uploadVideo(UploadFileRequest request);
   StreamController<AmityUploadResult<AmityVideo>> uploadVideoStream(UploadFileRequest request);
   void cancelUpload(String uploadId);
 }

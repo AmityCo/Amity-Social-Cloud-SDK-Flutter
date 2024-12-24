@@ -48,4 +48,9 @@ class UsersRequest {
   String toString() {
     return usersRequestToJson(this);
   }
+
+  int getHashCode() {
+    final jsonString = (toJson()..remove('options')).toString();
+    return jsonString.hashCode;
+  }
 }

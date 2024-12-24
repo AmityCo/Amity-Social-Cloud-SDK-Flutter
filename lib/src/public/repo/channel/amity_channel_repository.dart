@@ -1,9 +1,13 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/public/public.dart';
+import 'package:amity_sdk/src/public/query_builder/channel/channel_get_live_object.dart';
 
 /// Channel Repository
 class AmityChannelRepository {
+  
+  ChannelGetLiveObject live = ChannelGetLiveObject();
+
   /* begin_public_function 
   id: channel.create
   api_style: async

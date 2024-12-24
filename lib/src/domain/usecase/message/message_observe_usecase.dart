@@ -26,7 +26,7 @@ class MessageObserveUsecase
       RequestBuilder<MessageQueryRequest> request) {
     final streamController = StreamController<List<AmityMessage>>();
 
-    messageRepo.listentMessages(request).listen((event) async {
+    messageRepo.listenMessages(request).listen((event) async {
       await Stream.fromIterable(event).forEach((element) async {
         element = await messageComposerUsecase.get(element);
       });

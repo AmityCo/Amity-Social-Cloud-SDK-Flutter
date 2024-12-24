@@ -78,6 +78,15 @@ class MqttEventListeners {
     ChannelUnbannedEventListener(),
     ChannelJoinedEventListener(),
     ChannelLeftEventListener(),
+
+    //Message
+    MessageCreatedEventListener(),
+    MessageUpdatedEventListener(),
+    MessageDeletedEventListener(),
+    MessageFlaggedEventListener(),
+    MessageUnflaggedEventListener(),
+    MessageReactionAddedEventListener(),
+    MessageReactionRemovedEventListener(),
   ]);
 
   SocketEventListener? getEvent(String eventType) =>

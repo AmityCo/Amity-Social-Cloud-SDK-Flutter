@@ -1,13 +1,58 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/enum/amity_community_notification_event_name.dart';
-import 'package:amity_sdk/src/core/enum/amity_roles_filter.dart';
 import 'package:amity_sdk/src/data/response/get_notification_settings_response.dart';
-import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_community_notification_event.dart';
-import 'package:amity_sdk/src/domain/model/model.dart';
+import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_channel_notification_settings.dart';
+import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_user_notification_module.dart';
+import 'package:amity_sdk/src/domain/model/amity_notification_settings/amity_user_notification_settings.dart';
 import 'package:amity_sdk/src/src.dart';
 
 class PushNotificationMapper {
+
+  AmityUserNotificationSettings mapToUserNotificationSettings(
+      GetNotificationSettingsResponse getNotificationSettingsResponse) {
+    return AmityUserNotificationSettings(
+        isEnabled: getNotificationSettingsResponse.isPushNotifiable ?? false,
+        events: (getNotificationSettingsResponse.notifiableEvents == null)
+            ? []
+            : mapUserModules(
+                getNotificationSettingsResponse.notifiableEvents!));
+  }
+
+  List<AmityUserNotificationModule> mapUserModules(
+      List<NotifiableEvents> modules) {
+    List<AmityUserNotificationModule> userModules = [];
+
+    for (NotifiableEvents module in modules) {
+      if (module.moduleName != null) {
+        switch (AmityUserNotificationModuleNameExtension.fromValue(
+            module.moduleName!)) {
+          case AmityUserNotificationModuleName.CHAT:
+            userModules.add(Chat(
+                isEnabled: module.isPushNotifiable!,
+                rolesFilter: mapRolesFilter(
+                    module.listenFromRoleIds, module.ignoreFromRoleIds)));
+            break;
+          case AmityUserNotificationModuleName.SOCIAL:
+            userModules.add(Social(
+                isEnabled: module.isPushNotifiable!,
+                rolesFilter: mapRolesFilter(
+                    module.listenFromRoleIds, module.ignoreFromRoleIds)));
+            break;
+          case AmityUserNotificationModuleName.VIDEO_STREAMING:
+            userModules.add(VideoStreaming(
+                isEnabled: module.isPushNotifiable!,
+                rolesFilter: mapRolesFilter(
+                    module.listenFromRoleIds, module.ignoreFromRoleIds)));
+            break;
+          default:
+          break;
+        }
+      }
+    }
+
+    return userModules;
+  }
+
   AmityCommunityNotificationSettings mapToCommunityNotificationSettings(
       GetNotificationSettingsResponse getNotificationSettingsResponse) {
     return AmityCommunityNotificationSettings(
@@ -92,6 +137,13 @@ class PushNotificationMapper {
     }
 
     return communityEvents;
+  }
+
+  AmityChannelNotificationSettings mapToChannelNotificationSettings(
+      GetNotificationSettingsResponse getNotificationSettingsResponse) {
+    return AmityChannelNotificationSettings(
+      isEnabled: getNotificationSettingsResponse.isPushNotifiable ?? false,
+    );
   }
 
   AmityRolesFilter mapRolesFilter(

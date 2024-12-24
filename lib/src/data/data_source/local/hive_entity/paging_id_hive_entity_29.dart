@@ -47,4 +47,15 @@ class PagingIdHiveEntity extends EkoObject {
   String? getId() {
     return "${nonce}_${hash}_$id";
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is PagingIdHiveEntity &&
+      other.id == id &&
+      other.hash == hash &&
+      other.nonce == nonce &&
+      other.position == position;
+  }
 }

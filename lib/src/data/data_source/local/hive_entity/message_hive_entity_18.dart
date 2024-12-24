@@ -4,85 +4,88 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 part 'message_hive_entity_18.g.dart';
 
-/// Post Hive entity
 @HiveType(typeId: 18)
-class MessageHiveEntity extends  EkoObject {
-  /// Message ID
+class MessageHiveEntity extends EkoObject {
+  @HiveField(0)
+  String? uniqueId;
+
+  @HiveField(1)
   String? messageId;
 
-  /// Channel ID
+  @HiveField(2)
   String? channelId;
 
-  /// Subchannel ID
+  @HiveField(3)
   String? subChannelId;
 
-  /// User ID
+  @HiveField(4)
   String? userId;
 
-  /// Type
+  @HiveField(5)
   String? type;
 
-  /// Message Data
+  @HiveField(6)
   MessageDataHiveEntity? data;
 
-  /// Channel Segment
+  @HiveField(7)
   int? channelSegment;
 
-  /// Parent ID
+  @HiveField(8)
   String? parentId;
 
-  /// File ID
+  @HiveField(9)
   String? fileId;
 
-  /// Tags
+  @HiveField(10)
   List<String>? tags;
 
-  /// Metadata
+  @HiveField(11)
   Map<String, dynamic>? metadata;
 
-  /// Flag Count
+  @HiveField(12)
   int? flagCount;
 
-  /// Hash Flag
+  @HiveField(13)
   Map<String, dynamic>? hashFlag;
 
-  /// Childer number
+  @HiveField(14)
   int? childrenNumber;
 
-  /// Reactions count
+  @HiveField(15)
   int? reactionsCount;
 
-  /// Reactions
+  @HiveField(16)
   Map<String, int>? reactions;
 
-  /// My Reaction
+  @HiveField(17)
   List<String>? myReactions;
 
-  /// Latest Reaction
+  @HiveField(18)
   Map<String, dynamic>? latestReaction;
 
-  /// Is Deleted
+  @HiveField(19)
   bool? isDeleted;
 
-  /// Created At
+  @HiveField(20)
   DateTime? createdAt;
 
-  /// Updated At
+  @HiveField(21)
   DateTime? updatedAt;
 
-  /// Edited At
+  @HiveField(22)
   DateTime? editedAt;
 
-  /// Mentions
+  @HiveField(23)
   List<Mentionee>? mentionees;
 
-  /// Sync State
-  AmityMessageSyncState? syncState;
+  @HiveField(24)
+  String? syncState;
 
-  ///
+  @HiveField(25)
   bool? flaggedByMe;
 
   MessageHiveEntity({
+    this.uniqueId,
     this.messageId,
     this.channelId,
     this.userId,
@@ -106,14 +109,16 @@ class MessageHiveEntity extends  EkoObject {
     this.editedAt,
     this.mentionees,
     this.syncState,
+    this.flaggedByMe,
   });
 
   @override
   String toString() {
-    return 'MessageHiveEntity(messageId: $messageId, channelId: $channelId, userId: $userId, type: $type, data: $data, channelSegment: $channelSegment, parentId: $parentId, fileId: $fileId, tags: $tags, metadata: $metadata, flagCount: $flagCount, childrenNumber: $childrenNumber, reactionsCount: $reactionsCount, reactions: $reactions, myReactions: $myReactions, latestReaction: $latestReaction, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, editedAt: $editedAt, syncState: $syncState)';
+    return 'MessageHiveEntity(uniqueId: $uniqueId, messageId: $messageId, channelId: $channelId, userId: $userId, type: $type, data: $data, channelSegment: $channelSegment, parentId: $parentId, fileId: $fileId, tags: $tags, metadata: $metadata, flagCount: $flagCount, childrenNumber: $childrenNumber, reactionsCount: $reactionsCount, reactions: $reactions, myReactions: $myReactions, latestReaction: $latestReaction, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, editedAt: $editedAt, syncState: $syncState)';
   }
 
   MessageHiveEntity copyWith({
+    String? uniqueId,
     String? messageId,
     String? channelId,
     String? userId,
@@ -136,9 +141,10 @@ class MessageHiveEntity extends  EkoObject {
     DateTime? updatedAt,
     DateTime? editedAt,
     List<Mentionee>? mentionees,
-    AmityMessageSyncState? syncState,
+    String? syncState,
   }) {
     return MessageHiveEntity(
+      uniqueId: uniqueId ?? this.uniqueId,
       messageId: messageId ?? this.messageId,
       channelId: channelId ?? this.channelId,
       userId: userId ?? this.userId,
@@ -164,9 +170,9 @@ class MessageHiveEntity extends  EkoObject {
       syncState: syncState ?? this.syncState,
     );
   }
-  
+
   @override
   String? getId() {
-    return messageId;
+    return uniqueId;
   }
 }

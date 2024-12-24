@@ -12,12 +12,29 @@ class MessageDataHiveEntityAdapter extends TypeAdapter<MessageDataHiveEntity> {
 
   @override
   MessageDataHiveEntity read(BinaryReader reader) {
-    return MessageDataHiveEntity();
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return MessageDataHiveEntity()
+      ..text = fields[0] as String?
+      ..fileId = fields[1] as String?
+      ..caption = fields[2] as String?
+      ..thumbnailFileId = fields[3] as String?;
   }
 
   @override
   void write(BinaryWriter writer, MessageDataHiveEntity obj) {
-    writer.writeByte(0);
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.text)
+      ..writeByte(1)
+      ..write(obj.fileId)
+      ..writeByte(2)
+      ..write(obj.caption)
+      ..writeByte(3)
+      ..write(obj.thumbnailFileId);
   }
 
   @override

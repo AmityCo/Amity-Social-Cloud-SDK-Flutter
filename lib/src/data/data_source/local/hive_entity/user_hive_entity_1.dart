@@ -94,4 +94,26 @@ class UserHiveEntity extends EkoObject {
     this.updatedAt,
     this.hashFlag,
   });
+
+  @override bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is UserHiveEntity &&
+      other.id == id &&
+      other.userId == userId &&
+      other.roles == roles &&
+      other.permissions == permissions &&
+      other.displayName == displayName &&
+      other.description == description &&
+      other.avatarFileId == avatarFileId &&
+      other.avatarCustomUrl == avatarCustomUrl &&
+      other.path == path &&
+      other.flagCount == flagCount &&
+      other.metadata == metadata &&
+      other.isDeleted == isDeleted &&
+      other.isGlobalBan == isGlobalBan &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt &&
+      other.hashFlag == hashFlag;
+  }
 }

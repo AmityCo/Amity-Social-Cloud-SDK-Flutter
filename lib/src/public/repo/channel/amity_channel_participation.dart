@@ -1,5 +1,6 @@
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/member/channel_members_get_cache_usecase.dart';
 import 'package:amity_sdk/src/public/public.dart';
 
 /// [AmityChannelParticipation]
@@ -42,6 +43,10 @@ class AmityChannelParticipation {
       ..keyword(keyword);
   }
   /* end_public_function */
+
+  Future<List<AmityChannelMember>> getMembersFromCache() {
+    return serviceLocator<ChannelGetMembersFromCacheUsecase>().get(_channelId);
+  }
 
   // fun startReading() {
   //     return StartReadingChannelParticipationUseCase().execute(channelId)

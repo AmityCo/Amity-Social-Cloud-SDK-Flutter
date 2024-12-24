@@ -1,5 +1,4 @@
 import 'package:amity_sdk/src/data/data.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/paging_id_hive_entity_29.dart';
 import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 
@@ -18,6 +17,12 @@ class PagingIdDbAdapterImpl extends PagingIdDbAdapter {
   Future savePagingIdEntity(PagingIdHiveEntity data) async {
     await box.put(data.id, data);
   }
+
+  @override
+  Future savePagingIdEntities(List<PagingIdHiveEntity> data) async {
+    final pagingIds = { for (var e in data) e.id : e };
+    await box.putAll(pagingIds);
+  }
   
   @override
   List<PagingIdHiveEntity> getPagingIdEntities(int nonce, int hash) {
@@ -30,17 +35,20 @@ class PagingIdDbAdapterImpl extends PagingIdDbAdapter {
   @override
   Stream<List<PagingIdHiveEntity>> listenPagingIdEntities(int nonce, int hash) {
     return box.watch().map((event) => box.values
-        .where((pagingId) => pagingId.hash == hash && pagingId.nonce == nonce)
-        .sorted((a, b) => (a.position ?? 0).compareTo(a.position ?? 0))
-        .toList());
+      .where((pagingId) => pagingId.hash == hash && pagingId.nonce == nonce)
+      .sorted((a, b) => (a.position ?? 0).compareTo(a.position ?? 0))
+      .toList())
+      .distinct((previous, current) {
+        return ListEquality().equals(previous, current);
+      });
   }
 
   @override
   Future deletePagingIdByHash(int nonce, int hash) async {
-    return box.values
+    final pagingIds = box.values
       .where((pagingId) => pagingId.hash == hash && pagingId.nonce == nonce)
-      .forEach((pagingId) async { 
-        await box.delete(pagingId.id);
-      });
+      .map((pagingId) => pagingId.id)
+      .toList();
+    await box.deleteAll(pagingIds);
   }
 }
