@@ -142,7 +142,7 @@ class MessageRepoImpl extends MessageRepo {
             ..uploadId = request.messageId
             ..fullImage = true)
             .stream
-            .firstWhere((element) => 
+            .firstWhere((element) =>
               element is AmityUploadComplete
               || element is AmityUploadError
               || element is AmityUploadCancel);
@@ -151,7 +151,7 @@ class MessageRepoImpl extends MessageRepo {
             ..uploadId = request.messageId
             ..fullImage = true)
             .stream
-            .firstWhere((element) => 
+            .firstWhere((element) =>
               element is AmityUploadComplete
               || element is AmityUploadError
               || element is AmityUploadCancel);
@@ -159,7 +159,7 @@ class MessageRepoImpl extends MessageRepo {
           amityUploadResult = await fileRepo
               .uploadFileStream(UploadFileRequest(files: [File(request.uri!.path)])..uploadId = request.messageId)
               .stream
-              .firstWhere((element) => 
+              .firstWhere((element) =>
                 element is AmityUploadComplete
                 || element is AmityUploadError
                 || element is AmityUploadCancel);
@@ -197,7 +197,7 @@ class MessageRepoImpl extends MessageRepo {
     if (entity != null) {
       final messageId = entity.messageId;
       if (entity.syncState == AmityMessageSyncState.SYNCED.value && messageId != null) {
-        try { 
+        try {
           await messageApiInterface.deleteMessage(messageId!);
           entity.isDeleted = true;
           entity.save();

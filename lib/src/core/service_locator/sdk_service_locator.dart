@@ -1068,7 +1068,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<ChannelUpdateUseCase>(() =>
         ChannelUpdateUseCase(
             channelRepo: serviceLocator(),
-            channelComposerUsecase: serviceLocator()));  
+            channelComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<ChannelObserveNewItemUseCase>(() =>
         ChannelObserveNewItemUseCase(
             channelRepo: serviceLocator(),
