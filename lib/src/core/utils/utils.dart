@@ -14,3 +14,4 @@ export 'story_live_collection.dart';
 export 'story_target_live_collection.dart';
 export 'stream_live_collection.dart';
 export 'sub_channel_live_collection.dart';
+export 'user_live_collection.dart';

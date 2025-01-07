@@ -1,13 +1,32 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/public/query_builder/message/message_get_live_object.dart';
 
 /// [MessageRepository]
 class MessageRepository {
+
+  MessageGetLiveObject live = MessageGetLiveObject();
+
   /*  begin_public_function
   id: message.query
   */
-  /// Get Messages
+  /// Query messages with the given channelId.
+  ///
+  /// **Deprecated**: Use [newGetMessages] instead to query messages.
+  ///
+  /// This function is maintained for backward compatibility but is no longer
+  /// recommended for use in new implementations.
+  ///
+  /// Note: This function only supports system generated channelId.
+  /// In case of custom channelId, replace with AmityChannel.defaultSubChannelId
+  ///
+  /// Example:
+  /// ```dart
+  /// var defaultSubChannelId = channel.defaultSubChannelId;
+  /// getMessages(defaultSubChannelId);
+  /// ```
+  @Deprecated("Now only support system generated channelId. In case of custom channelId, replace with channel.defaultSubChannelId")
   MessageGetQueryBuilder getMessages(String channelId) {
     return MessageGetQueryBuilder(serviceLocator<MessageQueryUseCase>(), channelId);
   }
@@ -21,7 +40,7 @@ class MessageRepository {
 
 
   AmityMessageCreateDataTypeSelector newCreateMessage(String subchannelId) {
-    return AmityMessageCreateTargetSelector(useCase: serviceLocator<MessageCreateUsecase>()).channelId(subchannelId);
+    return AmityMessageCreateTargetSelector(useCase: serviceLocator<MessageCreateUsecase>()).subchannelId(subchannelId);
   }
 
   /*  begin_public_function

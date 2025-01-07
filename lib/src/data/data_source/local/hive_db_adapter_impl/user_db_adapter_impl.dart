@@ -1,4 +1,6 @@
+import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/data/data.dart';
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 
 class UserDbAdapterImpl extends UserDbAdapter {
@@ -23,12 +25,36 @@ class UserDbAdapterImpl extends UserDbAdapter {
   }
 
   @override
+  Future saveUserEntities(List<UserHiveEntity> entities) async {
+    final users = { for (var e in entities) e.userId : e };
+    await box.putAll(users);
+  }
+
+  @override
   Stream<UserHiveEntity> listenEntity(String userId) {
     return box.watch(key: userId).map((event) => event.value);
   }
 
   @override
   List<UserHiveEntity> getUsers() {
+    return box.values.toList();
+  }
+
+  @override
+  Stream<List<UserHiveEntity>> listenUserEntities(
+      RequestBuilder<UsersRequest> request) {
+    return box.watch()
+      .map((event) => 
+        box.values
+          .where((user) => user != null)
+          .toList()
+      )
+      .distinct((a, b) => ListEquality().equals(a, b));
+    }
+
+  @override
+  List<UserHiveEntity> getUserEntities(
+      RequestBuilder<UsersRequest> request) {
     return box.values.toList();
   }
 }

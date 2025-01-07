@@ -72,6 +72,14 @@ class ChannelMemberRepoImpl extends ChannelMemberRepo {
   }
 
   @override
+  List<AmityChannelMember> getMembersFromCache(String channelId) {
+    return commonDbAdapter.channelUserDbAdapter
+      .getMembers(channelId)
+      .map((e) => e.convertToAmityChannelMember())
+      .toList();
+  }
+
+  @override
   Future<PageListData<List<AmityChannelMember>, String>> searchMembers(GetChannelMembersRequestV4 request) async {
     final data = await channelMemberApiInterface.searchChannelMembers(request);
 

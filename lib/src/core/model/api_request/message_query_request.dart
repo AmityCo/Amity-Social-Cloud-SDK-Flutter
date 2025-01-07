@@ -85,4 +85,9 @@ class MessageQueryRequest {
             : List<String>.from(excludeTags!.map((x) => x)),
         "options": options?.toJson(),
       }..removeWhere((key, value) => value == null);
+
+  int getHashCode() {
+    final jsonString = (toJson()..remove('options')).toString();
+    return jsonString.hashCode;
+  }
 }

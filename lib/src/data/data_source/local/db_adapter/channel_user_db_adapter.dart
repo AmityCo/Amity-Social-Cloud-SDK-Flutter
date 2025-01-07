@@ -16,6 +16,8 @@ abstract class ChannelUserDbAdapter {
 
   Future updateMembership(String channelId, String userId, String membership);
 
+  List<ChannelUserHiveEntity> getMembers(String channelId);
+
   // /// Listen Message Entities
   // Stream<List<ChannelUserHiveEntity>> listenMessageEntities(
   //     MessageQueryRequest request);

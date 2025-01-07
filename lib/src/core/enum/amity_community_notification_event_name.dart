@@ -1,3 +1,16 @@
+enum AmityUserNotificationModuleName{
+  
+    CHAT("chat"),
+    SOCIAL("social"),
+    VIDEO_STREAMING("video-streaming"),
+    UNKNOWN_EVENT("unknown");
+
+
+  final String value;
+
+  const AmityUserNotificationModuleName(this.value);
+}
+
 enum AmityCommunityNotificationEventName{
   
     POST_CREATED("post.created"),
@@ -14,6 +27,20 @@ enum AmityCommunityNotificationEventName{
   final String value;
 
   const AmityCommunityNotificationEventName(this.value);
+}
+
+extension AmityUserNotificationModuleNameExtension on AmityUserNotificationModuleName{
+
+  static const _map = {
+    "chat": AmityUserNotificationModuleName.CHAT,
+    "social": AmityUserNotificationModuleName.SOCIAL,
+    "video-streaming": AmityUserNotificationModuleName.VIDEO_STREAMING,
+    "unknown": AmityUserNotificationModuleName.UNKNOWN_EVENT
+  };
+
+  static AmityUserNotificationModuleName? fromValue(String value) => _map[value];
+
+  String get value => this.value;
 }
 
 extension AmityCommunityNotificationEventNameExtension on AmityCommunityNotificationEventName{

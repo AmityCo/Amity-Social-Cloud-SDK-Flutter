@@ -11,6 +11,7 @@ extension ChannelHiveExtensionConverter on ChannelHiveEntity {
 
     return AmityChannel()
       ..channelId = channelId
+      ..defaultSubChannelId = defaultSubChannelId
       ..displayName = displayName
       ..metadata = metadata
       ..messageCount = messageCount

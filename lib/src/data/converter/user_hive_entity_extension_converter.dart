@@ -18,6 +18,7 @@ extension UserHiveEntityExtension on UserHiveEntity {
       ..roles = roles
       ..path = path
       ..isGlobalBan = isGlobalBan
+      ..isDeleted = isDeleted
       ..flagCount = flagCount
       ..hashFlag = hashFlag;
   }

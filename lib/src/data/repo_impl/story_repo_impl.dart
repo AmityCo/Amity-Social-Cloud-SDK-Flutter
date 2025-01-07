@@ -54,7 +54,7 @@ class StoryRepoImpl extends StoryRepo {
       switch (AmityStoryDataTypeExtension.enumOf(request.dataType!)) {
         case AmityStoryDataType.VIDEO:
           amityUploadResult = await fileRepo
-              .uploadVidoe(UploadFileRequest(
+              .uploadVideo(UploadFileRequest(
                   files: [File(request.uri!.path)],
                   feedtype: AmityContentFeedType.STORY.value)
                 ..uploadId = request.referenceId

@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
+import 'package:amity_sdk/src/data/converter/user/users_response_extension.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:collection/collection.dart';
 
 class UserRepoImpl extends UserRepo {
   final UserApiInterface userApiInterface;
@@ -9,13 +14,15 @@ class UserRepoImpl extends UserRepo {
   final FileDbAdapter fileDbAdapter;
   final FollowDbAdapter followDbAdapter;
   final FollowInfoDbAdapter followInfoDbAdapter;
+  final PagingIdDbAdapter pagingIdRepo;
   UserRepoImpl(
       {required this.userApiInterface,
       required this.followApiInterface,
       required this.userDbAdapter,
       required this.fileDbAdapter,
       required this.followDbAdapter,
-      required this.followInfoDbAdapter});
+      required this.followInfoDbAdapter,
+      required this.pagingIdRepo});
   @override
   Future<AmityUser> getUserById(String userId) async {
     final data = await userApiInterface.getUserById(userId);
@@ -28,12 +35,15 @@ class UserRepoImpl extends UserRepo {
   }
 
   @override
-  Future<PageListData<List<AmityUser>, String>> getUsers(UsersRequest request) async {
+  Future<PageListData<List<AmityUser>, String>> getUsers(
+      UsersRequest request) async {
     final data = await userApiInterface.getUsers(request);
 
-    final userHiveEntities = data.users.map((e) => e.convertToUserHiveEntity()).toList();
+    final userHiveEntities =
+        data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
-    final fileHiveEntities = data.files.map((e) => e.convertToFileHiveEntity()).toList();
+    final fileHiveEntities =
+        data.files.map((e) => e.convertToFileHiveEntity()).toList();
 
     for (var userEntity in userHiveEntities) {
       await userDbAdapter.saveUserEntity(userEntity);
@@ -42,9 +52,55 @@ class UserRepoImpl extends UserRepo {
       await fileDbAdapter.saveFileEntity(fileEntity);
     }
 
-    final amityUsers = userHiveEntities.where((user) => !(user.isDeleted ?? false)).map((e) => e.convertToAmityUser()).toList();
+    final amityUsers = userHiveEntities
+        .where((user) => !(user.isDeleted ?? false))
+        .map((e) => e.convertToAmityUser())
+        .toList();
 
     return PageListData(amityUsers, data.paging!.next ?? '');
+  }
+
+  @override
+  Future<PageListData<List<AmityUser>, String>> queryUsers(
+      UsersRequest request) async {
+    final hash = request.getHashCode();
+    final nonce = AmityNonce.USER_LIST;
+    int nextIndex = 0;
+    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    final data = await userApiInterface.getUsers(request);
+    await data.saveToDb<AmityUser>(userDbAdapter, fileDbAdapter);
+    if (isFirstPage) {
+      await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo
+        .getPagingIdEntities(nonce.value, hash)
+        .map((e) => (e.position ?? 0))
+        .toList()
+        .reduce(max)) + 1;
+    }
+    final pagingIds = data.users.mapIndexed((index, element) =>
+      PagingIdHiveEntity(
+        id: element.userId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      )).toList();
+    await pagingIdRepo.savePagingIdEntities(pagingIds);
+    return PageListData(<AmityUser>[], data.paging?.next ?? '');
+  }
+
+  @override
+  Stream<List<AmityUser>> listenUserChanges(
+      RequestBuilder<UsersRequest> request) {
+    final users = userDbAdapter.listenUserEntities(request);
+    // Only for notify the changes from the database
+    return users.map((event) => <AmityUser>[]);
+  }
+
+  @override
+  List<UserHiveEntity> getUserEntities(
+      RequestBuilder<UsersRequest> request) {
+    return userDbAdapter.getUserEntities(request);
   }
 
   @override
@@ -63,9 +119,11 @@ class UserRepoImpl extends UserRepo {
   Future<List<AmityUser>> updateUser(UpdateUserRequest request) async {
     final data = await userApiInterface.updateUser(request);
 
-    final userHiveEntities = data.users.map((e) => e.convertToUserHiveEntity()).toList();
+    final userHiveEntities =
+        data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
-    final fileHiveEntities = data.files.map((e) => e.convertToFileHiveEntity()).toList();
+    final fileHiveEntities =
+        data.files.map((e) => e.convertToFileHiveEntity()).toList();
 
     for (var fileEntity in fileHiveEntities) {
       await fileDbAdapter.saveFileEntity(fileEntity);
@@ -75,7 +133,8 @@ class UserRepoImpl extends UserRepo {
       await userDbAdapter.saveUserEntity(userEntity);
     }
 
-    final amityUsers = userHiveEntities.map((e) => e.convertToAmityUser()).toList();
+    final amityUsers =
+        userHiveEntities.map((e) => e.convertToAmityUser()).toList();
     return amityUsers;
   }
 
@@ -83,13 +142,15 @@ class UserRepoImpl extends UserRepo {
   Future<AmityUser> flag(String userId) async {
     final data = await userApiInterface.flag(userId);
 
-    final userHiveEntities = data.users.map((e) => e.convertToUserHiveEntity()).toList();
+    final userHiveEntities =
+        data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
     for (var userEntity in userHiveEntities) {
       await userDbAdapter.saveUserEntity(userEntity);
     }
 
-    final amityUsers = userHiveEntities.map((e) => e.convertToAmityUser()).toList();
+    final amityUsers =
+        userHiveEntities.map((e) => e.convertToAmityUser()).toList();
     return amityUsers.first;
   }
 
@@ -97,13 +158,15 @@ class UserRepoImpl extends UserRepo {
   Future<AmityUser> unflag(String userId) async {
     final data = await userApiInterface.unflag(userId);
 
-    final userHiveEntities = data.users.map((e) => e.convertToUserHiveEntity()).toList();
+    final userHiveEntities =
+        data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
     for (var userEntity in userHiveEntities) {
       await userDbAdapter.saveUserEntity(userEntity);
     }
 
-    final amityUsers = userHiveEntities.map((e) => e.convertToAmityUser()).toList();
+    final amityUsers =
+        userHiveEntities.map((e) => e.convertToAmityUser()).toList();
     return amityUsers.first;
   }
 
@@ -146,12 +209,15 @@ class UserRepoImpl extends UserRepo {
   }
 
   @override
-  Future<PageListData<List<AmityUser>, String>> getBlockedUsers(OptionsRequest request) async {
+  Future<PageListData<List<AmityUser>, String>> getBlockedUsers(
+      OptionsRequest request) async {
     final data = await userApiInterface.getBlockedUsers(request);
 
-    final userHiveEntities = data.users.map((e) => e.convertToUserHiveEntity()).toList();
+    final userHiveEntities =
+        data.users.map((e) => e.convertToUserHiveEntity()).toList();
 
-    final fileHiveEntities = data.files.map((e) => e.convertToFileHiveEntity()).toList();
+    final fileHiveEntities =
+        data.files.map((e) => e.convertToFileHiveEntity()).toList();
 
     for (var userEntity in userHiveEntities) {
       await userDbAdapter.saveUserEntity(userEntity);
@@ -160,7 +226,8 @@ class UserRepoImpl extends UserRepo {
       await fileDbAdapter.saveFileEntity(fileEntity);
     }
 
-    final amityUsers = userHiveEntities.map((e) => e.convertToAmityUser()).toList();
+    final amityUsers =
+        userHiveEntities.map((e) => e.convertToAmityUser()).toList();
 
     return PageListData(amityUsers, data.paging!.next ?? '');
   }

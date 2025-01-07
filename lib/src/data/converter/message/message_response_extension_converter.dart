@@ -7,6 +7,7 @@ extension MessageResponseExtensionConverter on MessageResponse {
   /// Convert [MessageResponse] to [MessageHiveEntity]
   MessageHiveEntity convertToMesageHiveEntity() {
     return MessageHiveEntity()
+      ..uniqueId = referenceId ?? messageId
       ..messageId = messageId
       ..channelId = channelId
       ..userId = userId

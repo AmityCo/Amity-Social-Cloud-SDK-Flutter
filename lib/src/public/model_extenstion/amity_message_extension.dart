@@ -27,8 +27,12 @@ extension AmityMessageExtension on AmityMessage {
         useCase: serviceLocator<MessageUpdateUsecase>(), channelId: channelId!, messageId: messageId!);
   }
 
-  Future delete() {
-    return serviceLocator<MessageDeleteUsecase>().get(messageId!);
+  Future delete() async {
+    try {
+      await serviceLocator<MessageDeleteUsecase>().get(uniqueId!);
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 
   Future<AmityMessage> flag() {
@@ -59,7 +63,7 @@ extension AmityMessageExtension on AmityMessage {
   StreamController<AmityMessage> get listen {
     StreamController<AmityMessage> controller = StreamController<AmityMessage>();
 
-    serviceLocator<MessageDbAdapter>().listenMessageEntity(messageId!).listen((event) {
+    serviceLocator<MessageDbAdapter>().listenMessageEntity(uniqueId!).listen((event) {
       final updateAmityMessage = event.convertToAmityMessage();
 
       //TOOD: Good idea would be have compose method inside the object itself

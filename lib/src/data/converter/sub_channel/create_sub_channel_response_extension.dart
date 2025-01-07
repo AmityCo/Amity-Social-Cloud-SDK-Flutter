@@ -10,7 +10,7 @@ import 'package:amity_sdk/src/data/data_source/local/hive_entity/sub_channel_hiv
 import 'package:amity_sdk/src/data/response/response.dart';
 
 extension CreateSubChannelResponseExtension on CreateSubChannelResponse {
-  
+
   Future saveToDb<T>(DbAdapterRepo dbRepo) async {
 
     List<SubChannelHiveEntity> subChannelHiveEntities =
@@ -33,7 +33,7 @@ extension CreateSubChannelResponseExtension on CreateSubChannelResponse {
     }
 
     for (var e in messageHiveEntity) {
-      e.syncState = AmityMessageSyncState.SYNCED;
+      e.syncState = AmityMessageSyncState.SYNCED.value;
       await dbRepo.messageDbAdapter.saveMessageEntity(e);
     }
 
@@ -45,5 +45,5 @@ extension CreateSubChannelResponseExtension on CreateSubChannelResponse {
   }
 
 
-  
+
 }

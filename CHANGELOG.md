@@ -1,3 +1,20 @@
+## 0.54.0
+* Feat: Channel Live Object
+* Feat: Message Live Object
+* Feat: Message Live Collection
+* Feat: User Live Object
+* Feat: User Live Collection
+* Feat: User Notification Setting
+* Feat: Channel Notification Setting
+* Feat: Introduce Video Message
+
+## 0.53.0
+* Feat: Expose default subchannelId for channel object
+* Deprecate: Channel creation with custom channelId
+
+## 0.52.1
+* Fix: Exclude deleted posts from global feed and custom post ranking Live Collection
+
 ## 0.52.0
 * Feat: Introduce Subchannel
 * Feat: Migrate Message to MessageV5

@@ -9,7 +9,8 @@ import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/repo/account_repo.dart';
 import 'package:amity_sdk/src/public/amity_core_client.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mqtt_client/mqtt_client.dart' if (dart.library.html) 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:mqtt_client/mqtt_client.dart'
+    if (dart.library.html) 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class AmityMQTT {
@@ -32,13 +33,22 @@ class AmityMQTT {
   void connect() {
     logger('AMITY_MQTT::Connect to mqtt server');
     final currentUser = AmityCoreClient.getCurrentUser();
+
+    // If account is already available, connect to the mqtt server
+    final account = accountRepo.getAccount(currentUser.userId!);
+    if (account != null && account.accessToken != null) {
+      _connect(account);
+    }
+
     _accountSubscription = accountRepo
         .listenAccount(currentUser.userId!)
         .skipWhile((account) => account?.accessToken?.isNotEmpty != true)
-        .distinct((previous, next) {
-          return previous?.accessToken == next?.accessToken;
-        },)
-        .listen((account) {
+        .distinct(
+      (previous, next) {
+        return previous?.accessToken == next?.accessToken;
+      },
+    ).listen((account) {
+      logger('MQTT Listen To account');
       if (account != null) {
         logger('asocket::connecting with accessToken ${account.accessToken}');
         _connect(account);
@@ -47,8 +57,10 @@ class AmityMQTT {
   }
 
   Future<int> _connect(AccountHiveEntity accountEntity) async {
-    String clientIdentifier = "${accountEntity.deviceId}-user-${accountEntity.id}";
-    activeClient = MqttServerClient(amityCoreClientOption.mqttEndpoint.endpoint, clientIdentifier);
+    String clientIdentifier =
+        "${accountEntity.deviceId}-user-${accountEntity.id}";
+    activeClient = MqttServerClient(
+        amityCoreClientOption.mqttEndpoint.endpoint, clientIdentifier);
 
     activeClient?.autoReconnect = false;
     // activeClient?.instantiationCorrect = true;
@@ -62,7 +74,8 @@ class AmityMQTT {
     activeClient?.onSubscribeFail = _onSubscribFailed;
 
     activeClient?.pongCallback = _pong;
-    activeClient?.websocketProtocols = MqttClientConstants.protocolsSingleDefault;
+    activeClient?.websocketProtocols =
+        MqttClientConstants.protocolsSingleDefault;
     activeClient?.secure = true;
 
     // Uncomment this for logging MQTT client
@@ -77,10 +90,13 @@ class AmityMQTT {
         .withWillQos(MqttQos.atMostOnce)
         .authenticateAs(accountEntity.id!, accountEntity.accessToken!);
 
-    logger('AMITY_MQTT::Mosquitto client connecting to - ${amityCoreClientOption.mqttEndpoint.endpoint}');
+    logger(
+        'AMITY_MQTT::Mosquitto client connecting to - ${amityCoreClientOption.mqttEndpoint.endpoint}');
     activeClient?.connectionMessage = connMess;
 
-    if (activeClient != null && activeClient?.connectionStatus?.state != MqttConnectionState.connected) {
+    if (activeClient != null &&
+        activeClient?.connectionStatus?.state !=
+            MqttConnectionState.connected) {
       try {
         await activeClient?.connect();
       } on Exception catch (e) {
@@ -88,10 +104,11 @@ class AmityMQTT {
         return MQTT_DISCONNECTED;
       }
     }
-    
 
-    if (activeClient?.connectionStatus!.state == MqttConnectionState.connected) {
-      logger('AMITY_MQTT::Mosquitto client connected ---->  ${activeClient?.clientIdentifier}');
+    if (activeClient?.connectionStatus!.state ==
+        MqttConnectionState.connected) {
+      logger(
+          'AMITY_MQTT::Mosquitto client connected ---->  ${activeClient?.clientIdentifier}');
       if (!isSubscribed) {
         _subscribeToNetwork();
         _subscribeSmartFeed();
@@ -107,13 +124,13 @@ class AmityMQTT {
     return MQTT_CONNECTED;
   }
 
-  void _subscribeToNetwork(){
+  void _subscribeToNetwork() {
     final currentUser = AmityCoreClient.getCurrentUser();
-      var split = currentUser.path?.split("/");
-      String? networkId = split?[0];
-      if(networkId!=null){
-        subscribe(AmityTopic.NETWORK(networkId));
-      }
+    var split = currentUser.path?.split("/");
+    String? networkId = split?[0];
+    if (networkId != null) {
+      subscribe(AmityTopic.NETWORK(networkId));
+    }
   }
 
   void _subscribeSmartFeed() {
@@ -121,12 +138,11 @@ class AmityMQTT {
     var split = currentUser.path?.split("/");
     String? networkId = split?.firstOrNull;
     String? userId = split?.lastOrNull;
-    if(networkId!=null && userId != null){
+    if (networkId != null && userId != null) {
       subscribe(AmityTopic.SMART_CHANNEL(networkId, userId));
       subscribe(AmityTopic.SMART_SUBCHANNEL(networkId, userId));
       subscribe(AmityTopic.SMART_MESSAGE(networkId, userId));
     }
-    
   }
 
   void _addClientListeners() {
@@ -141,7 +157,7 @@ class AmityMQTT {
   }
 
   void _disconnectClient() {
-    try  {
+    try {
       activeClient?.disconnect();
     } on Exception catch (e) {
       logger('AMITY_MQTT::client exception - $e');
@@ -164,7 +180,8 @@ class AmityMQTT {
     final completer = Completer<bool>();
 
     if (_completerPool.containsKey(topic.generateTopic())) {
-      logger('AMITY_MQTT::Subscribing to - ${topic.generateTopic()} already in progress');
+      logger(
+          'AMITY_MQTT::Subscribing to - ${topic.generateTopic()} already in progress');
       completer.completeError('Subscription already in progress');
       return completer.future;
     }
@@ -182,8 +199,10 @@ class AmityMQTT {
     /// Connection timeout for MQTT
     Future.delayed(const Duration(seconds: 30), () {
       if (_completerPool.containsKey(topic)) {
-        _completerPool[topic]?.completeError(
-            AmityException(message: 'Subcription failed for the topic $topic, Connection timeout', code: 408));
+        _completerPool[topic]?.completeError(AmityException(
+            message:
+                'Subcription failed for the topic $topic, Connection timeout',
+            code: 408));
         _completerPool.remove(topic);
       }
     });
@@ -198,7 +217,8 @@ class AmityMQTT {
     final completer = Completer<bool>();
 
     if (_completerPool.containsKey(topic.generateTopic())) {
-      logger('AMITY_MQTT::Unsubscribing to - ${topic.generateTopic()} already in progress');
+      logger(
+          'AMITY_MQTT::Unsubscribing to - ${topic.generateTopic()} already in progress');
       completer.completeError('unsubscription already in progress');
       return completer.future;
     }
@@ -216,8 +236,10 @@ class AmityMQTT {
     /// Connection timeout for MQTT
     Future.delayed(const Duration(seconds: 30), () {
       if (_completerPool.containsKey(topic)) {
-        _completerPool[topic]?.completeError(
-            AmityException(message: 'Subcription failed for the topic $topic, Connection timeout', code: 408));
+        _completerPool[topic]?.completeError(AmityException(
+            message:
+                'Subcription failed for the topic $topic, Connection timeout',
+            code: 408));
         _completerPool.remove(topic);
       }
     });
@@ -248,8 +270,8 @@ class AmityMQTT {
   void _onSubscribFailed(String topic) {
     logger('AMITY_MQTT::Subscription  Fail for topic $topic');
     if (_completerPool.containsKey(topic)) {
-      _completerPool[topic]
-          ?.completeError(AmityException(message: 'Subcription failed for the topic $topic', code: 401));
+      _completerPool[topic]?.completeError(AmityException(
+          message: 'Subcription failed for the topic $topic', code: 401));
       _completerPool.remove(topic);
     }
   }
@@ -257,19 +279,23 @@ class AmityMQTT {
   /// The unsolicited disconnect callback
   void _onDisconnected() {
     logger('AMITY_MQTT::OnDisconnected client callback - Client disconnection');
-    if (activeClient?.connectionStatus?.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
-      logger('AMITY_MQTT::OnDisconnected callback is solicited, this is correct');
+    if (activeClient?.connectionStatus?.disconnectionOrigin ==
+        MqttDisconnectionOrigin.solicited) {
+      logger(
+          'AMITY_MQTT::OnDisconnected callback is solicited, this is correct');
     }
     isSubscribed = false; // Reset the subscription flag on disconnect
 
     // Try to reconnect on unsolicited disconnect events
-    print('AMITY_MQTT::Disconnected, retrying connection within $retryInterval seconds');
+    print(
+        'AMITY_MQTT::Disconnected, retrying connection within $retryInterval seconds');
     Future.delayed(Duration(seconds: retryInterval), () async {
       try {
         await activeClient?.connect();
       } catch (e) {
         print('Reconnect failed: $e');
-        if (retryInterval <= 300) { // Cap the retry interval at 5 mins
+        if (retryInterval <= 300) {
+          // Cap the retry interval at 5 mins
           retryInterval *= 2; // Double the retry interval
         }
         _onDisconnected(); // Retry connection indefinitely
@@ -279,12 +305,15 @@ class AmityMQTT {
 
   /// The successful connect callback
   void _onConnected() {
-    logger('AMITY_MQTT::OnConnected client callback - Client connection was sucessful');
+    logger(
+        'AMITY_MQTT::OnConnected client callback - Client connection was sucessful');
     try {
       retryInterval = 5; // Reset the retry interval
-      activeClient?.updates?.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+      activeClient?.updates
+          ?.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
         final recMess = c?[0].payload as MqttPublishMessage;
-        final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+        final pt =
+            MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
         final payload = MqttPayloadResponse.fromJson(jsonDecode(pt));
 

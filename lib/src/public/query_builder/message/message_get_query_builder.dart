@@ -8,7 +8,7 @@ class MessageGetQueryBuilder {
 
   late MessageQueryRequest _request;
 
-  bool _stackFromEnd = true;
+  bool _stackFromEnd = false;
   String? _parentId;
   bool? _isFilterByParentId = false;
   AmityTags? _includingTags;
@@ -76,9 +76,10 @@ class MessageGetQueryBuilder {
   }
 
   /// Get Live collection for the messages
-  MessageLiveCollection getLiveCollection({int? pageSize = 20}) {
+  MessageLiveCollection getLiveCollection() {
+    final request = build();
     return MessageLiveCollection(
-      request: () => build(pageSize: pageSize),
+      request: () => request,
     );
   }
 

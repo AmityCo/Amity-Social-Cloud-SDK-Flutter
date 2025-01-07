@@ -8,6 +8,6 @@ class PagingIdInsertUsecase extends ProcessingUseCase<void, PagingIdHiveEntity> 
 
   @override
   Future process(PagingIdHiveEntity params) async {
-    return await pagingIdDbAdapter.savePagingIdEntity(params);
+    await pagingIdDbAdapter.savePagingIdEntity(params);
   }
 }

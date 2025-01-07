@@ -2,9 +2,13 @@ import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/public/public.dart';
 import 'package:amity_sdk/src/public/query_builder/user/amity_query_reach_user_builder.dart';
+import 'package:amity_sdk/src/public/query_builder/user/user_get_live_object.dart';
 
 /// User Repository
 class UserRepository {
+
+  UserGetLiveObject live = UserGetLiveObject();
+
   /* begin_public_function 
   id: user.query
   */

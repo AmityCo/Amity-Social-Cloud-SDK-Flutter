@@ -12,7 +12,7 @@ class FileVideoUploadUsecase
   FileVideoUploadUsecase(this._fileRepo);
   @override
   Future<AmityUploadResult<AmityVideo>> get(UploadFileRequest params) {
-    return _fileRepo.uploadVidoe(params);
+    return _fileRepo.uploadVideo(params);
   }
 
   StreamController<AmityUploadResult<AmityVideo>> listen(

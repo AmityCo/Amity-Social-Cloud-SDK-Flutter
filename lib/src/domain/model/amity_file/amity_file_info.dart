@@ -123,7 +123,7 @@ class AmityVideo extends AmityFileInfo {
   }
 
   String? getVideoUrl(AmityVideoResolution resolution) {
-    return fileProperties.rawFile?['videoUrl'][resolution.apiKey];
+    return fileProperties.rawFile?['videoUrl']?[resolution.apiKey];
   }
 }
 

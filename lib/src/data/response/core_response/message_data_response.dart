@@ -5,6 +5,7 @@ class MessageDataResponse {
     required this.text,
     required this.fileId,
     required this.caption,
+    this.thumbnailFileId,
   });
 
   /// Text
@@ -16,12 +17,16 @@ class MessageDataResponse {
   /// Caption
   String? caption;
 
+  /// Thumbnail File Id
+  String? thumbnailFileId;
+
   /// Factory method to init from json
   factory MessageDataResponse.fromJson(Map<String, dynamic>? json) =>
       MessageDataResponse(
         text: json?["text"],
         fileId: json?["fileId"],
         caption: json?["caption"],
+        thumbnailFileId: json?["thumbnailFileId"],
       );
 
   /// convert to map
@@ -29,5 +34,6 @@ class MessageDataResponse {
         "text": text,
         "fileId": fileId,
         "caption": caption,
+        "thumbnailFileId": thumbnailFileId,
       };
 }

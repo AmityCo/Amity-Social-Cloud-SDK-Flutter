@@ -14,31 +14,39 @@ extension MessageHiveExtensionConverter on MessageHiveEntity {
     switch (amityMessageDataType) {
       case AmityMessageDataType.TEXT:
         amityMessageData =
-            MessageTextData(messageId: messageId!, text: data!.text);
+            MessageTextData(messageId: uniqueId!, text: data!.text);
         break;
       case AmityMessageDataType.IMAGE:
         amityMessageData = MessageImageData(
-          messageId: messageId!,
+          messageId: uniqueId!,
           fileId: fileId,
           caption: data!.caption,
         );
         break;
       case AmityMessageDataType.AUDIO:
         amityMessageData = MessageAudioData(
-          messageId: messageId!,
+          messageId: uniqueId!,
           fileId: fileId!,
         );
         break;
       case AmityMessageDataType.FILE:
         amityMessageData = MessageFileData(
-          messageId: messageId!,
+          messageId: uniqueId!,
           fileId: fileId,
           caption: data!.caption,
         );
         break;
+      
+      case AmityMessageDataType.VIDEO:
+        amityMessageData = MessageVideoData(
+          messageId: uniqueId!,
+          fileId: fileId,
+          rawData: data!.toMap(),
+        );
+        break;
       case AmityMessageDataType.CUSTOM:
         amityMessageData = MessageCustomData(
-          messageId: messageId!,
+          messageId: uniqueId!,
           rawData: data!.toMap(),
         );
         break;
@@ -56,12 +64,14 @@ extension MessageHiveExtensionConverter on MessageHiveEntity {
     }
 
     return AmityMessage()
+      ..uniqueId = uniqueId
       ..messageId = messageId
       ..channelId = channelId
+      ..subChannelId = subChannelId
       ..userId = userId
       ..type = amityMessageDataType
       ..data = amityMessageData
-      ..syncState = syncState
+      ..syncState = syncState?.toAmityMessageSyncState
       ..channelSegment = channelSegment
       ..parentId = parentId
       // ..fileId = fileId

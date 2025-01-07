@@ -33,15 +33,15 @@ extension CreateChannelResponseExtension on CreateChannelResponse {
       await dbRepo.userDbAdapter.saveUserEntity(e);
     }
 
-    //Save the Channel Hive
-    for (var e in channelHiveEntities) {
-      await dbRepo.channelDbAdapter.saveEntity(e);
-    }
-
     //Save the Channel User Hive
     for (var e in channelUserHiveEntities) {
       final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
       await dbRepo.channelUserDbAdapter.saveEntity(e, user);
+    }
+
+    //Save the Channel Hive
+    for (var e in channelHiveEntities) {
+      await dbRepo.channelDbAdapter.saveEntity(e);
     }
 
     // FIXME: right logic for type checking

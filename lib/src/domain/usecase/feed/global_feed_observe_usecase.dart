@@ -54,7 +54,7 @@ class GlobalFeedObserveUseCase
     } else {
       final ids = pagingIds.map((e) => e.id).toList();
       final posts = entities
-          .where((entity) => ids.contains(entity.postId))
+          .where((entity) => ids.contains(entity.postId) && entity.isDeleted == false)
           .map((e) => e.convertToAmityPost())
           .toList()
         ..sort((a, b) {

@@ -29,10 +29,14 @@ extension CreateMessageResponseExtension on CreateMessageResponse {
       await dbRepo.userDbAdapter.saveUserEntity(e);
     }
 
-    //Save Post Entity
+    //Save Message Entity
     for (var e in messagesHiveEntities) {
+      if (e.uniqueId != e.messageId) {
+        dbRepo.messageDbAdapter.deleteMessageEntityByUniqueId(e.uniqueId!);
+        e.uniqueId = e.messageId;
+      }
       /// Save all message with sync state
-      e.syncState = AmityMessageSyncState.SYNCED;
+      e.syncState = AmityMessageSyncState.SYNCED.value;
       await dbRepo.messageDbAdapter.saveMessageEntity(e);
     }
 

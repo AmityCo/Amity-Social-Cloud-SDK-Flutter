@@ -18,11 +18,11 @@ class MessageEventListener extends SocketEventListener {
     /// Exclude the update if we dont have my rection key
     if (data.messages[0].myReactions == null) {
       final amityMessage = serviceLocator<MessageGetLocalUsecase>()
-          .get(data.messages[0].messageId);
+          .get(data.messages[0].referenceId ?? data.messages[0].messageId);
       data.messages[0].myReactions = amityMessage?.myReactions;
     }
-
-    data.saveToDb(serviceLocator());
+    final dbRepo = serviceLocator<DbAdapterRepo>();
+    data.saveToDb(dbRepo);
 
     final channelId = data.messages[0].channelId;
     serviceLocator<ChannelUpdateLastActivityUsecase>().process(channelId);
@@ -31,8 +31,9 @@ class MessageEventListener extends SocketEventListener {
   @override
   bool shouldProcessEvent(Map<String, dynamic> json) {
     final data = CreateMessageResponse.fromJson(json);
+    final uniqueId = data.messages[0].referenceId ?? data.messages[0].messageId;
     if (data.messages.isNotEmpty) {
-      return _hasLocalMessage(data.messages[0].messageId);
+      return _hasLocalMessage(uniqueId);
     } else {
       return false;
     }

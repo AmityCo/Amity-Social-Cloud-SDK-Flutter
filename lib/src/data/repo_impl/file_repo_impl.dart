@@ -73,7 +73,7 @@ class FileRepoImpl extends FileRepo {
   }
 
   @override
-  Future<AmityUploadResult<AmityVideo>> uploadVidoe(
+  Future<AmityUploadResult<AmityVideo>> uploadVideo(
     UploadFileRequest request,
   ) async {
     final data = await fileApiInterface.uploadVideo(request);

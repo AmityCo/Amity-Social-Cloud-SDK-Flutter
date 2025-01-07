@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/user_live_collection.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 /// Query Builder to Get All Amity User
@@ -54,5 +55,16 @@ class AmityAllUserQueryBuilder {
     }
 
     return _useCase.get(usersRequest);
+  }
+
+  UserLiveCollection getLiveCollection() {
+    UsersRequest usersRequest = UsersRequest();
+
+    usersRequest.keyword = _keywoard;
+
+    usersRequest.sortBy = _amityUserSortOption.value;
+    usersRequest.filter = 'all';
+
+    return UserLiveCollection(request: () => usersRequest);
   }
 }

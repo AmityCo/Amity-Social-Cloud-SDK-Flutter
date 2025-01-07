@@ -10,7 +10,11 @@ class MessageDeleteUsecase extends UseCase<void, String> {
   MessageDeleteUsecase({required this.messageRepo});
 
   @override
-  Future<void> get(String params) async {
-    return messageRepo.deleteMessage(params);
+  Future get(String params) async {
+    try {
+      await messageRepo.deleteMessage(params);
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 }

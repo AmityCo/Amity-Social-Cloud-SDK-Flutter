@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 /// [AmityMessageDataType]
-enum AmityMessageDataType { TEXT, IMAGE, FILE, AUDIO, CUSTOM }
+enum AmityMessageDataType { TEXT, IMAGE, FILE, AUDIO, VIDEO, CUSTOM }
 
 /// [AmityMessageDataType] Extension
 extension AmityMessageDataTypeExtension on AmityMessageDataType {

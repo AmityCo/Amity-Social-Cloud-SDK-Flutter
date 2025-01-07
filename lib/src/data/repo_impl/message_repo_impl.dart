@@ -1,8 +1,13 @@
 import 'dart:io' if (dart.library.html) 'dart:html';
+import 'dart:math';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
+import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
+import 'package:collection/collection.dart';
 
 /// [MessageRepoImpl]
 class MessageRepoImpl extends MessageRepo {
@@ -14,46 +19,57 @@ class MessageRepoImpl extends MessageRepo {
 
   final FileRepo fileRepo;
 
+  final ChannelRepo channelRepo;
+
+  final PagingIdRepo pagingIdRepo;
+
   /// init [MessageRepoImpl]
-  MessageRepoImpl({required this.messageApiInterface, required this.dbAdapterRepo, required this.fileRepo});
+  MessageRepoImpl({required this.messageApiInterface, required this.dbAdapterRepo, required this.fileRepo, required this.channelRepo, required this.pagingIdRepo});
 
   @override
   Future<PageListData<List<AmityMessage>, String>> queryMesssage(MessageQueryRequest request) async {
+    final hash = request.getHashCode();
+    final nonce = AmityNonce.MESSAGE_LIST;
+    int nextIndex = 0;
     final data = await messageApiInterface.messageQuery(request);
+    final paging = data.paging;
+    final amitMessages = await data.saveToDb<AmityMessage>(dbAdapterRepo);
     //mandatory to delete all previous messages, since we don't know
     //the up to date data for each messages
-    final isFirstPageRequest = ((request.options?.last ?? 0) > 0) || ((request.options?.before ?? 0) > 0);
-    if (request.options?.token == null && isFirstPageRequest) {
-      await dbAdapterRepo.messageDbAdapter.deleteMessagesByChannelId(request.subChannelId);
-    }
-    final amitMessages = await data.saveToDb<AmityMessage>(dbAdapterRepo);
-    final String token;
-    // if stack from end is true, next page token always the previous one,
-    // vice versa with false stack from end
-    if (request.stackFromEnd == true) {
-      token = data.paging!.previous ?? '';
+    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    if (isFirstPage) {
+      await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
     } else {
-      token = data.paging!.next ?? '';
+      nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;
     }
-    return PageListData(amitMessages, token);
+    data.messages.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.referenceId ?? element.messageId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdRepo.savePagingId(pagingId);
+    });
+    return PageListData(amitMessages, paging?.next ?? '');
   }
 
   @override
-  Stream<List<AmityMessage>> listentMessages(RequestBuilder<MessageQueryRequest> request) {
+  Stream<List<AmityMessage>> listenMessages(RequestBuilder<MessageQueryRequest> request) {
     final req = request.call();
     return dbAdapterRepo.messageDbAdapter.listenMessageEntities(request).map((event) {
       final List<AmityMessage> list = [];
       for (var element in event) {
         list.add(element.convertToAmityMessage());
-        //sort result
-        if (req.stackFromEnd == true) {
-          list.sort((a, b) => b.channelSegment!.compareTo(a.channelSegment!));
-        } else {
-          list.sort((a, b) => a.channelSegment!.compareTo(b.channelSegment!));
-        }
       }
       return list;
     });
+  }
+
+  @override
+  List<MessageHiveEntity> getMessageEntities(
+      RequestBuilder<MessageQueryRequest> request) {
+    return dbAdapterRepo.messageDbAdapter.getMessageEntities(request);
   }
 
   @override
@@ -64,14 +80,15 @@ class MessageRepoImpl extends MessageRepo {
     entity.channelSegment = dbAdapterRepo.messageDbAdapter.getHighestChannelSagment(request.subchannelId) + 1;
 
     try {
-      entity.syncState = AmityMessageSyncState.SYNCING;
+      entity.syncState = AmityMessageSyncState.SYNCING.value;
       dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
 
       final data = await messageApiInterface.createMessage(request);
       final amitMessages = await data.saveToDb<AmityMessage>(dbAdapterRepo);
+      await ChannelUpdateLastActivityUsecase(channelRepo: channelRepo).process(request.subchannelId);
       return (amitMessages as List).first;
     } catch (error) {
-      entity.syncState = AmityMessageSyncState.FAILED;
+      entity.syncState = AmityMessageSyncState.FAILED.value;
       dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
 
       rethrow;
@@ -91,8 +108,8 @@ class MessageRepoImpl extends MessageRepo {
   }
 
   @override
-  bool hasLocalMessage(String messageId) {
-    return dbAdapterRepo.messageDbAdapter.getMessageEntity(messageId) != null;
+  bool hasLocalMessage(String uniqueId) {
+    return dbAdapterRepo.messageDbAdapter.getMessageEntity(uniqueId) != null;
   }
 
   @override
@@ -112,33 +129,57 @@ class MessageRepoImpl extends MessageRepo {
       entity.fileId = request.messageId;
 
       /// Message Created
-      entity.syncState = AmityMessageSyncState.CREATED;
-      dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
+      entity.syncState = AmityMessageSyncState.CREATED.value;
+      await dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
 
       /// Message media Uploading
-      entity.syncState = AmityMessageSyncState.UPLOADING;
-      dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
+      entity.syncState = AmityMessageSyncState.UPLOADING.value;
+      await dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
 
-      final amityUploadResult = request.type == AmityMessageDataType.IMAGE.value
-          ? await fileRepo.uploadImage(UploadFileRequest(files: [File(request.uri!.path)])
+      var amityUploadResult;
+      if (request.type == AmityMessageDataType.IMAGE.value) {
+          amityUploadResult = await fileRepo.uploadImageStream(UploadFileRequest(files: [File(request.uri!.path)])
             ..uploadId = request.messageId
             ..fullImage = true)
-          : await fileRepo
-              .uploadFile(UploadFileRequest(files: [File(request.uri!.path)])..uploadId = request.messageId);
+            .stream
+            .firstWhere((element) =>
+              element is AmityUploadComplete
+              || element is AmityUploadError
+              || element is AmityUploadCancel);
+      } else if (request.type == AmityMessageDataType.VIDEO.value) {
+        amityUploadResult = await fileRepo.uploadVideoStream(UploadFileRequest(files: [File(request.uri!.path)], feedtype: AmityContentFeedType.MESSAGE.value)
+            ..uploadId = request.messageId
+            ..fullImage = true)
+            .stream
+            .firstWhere((element) =>
+              element is AmityUploadComplete
+              || element is AmityUploadError
+              || element is AmityUploadCancel);
+      } else {
+          amityUploadResult = await fileRepo
+              .uploadFileStream(UploadFileRequest(files: [File(request.uri!.path)])..uploadId = request.messageId)
+              .stream
+              .firstWhere((element) =>
+                element is AmityUploadComplete
+                || element is AmityUploadError
+                || element is AmityUploadCancel);
+      }
 
       if (amityUploadResult is AmityUploadComplete) {
         request.fileId = (amityUploadResult as AmityUploadComplete).file.fileId;
       }
 
       /// Message Syncing
-      entity.syncState = AmityMessageSyncState.SYNCING;
-      dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
+      entity.syncState = AmityMessageSyncState.SYNCING.value;
+      await dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
 
       final data = await messageApiInterface.createMessage(request);
       final amitMessages = await data.saveToDb<AmityMessage>(dbAdapterRepo);
+      await ChannelUpdateLastActivityUsecase(channelRepo: channelRepo).process(request.subchannelId);
       return (amitMessages as List).first;
+
     } catch (error) {
-      entity.syncState = AmityMessageSyncState.FAILED;
+      entity.syncState = AmityMessageSyncState.FAILED.value;
       dbAdapterRepo.messageDbAdapter.saveMessageEntity(entity);
 
       rethrow;
@@ -151,12 +192,22 @@ class MessageRepoImpl extends MessageRepo {
   }
 
   @override
-  Future deleteMessage(String messageId) async {
-    await messageApiInterface.deleteMessage(messageId);
-
-    final entity = dbAdapterRepo.messageDbAdapter.getMessageEntity(messageId)!;
-    entity.isDeleted = true;
-    entity.save();
+  Future deleteMessage(String uniqueId) async {
+    final entity = dbAdapterRepo.messageDbAdapter.getMessageEntity(uniqueId);
+    if (entity != null) {
+      final messageId = entity.messageId;
+      if (entity.syncState == AmityMessageSyncState.SYNCED.value && messageId != null) {
+        try {
+          await messageApiInterface.deleteMessage(messageId!);
+          entity.isDeleted = true;
+          entity.save();
+        } catch (error) {
+          return Future.error(error);
+        }
+      } else {
+        await dbAdapterRepo.messageDbAdapter.deleteMessageEntity(entity);
+      }
+    }
   }
 
   @override

@@ -38,15 +38,17 @@ class ChannelHiveEntityAdapter extends TypeAdapter<ChannelHiveEntity> {
       updatedAt: fields[18] as DateTime?,
       avatarFileId: fields[19] as String?,
       isDeleted: fields[20] as bool?,
-    );
+    )..defaultSubChannelId = fields[21] as String?;
   }
 
   @override
   void write(BinaryWriter writer, ChannelHiveEntity obj) {
     writer
-      ..writeByte(21)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.channelId)
+      ..writeByte(21)
+      ..write(obj.defaultSubChannelId)
       ..writeByte(1)
       ..write(obj.isDistinct)
       ..writeByte(2)

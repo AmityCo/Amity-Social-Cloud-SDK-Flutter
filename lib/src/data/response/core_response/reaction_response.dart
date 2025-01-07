@@ -29,18 +29,21 @@ class Reactor {
     required this.reactionName,
     required this.userId,
     required this.reactionId,
+    required this.eventName,
     required this.createdAt,
   });
 
   final String reactionName;
   final String userId;
   final String reactionId;
+  String eventName;
   final DateTime createdAt;
 
   factory Reactor.fromJson(Map<String, dynamic> json) => Reactor(
         reactionName: json["reactionName"],
         userId: json["userId"],
         reactionId: json["reactionId"],
+        eventName: json["eventName"],
         createdAt: DateTime.parse(json["createdAt"]),
       );
 
@@ -48,6 +51,7 @@ class Reactor {
         "reactionName": reactionName,
         "userId": userId,
         "reactionId": reactionId,
+        "eventName": eventName,
         "createdAt": createdAt.toIso8601String(),
       };
 }

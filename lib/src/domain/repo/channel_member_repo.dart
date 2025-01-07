@@ -44,4 +44,6 @@ abstract class ChannelMemberRepo {
 
   /// Mute Member
   Future muteMember(UpdateChannelMembersRequest request);
+
+  List<AmityChannelMember> getMembersFromCache(String channelId);
 }

@@ -7,15 +7,16 @@ sealed class NotificationSaveSettingsRequest {
   Map<String, dynamic> toJson();
 }
 
-
-
 class ChannelNotificationSettings extends NotificationSaveSettingsRequest {
   String? channelId;
   bool? isPushNotifiable = false;
+  List<NotifiableEventsRequest>? notifiableEvents;
   String level = "channel";
 
   ChannelNotificationSettings(
-      {this.channelId, this.isPushNotifiable, required this.level});
+      {this.channelId, 
+      required this.isPushNotifiable,
+      this.notifiableEvents,});
 
   @override
   Map<String, dynamic> toJson() => {
@@ -47,13 +48,15 @@ class CommunityNotificationSettings extends NotificationSaveSettingsRequest {
 
 class UserNotificationSettings extends NotificationSaveSettingsRequest {
   bool? isPushNotifiable = false;
-  List<NotifiableEventsRequest>? notifiableEvents;
+  List<NotifiableEventsRequest>? notifiableModules;
   String level = "user";
+
+  UserNotificationSettings({required this.isPushNotifiable, this.notifiableModules});
 
   @override
   Map<String, dynamic> toJson() => {
         "isPushNotifiable": isPushNotifiable,
-        "notifiableEvents": notifiableEvents == null ? null : List<dynamic>.from(notifiableEvents!.map((x) => x.toJson())),
+        "notifiableEvents": notifiableModules == null ? null : List<dynamic>.from(notifiableModules!.map((x) => x.toJson())),
         "level": level
       }..removeNullValue();
 }

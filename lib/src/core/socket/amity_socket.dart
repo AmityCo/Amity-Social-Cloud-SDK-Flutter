@@ -108,9 +108,6 @@ class AmitySocket {
 
   void _registerEvents() {
     final List<SocketEventListener> events = [
-      MessageCreateEventListener(),
-      MessageUpdateEventListener(),
-      MessageDeleteventListener(),
       StreamStartEvent(),
       StreamStopEvent(),
     ];
