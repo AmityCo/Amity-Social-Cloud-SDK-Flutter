@@ -1,3 +1,6 @@
+## 0.54.1
+* Fix: Ensure service locator ready when setup SDK client
+
 ## 0.54.0
 * Feat: Channel Live Object
 * Feat: Message Live Object

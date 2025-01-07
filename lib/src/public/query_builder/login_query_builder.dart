@@ -46,19 +46,19 @@ class LoginQueryBuilder {
   Future<AmityUser> submit() async {
     // Check if the user is already logged in
     if (serviceLocator.isRegistered<AccountHiveEntity>()) {
-
+      
       // Get the active user id
       final activeUserId = serviceLocator<AccountHiveEntity>().userId;
 
       if (activeUserId != null && activeUserId != _userId) {
-
+        
         // Logout if logging in user is different from the active user
         // To clear all the data related to the active user
         await AmityCoreClient.logout();
         _appEventBus!.publish(AppEvent.LoggingIn);
 
       } else if (activeUserId == null) {
-
+        
         // Publish "Logging in" event when user is logging in for the first time
         _appEventBus!.publish(AppEvent.LoggingIn);
 

@@ -56,7 +56,7 @@ class CreateMessageRequest {
   /// Reference Id
   String? referenceId;
 
-  String?  dataType;
+  String?  dataType; 
 
   /// Metadata
   Map<String, dynamic>? metadata;
