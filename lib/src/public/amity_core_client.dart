@@ -16,7 +16,7 @@ class AmityCoreClient extends CoreClient {
     required AmityCoreClientOption option,
     bool sycInitialization = false,
   }) async {
-    CoreClient.setup(option: option, sycInitialization: sycInitialization);
+    await CoreClient.setup(option: option, sycInitialization: sycInitialization);
     return;
   }
 
