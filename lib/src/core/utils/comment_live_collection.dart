@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/usecase/comment/comment_fetch_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 
 class CommentLiveCollection extends LiveCollection<AmityComment> {
@@ -15,7 +18,7 @@ class CommentLiveCollection extends LiveCollection<AmityComment> {
     final params = request();
     params.options?.token = null;
     params.options?.limit = defaultPageSize;
-    return await serviceLocator<CommentQueryUseCase>().get(params);
+    return await serviceLocator<CommentFetchUseCase>().get(params);
   }
 
   @override
@@ -24,11 +27,16 @@ class CommentLiveCollection extends LiveCollection<AmityComment> {
     final params = request();
     params.options?.token = token;
     params.options?.limit = null;
-    return await serviceLocator<CommentQueryUseCase>().get(params);
+    return await serviceLocator<CommentFetchUseCase>().get(params);
   }
 
   @override
   StreamController<List<AmityComment>> getStreamController() {
     return serviceLocator<CommentObserveUseCase>().listen(request);
+  }
+  
+  @override
+  StreamController<PagingIdHiveEntity> observeNewItem() {
+    return serviceLocator<CommentObserveNewItemUseCase>().listen(request);
   }
 }

@@ -101,6 +101,7 @@ class ChannelHiveEntity extends EkoObject{
 
   ChannelHiveEntity({
     this.channelId,
+    this.defaultSubChannelId,
     this.isDistinct,
     this.metadata,
     this.type,

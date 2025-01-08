@@ -18,6 +18,7 @@ class ChannelHiveEntityAdapter extends TypeAdapter<ChannelHiveEntity> {
     };
     return ChannelHiveEntity(
       channelId: fields[0] as String?,
+      defaultSubChannelId: fields[21] as String?,
       isDistinct: fields[1] as bool?,
       metadata: (fields[2] as Map?)?.cast<String, dynamic>(),
       type: fields[3] as String?,
@@ -38,7 +39,7 @@ class ChannelHiveEntityAdapter extends TypeAdapter<ChannelHiveEntity> {
       updatedAt: fields[18] as DateTime?,
       avatarFileId: fields[19] as String?,
       isDeleted: fields[20] as bool?,
-    )..defaultSubChannelId = fields[21] as String?;
+    );
   }
 
   @override

@@ -10,4 +10,6 @@ abstract class CommentDbAdapter {
 
   Stream<List<CommentHiveEntity>> listenCommentEntities(
       RequestBuilder<GetCommentRequest> request);
+
+  List<CommentHiveEntity> getCommentEntities(RequestBuilder<GetCommentRequest> request);
 }

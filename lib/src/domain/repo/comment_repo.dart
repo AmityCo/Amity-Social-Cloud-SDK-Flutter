@@ -23,4 +23,7 @@ abstract class CommentRepo extends AmityObjectRepository<CommentHiveEntity, Amit
 
   /// Has Local Comment
   bool hasLocalComment(String commentId);
+
+  List<CommentHiveEntity> getCommentEntities(
+      RequestBuilder<GetCommentRequest> request);
 }

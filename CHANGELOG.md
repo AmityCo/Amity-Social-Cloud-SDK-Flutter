@@ -1,3 +1,7 @@
+## 0.54.2
+* Feat: Update Comment Live Collection to use Query Stream
+* Fix: Fix null channel.defaultSubChannelId
+
 ## 0.54.1
 * Fix: Ensure service locator ready when setup SDK client
 
