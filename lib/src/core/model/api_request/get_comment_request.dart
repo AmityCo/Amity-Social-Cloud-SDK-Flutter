@@ -63,6 +63,11 @@ class GetCommentRequest {
         "dataTypes[matchType]": matchType,
       }..removeWhere((key, value) => value == null);
 
+  int getHashCode() {
+    final jsonString = (toJson()..remove('options')).toString();
+    return jsonString.hashCode;
+  }
+
   @override
   String toString() => 'GetCommentRequest(referenceId: $referenceId, referenceType: $referenceType)';
 }

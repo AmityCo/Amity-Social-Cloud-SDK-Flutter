@@ -68,6 +68,8 @@ import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_list_usecas
 import 'package:amity_sdk/src/domain/usecase/channel/channel_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/channel_update_last_activity_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/channel/member/channel_members_get_cache_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/comment/comment_fetch_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usecase.dart';
@@ -366,7 +368,8 @@ class SdkServiceLocator {
         ));
     serviceLocator.registerLazySingleton<CommentRepo>(() => CommentRepoImpl(
         commentApiInterface: serviceLocator(),
-        dbAdapterRepo: serviceLocator()));
+        dbAdapterRepo: serviceLocator(),
+        pagingIdRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<FileRepo>(() => FileRepoImpl(
         fileDbAdapter: serviceLocator(), fileApiInterface: serviceLocator()));
     serviceLocator.registerLazySingleton<ReactionRepo>(() => ReactionRepoImpl(
@@ -787,7 +790,14 @@ class SdkServiceLocator {
         CommentQueryUseCase(
             commentRepo: serviceLocator(),
             commentComposerUsecase: serviceLocator()));
-
+    serviceLocator.registerLazySingleton<CommentFetchUseCase>(() =>
+        CommentFetchUseCase(
+            commentRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<CommentObserveNewItemUseCase>(() =>
+        CommentObserveNewItemUseCase(
+            commentRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator()));
+            
     serviceLocator.registerLazySingleton<PostFlagUsecase>(
         () => PostFlagUsecase(postRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<PostUnflagUsecase>(

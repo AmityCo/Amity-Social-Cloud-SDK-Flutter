@@ -101,7 +101,7 @@ class ChannelResponse {
         channelId: json["channelId"],
         channelInternalId: json["channelInternalId"],
         channelPublicId: json["channelPublicId"],
-        defaultMessageFeedId: json["defaultMessageFeedId"],
+        defaultMessageFeedId: json["_id"],
         isDistinct: json["isDistinct"],
         metadata: json["metadata"],
         type: json["type"],
@@ -131,6 +131,7 @@ class ChannelResponse {
   /// [ChannelResponse] to Map
   Map<String, dynamic> toJson() => {
         "channelId": channelId,
+        "_id": defaultMessageFeedId,
         "isDistinct": isDistinct,
         "metadata": metadata,
         "type": type,

@@ -59,4 +59,11 @@ class CommentDbAdapterImpl extends CommentDbAdapter {
         .toList()
     );
   }
+
+  @override
+  List<CommentHiveEntity> getCommentEntities(RequestBuilder<GetCommentRequest> request) {
+    return box.values
+    .where((comment) => comment.isMatchingFilter(request.call()))
+    .toList();
+  }
 }

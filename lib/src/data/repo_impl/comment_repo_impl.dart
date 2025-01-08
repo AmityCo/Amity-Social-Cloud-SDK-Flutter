@@ -1,15 +1,18 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/model/api_request/create_comment_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_comment_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/update_comment_request.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/core/utils/page_list_data.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 import 'package:amity_sdk/src/domain/repo/amity_object_repository.dart';
 import 'package:amity_sdk/src/core/utils/model_mapper.dart';
 import 'package:amity_sdk/src/core/mapper/comment_model_mapper.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
 import 'package:collection/collection.dart';
 
 /// Comment Repo Impl
@@ -20,8 +23,10 @@ class CommentRepoImpl extends CommentRepo {
   /// Common Db Adapter
   final DbAdapterRepo dbAdapterRepo;
 
+  final PagingIdRepo pagingIdRepo;
+
   /// Init [CommentRepoImpl]
-  CommentRepoImpl({required this.commentApiInterface, required this.dbAdapterRepo});
+  CommentRepoImpl({required this.commentApiInterface, required this.dbAdapterRepo, required this.pagingIdRepo});
 
   @override
   Future<AmityComment?> getCommentByIdFromDb(String commentId) async {
@@ -49,10 +54,30 @@ class CommentRepoImpl extends CommentRepo {
 
   @override
   Future<PageListData<List<AmityComment>, String>> queryComment(GetCommentRequest request) async {
+    final hash = request.getHashCode();
+    final nonce = AmityNonce.COMMENT_LIST;
+    int nextIndex = 0;
     final data = await commentApiInterface.queryComment(request);
+    final paging = data.paging;
 
     final amityComments = await _saveDetailsToDb(data);
-    return PageListData(amityComments, data.paging!.next ?? '');
+
+    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    if (isFirstPage) {
+      await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo.getPagingIdEntities(nonce.value, hash).map((e) => (e.position ?? 0)).toList().reduce(max)) + 1;
+    }
+    data.comments.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.commentId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdRepo.savePagingId(pagingId);
+    });
+    return PageListData(amityComments, paging?.next ?? '');
   }
 
   @override
@@ -155,15 +180,15 @@ class CommentRepoImpl extends CommentRepo {
       await dbAdapterRepo.commentDbAdapter.saveCommentEntity(e);
     }
 
-    //Save the Comment Entity
-    for (var e in commentHiveEntities) {
-      await dbAdapterRepo.commentDbAdapter.saveCommentEntity(e);
-    }
-
     //Save the Community Member Entity
     for (var e in communityUserHiveEntites) {
       final UserHiveEntity? user = userHiveEntities.firstWhereOrNull((element) => element.userId == e.userId);
       await dbAdapterRepo.communityMemberDbAdapter.saveCommunityMemberEntity(e, user);
+    }
+
+    //Save the Comment Entity
+    for (var e in commentHiveEntities) {
+      await dbAdapterRepo.commentDbAdapter.saveCommentEntity(e);
     }
 
     return commentHiveEntities.map((e) => e.convertToAmityComment()).toList();
@@ -224,5 +249,11 @@ class CommentRepoImpl extends CommentRepo {
   @override
   Future<CommentHiveEntity?> queryFromCache(String objectId) async {
     return dbAdapterRepo.commentDbAdapter.getCommentEntity(objectId);
+  }
+
+  @override
+  List<CommentHiveEntity> getCommentEntities(
+      RequestBuilder<GetCommentRequest> request) {
+    return dbAdapterRepo.commentDbAdapter.getCommentEntities(request);
   }
 }
