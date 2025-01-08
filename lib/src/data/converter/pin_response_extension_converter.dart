@@ -1,4 +1,4 @@
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/pin_hive_entity_35.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/pin_hive_entity_36.dart';
 import 'package:amity_sdk/src/data/response/pin_response.dart';
 import 'package:amity_sdk/src/data/response/pin_target_response.dart';
 

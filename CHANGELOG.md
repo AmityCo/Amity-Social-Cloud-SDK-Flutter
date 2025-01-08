@@ -1,3 +1,7 @@
+## 0.54.3
+* Fix: Fix Comment Live Collection doesn't emit data when client doesn't specify isDeleted on query builder
+* Fix: Fix Pinned post Live Collection doesn't emit data
+
 ## 0.54.2
 * Feat: Update Comment Live Collection to use Query Stream
 * Fix: Fix null channel.defaultSubChannelId

@@ -2,9 +2,9 @@ import 'package:amity_sdk/src/core/model/api_request/query_pinned_post_request.d
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
-part 'pin_hive_entity_35.g.dart';
+part 'pin_hive_entity_36.g.dart';
 
-@HiveType(typeId: 35)
+@HiveType(typeId: 36)
 class PinHiveEntity extends EkoObject {
 
   @HiveField(0)

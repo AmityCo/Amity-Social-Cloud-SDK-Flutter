@@ -18,7 +18,7 @@ export 'mentionee_hive_entity_30.dart';
 export 'message_data_hive_entity_19.dart';
 export 'message_hive_entity_18.dart';
 export 'paging_id_hive_entity_29.dart';
-export 'pin_hive_entity_35.dart';
+export 'pin_hive_entity_36.dart';
 export 'poll_answer_hive_entity_17.dart';
 export 'poll_hive_entity_16.dart';
 export 'post_data_hive_entity_7.dart';

@@ -136,7 +136,7 @@ extension CommentHiveEntityExtension on CommentHiveEntity {
   }
 
   bool isMatchingIsDeleted(bool? isDeleted) {
-    return this.isDeleted == isDeleted;
+    return isDeleted == null || this.isDeleted == isDeleted;
   }
 
   bool isMatchingParentId(String? parentId, bool? filterByParentId) {
