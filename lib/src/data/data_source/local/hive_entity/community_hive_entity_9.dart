@@ -1,10 +1,11 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:hive/hive.dart';
 
 part 'community_hive_entity_9.g.dart';
 
-@HiveType(typeId: 9)
+@HiveType(typeId: AmityHiveType.community)
 class CommunityHiveEntity extends EkoObject {
   @HiveField(0)
   String? communityId;

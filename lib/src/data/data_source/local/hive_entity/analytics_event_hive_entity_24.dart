@@ -1,9 +1,10 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
 part 'analytics_event_hive_entity_24.g.dart';
 
-@HiveType(typeId: 24)
+@HiveType(typeId: AmityHiveType.analyticsEvent)
 class AnalyticsEventHiveEntity extends EkoObject {
   String? eventId;
 

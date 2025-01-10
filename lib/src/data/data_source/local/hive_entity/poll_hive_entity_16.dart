@@ -1,11 +1,12 @@
 import 'package:amity_sdk/src/core/enum/enum.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:hive/hive.dart';
 
 part 'poll_hive_entity_16.g.dart';
 
 /// Poll post Hive Entity
-@HiveType(typeId: 16)
+@HiveType(typeId: AmityHiveType.poll)
 class PollHiveEntity extends  EkoObject {
   /// Poll Id
   String? pollId;

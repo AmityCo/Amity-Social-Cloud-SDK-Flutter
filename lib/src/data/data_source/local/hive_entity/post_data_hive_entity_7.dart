@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'post_data_hive_entity_7.g.dart';
 
 /// Data Field for Post
-@HiveType(typeId: 7)
+@HiveType(typeId: AmityHiveType.postChildData)
 class PostChildDataHiveEntity {
   /// Text
   @HiveField(0)

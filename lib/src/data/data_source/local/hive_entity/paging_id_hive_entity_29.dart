@@ -1,10 +1,11 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
 part 'paging_id_hive_entity_29.g.dart';
 
 /// Paging Id Hive entity
-@HiveType(typeId: 29)
+@HiveType(typeId: AmityHiveType.pagingId)
 class PagingIdHiveEntity extends EkoObject {
   /// id
   @HiveField(0)

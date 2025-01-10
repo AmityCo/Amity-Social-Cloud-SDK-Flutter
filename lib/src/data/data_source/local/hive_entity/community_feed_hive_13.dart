@@ -1,8 +1,9 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'community_feed_hive_13.g.dart';
 
-@HiveType(typeId: 13)
+@HiveType(typeId: AmityHiveType.communityFeed)
 class CommunityFeedHiveEntity extends HiveObject {
   @HiveField(0)
   String? feedId;

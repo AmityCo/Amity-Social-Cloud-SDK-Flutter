@@ -1,11 +1,12 @@
 // ignore_for_file: hash_and_equals
 
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:hive/hive.dart';
 
 part 'reaction_hive_entity_8.g.dart';
 
-@HiveType(typeId: 8)
+@HiveType(typeId: AmityHiveType.reaction)
 class ReactionHiveEntity extends EkoObject {
   @HiveField(0)
   String? reactionId;

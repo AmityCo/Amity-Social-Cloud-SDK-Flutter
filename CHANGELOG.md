@@ -1,3 +1,6 @@
+## 0.54.4
+* Feat: Introduce SubChannel Repository in ChatClient
+
 ## 0.54.3
 * Fix: Fix Comment Live Collection doesn't emit data when client doesn't specify isDeleted on query builder
 * Fix: Fix Pinned post Live Collection doesn't emit data

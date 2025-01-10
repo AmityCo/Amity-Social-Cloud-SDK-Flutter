@@ -1,9 +1,10 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'stream_hive_entity_22.g.dart';
 
-@HiveType(typeId: 22)
+@HiveType(typeId: AmityHiveType.stream)
 class StreamHiveEntity extends HiveObject {
   String? streamId;
 

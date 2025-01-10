@@ -1,5 +1,5 @@
 import 'package:amity_sdk/src/data/data_source/local/db_adapter/tombstone_db_adapter.dart';
-import 'package:amity_sdk/src/data/data_source/local/hive_entity/tombstone_hive_entity_22.dart';
+import 'package:amity_sdk/src/data/data_source/local/hive_entity/tombstone_hive_entity_23.dart';
 import 'package:amity_sdk/src/src.dart';
 import 'package:hive/hive.dart';
 

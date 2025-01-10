@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tombstone_hive_entity_22.dart';
+part of 'tombstone_hive_entity_23.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

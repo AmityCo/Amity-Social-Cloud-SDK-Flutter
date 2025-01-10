@@ -1,0 +1,39 @@
+class AmityHiveType {
+  static const int account = 0;
+  static const int user = 1;
+  static const int followInfo = 2;
+  static const int follow = 3;
+  static const int file = 4;
+  static const int post = 5;
+  static const int comment = 6;
+  static const int postChildData = 7;
+  static const int reaction = 8;
+  static const int community = 9;
+  static const int feedPaging = 10;
+  static const int videoFileId = 11;
+  static const int communityCategory = 12;
+  static const int communityFeed = 13;
+  static const int communityMember = 14;
+  static const int communityMemberPaging = 15;
+  static const int poll = 16;
+  static const int pollAnswer = 17;
+  static const int message = 18;
+  static const int messageData = 19;
+  static const int channel = 20;
+  static const int channelUser = 21;
+  static const int stream = 22;
+  static const int tombstone = 23;
+  static const int analyticsEvent = 24;
+  static const int communityPermission = 25;
+  static const int communityRole = 26;
+  static const int story = 27;
+  static const int storyTarget = 28;
+  static const int pagingId = 29;
+  static const int mentionee = 30;
+  // 31 is missing
+  static const int ad = 32;
+  static const int advertiser = 33;
+  static const int adSettings = 34;
+  static const int subChannel = 35;
+  static const int pin = 36;
+}

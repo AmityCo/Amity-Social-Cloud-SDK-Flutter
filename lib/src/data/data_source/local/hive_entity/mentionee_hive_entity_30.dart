@@ -1,8 +1,9 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'mentionee_hive_entity_30.g.dart';
 
-@HiveType(typeId: 30)
+@HiveType(typeId: AmityHiveType.mentionee)
 class MentioneeHiveEntity extends HiveObject {
 
   /// Mentionee type

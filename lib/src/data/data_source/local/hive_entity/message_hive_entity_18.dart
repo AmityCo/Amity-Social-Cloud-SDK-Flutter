@@ -1,10 +1,11 @@
 import 'package:amity_sdk/src/core/enum/amity_message_sync_state.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'message_hive_entity_18.g.dart';
 
-@HiveType(typeId: 18)
+@HiveType(typeId: AmityHiveType.message)
 class MessageHiveEntity extends EkoObject {
   @HiveField(0)
   String? uniqueId;
