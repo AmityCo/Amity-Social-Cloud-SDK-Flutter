@@ -9,6 +9,7 @@ enum AmityNonce {
   MESSAGE_LIST,
   USER_LIST,
   COMMENT_LIST,
+  REACTION_LIST,
 }
 
 extension AmityNonceExtension on AmityNonce {
@@ -26,13 +27,15 @@ extension AmityNonceExtension on AmityNonce {
       case AmityNonce.GLOBAL_FEED:
         return 5;
       case AmityNonce.CUSTOM_RANKING_FEED:
-        return 6;
+      return 6;
       case AmityNonce.MESSAGE_LIST:
         return 7;
       case AmityNonce.USER_LIST:
         return 8;
       case AmityNonce.COMMENT_LIST:
         return 10;
+      case AmityNonce.REACTION_LIST:
+        return 11;
       default:
         return 0;
     }

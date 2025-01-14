@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/data/converter/story/story_hive_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
+import 'package:amity_sdk/src/domain/repo/paging_id_repo.dart';
+import 'package:collection/collection.dart';
 
 /// Reaction Repo Impl for Post & Comment
 class ReactionRepoImpl extends ReactionRepo {
@@ -10,11 +15,13 @@ class ReactionRepoImpl extends ReactionRepo {
 
   /// Common Db Adapter
   final DbAdapterRepo dbAdapterRepo;
+  final PagingIdRepo pagingIdRepo;
 
   /// Init ReactionRepoImpl
   ReactionRepoImpl({
     required this.reactionApiInterface,
     required this.dbAdapterRepo,
+    required this.pagingIdRepo,
   });
 
   @override
@@ -112,7 +119,6 @@ class ReactionRepoImpl extends ReactionRepo {
       }
     }
 
-
     //Add Rection from local Amity Comment
     if (request.referenceType == AmityReactionReferenceType.STORY.value) {
       final amityStory =
@@ -128,15 +134,13 @@ class ReactionRepoImpl extends ReactionRepo {
         amityStoryLocalCopy.reactions ??= {};
         amityStoryLocalCopy.reactions![request.reactionName] =
             (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) + 1;
-        
-        await dbAdapterRepo.storyDbAdapter
-            .saveStoryEntity(amityStoryLocalCopy);
+
+        await dbAdapterRepo.storyDbAdapter.saveStoryEntity(amityStoryLocalCopy);
 
         await reactionApiInterface.addReaction(request);
-        var amityStoryObject =  amityStoryLocalCopy.convertToAmityStory() as T;
+        var amityStoryObject = amityStoryLocalCopy.convertToAmityStory() as T;
         return amityStoryObject;
       } catch (error) {
-        
         await dbAdapterRepo.storyDbAdapter.saveStoryEntity(amityStory);
         rethrow;
       }
@@ -251,8 +255,7 @@ class ReactionRepoImpl extends ReactionRepo {
         amityStoryLocalCopy.reactions![request.reactionName] =
             (amityStoryLocalCopy.reactions![request.reactionName] ?? 0) - 1;
 
-        await dbAdapterRepo.storyDbAdapter
-            .saveStoryEntity(amityStoryLocalCopy);
+        await dbAdapterRepo.storyDbAdapter.saveStoryEntity(amityStoryLocalCopy);
 
         await reactionApiInterface.removeReaction(request);
 
@@ -269,23 +272,41 @@ class ReactionRepoImpl extends ReactionRepo {
   @override
   Future<PageListData<List<AmityReaction>, String>> getReaction(
       GetReactionRequest request) async {
+    final hash = request.getHashCode();
+    final nonce = AmityNonce.REACTION_LIST;
+    int nextIndex = 0;
+    final isFirstPage =
+        request.options?.token == null && (request.options?.limit ?? 0) > 0;
     final data = await reactionApiInterface.getReaction(request);
-    
-    // Clear old reactions if it is first page (token is null)
-    if (data != null && request.options?.token == null) {
-      await _clearOldReactions(request);
-    }
-
-    // Save the reactions to DB
     final reactions = await _saveDetailsToDb(data);
-
+    if (isFirstPage) {
+      await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo
+              .getPagingIdEntities(nonce.value, hash)
+              .map((e) => (e.position ?? 0))
+              .toList()
+              .reduce(max)) +
+          1;
+    }
+    reactions.forEachIndexed((index, element) async {
+      
+      final pagingId = PagingIdHiveEntity(
+        id: element.reactionId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdRepo.savePagingId(pagingId);
+    });
 
     return PageListData(
         reactions.map((e) => e.convertToAmityReaction()).toList(),
         data.paging.next ?? '');
   }
 
-  Future<List<ReactionHiveEntity>> _saveDetailsToDb(GetReactionResponse data) async {
+  Future<List<ReactionHiveEntity>> _saveDetailsToDb(
+      GetReactionResponse data) async {
     //Convert to Reaction Hive Entity
     final reactionHiveEntities = data.reactions.isNotEmpty
         ? data.reactions.first.reactors
@@ -313,20 +334,17 @@ class ReactionRepoImpl extends ReactionRepo {
   }
 
   @override
-  Stream<List<AmityReaction>> listenReactions(RequestBuilder<GetReactionRequest> request) {
-    return dbAdapterRepo.reactionDbAdapter.listenReactionEntities(request).map((event) {
-      final req = request.call();
-      final List<AmityReaction> list = [];
-      for (var element in event) {
-        list.add(element.convertToAmityReaction());
-      }
-      list.sort((a, b) => a.createdAt!.compareTo(b.createdAt!) * -1);
-      return list;
-    });
+  Stream<List<AmityReaction>> listenReactions(
+      RequestBuilder<GetReactionRequest> request) {
+    final reactions =
+        dbAdapterRepo.reactionDbAdapter.listenReactionEntities(request);
+    return reactions
+        .map((event) => event.map((e) => e.convertToAmityReaction()).toList());
   }
-
-  Future _clearOldReactions(GetReactionRequest request) {
-    return dbAdapterRepo.reactionDbAdapter.clearOldReactions(request);
+  
+  @override
+  List<ReactionHiveEntity> getReactionEntities(
+      RequestBuilder<GetReactionRequest> request) {
+    return dbAdapterRepo.reactionDbAdapter.getReactionEntities(request);
   }
-
 }

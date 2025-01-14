@@ -1,3 +1,7 @@
+## 0.54.5
+* Feat: Update Reaction Live Collection to support RTE
+* Fix: Handle null event name on reactor response
+
 ## 0.54.4
 * Feat: Introduce SubChannel Repository in ChatClient
 

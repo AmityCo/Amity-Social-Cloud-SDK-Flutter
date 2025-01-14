@@ -36,7 +36,7 @@ class Reactor {
   final String reactionName;
   final String userId;
   final String reactionId;
-  String eventName;
+  String? eventName;
   final DateTime createdAt;
 
   factory Reactor.fromJson(Map<String, dynamic> json) => Reactor(
