@@ -14,7 +14,6 @@ class ChannelObserveNewItemUseCase
   /// Channel Repo
   final ChannelRepo channelRepo;
   final PagingIdRepo pagingIdRepo;
-  final nonce = AmityNonce.CHANNEL_LIST.value;
   HashMap<String, bool> channelIdMap = HashMap();
 
   ChannelObserveNewItemUseCase(
@@ -36,6 +35,7 @@ class ChannelObserveNewItemUseCase
     RequestBuilder<GetChannelRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     var firstPosition = 0;
     if (streamController.isClosed) {
       return;

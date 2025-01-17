@@ -195,7 +195,7 @@ class PostRepoImpl extends PostRepo
 
   @override
   Future<PageListData<List<AmityPost>, String>> queryPostList(GetPostRequest request) async {
-    final nonce = AmityNonce.POST_LIST;
+    final nonce = request.getNonce();
     final hash = request.getHashCode();
     final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
     int nextIndex = 0;

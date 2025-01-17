@@ -64,27 +64,30 @@ class UserRepoImpl extends UserRepo {
   Future<PageListData<List<AmityUser>, String>> queryUsers(
       UsersRequest request) async {
     final hash = request.getHashCode();
-    final nonce = AmityNonce.USER_LIST;
+    final nonce = request.getNonce();
     int nextIndex = 0;
-    final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
+    final isFirstPage =
+        request.options?.token == null && (request.options?.limit ?? 0) > 0;
     final data = await userApiInterface.getUsers(request);
     await data.saveToDb<AmityUser>(userDbAdapter, fileDbAdapter);
     if (isFirstPage) {
       await pagingIdRepo.deletePagingIdByHash(nonce.value, hash);
     } else {
       nextIndex = (pagingIdRepo
-        .getPagingIdEntities(nonce.value, hash)
-        .map((e) => (e.position ?? 0))
-        .toList()
-        .reduce(max)) + 1;
+              .getPagingIdEntities(nonce.value, hash)
+              .map((e) => (e.position ?? 0))
+              .toList()
+              .reduce(max)) +
+          1;
     }
-    final pagingIds = data.users.mapIndexed((index, element) =>
-      PagingIdHiveEntity(
-        id: element.userId,
-        hash: hash,
-        nonce: nonce.value,
-        position: nextIndex + index,
-      )).toList();
+    final pagingIds = data.users
+        .mapIndexed((index, element) => PagingIdHiveEntity(
+              id: element.userId,
+              hash: hash,
+              nonce: nonce.value,
+              position: nextIndex + index,
+            ))
+        .toList();
     await pagingIdRepo.savePagingIdEntities(pagingIds);
     return PageListData(<AmityUser>[], data.paging?.next ?? '');
   }
@@ -98,8 +101,7 @@ class UserRepoImpl extends UserRepo {
   }
 
   @override
-  List<UserHiveEntity> getUserEntities(
-      RequestBuilder<UsersRequest> request) {
+  List<UserHiveEntity> getUserEntities(RequestBuilder<UsersRequest> request) {
     return userDbAdapter.getUserEntities(request);
   }
 

@@ -16,6 +16,7 @@ export 'src/core/utils/live_collection.dart';
 export 'src/core/utils/message_live_collection.dart';
 export 'src/core/utils/paging_controller.dart';
 export 'src/core/utils/pinned_post_live_collection.dart';
+export 'src/core/utils/global_pinned_post_live_collection.dart';
 export 'src/core/utils/post_live_collection.dart';
 export 'src/core/utils/reaction_live_collection.dart';
 export 'src/core/utils/story_live_collection.dart';

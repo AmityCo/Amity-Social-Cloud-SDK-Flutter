@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:amity_sdk/src/core/model/api_request/core/option_request.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
 GetCommentRequest getCommentRequestFromJson(String str) =>
     GetCommentRequest.fromJson(json.decode(str));
@@ -66,6 +67,10 @@ class GetCommentRequest {
   int getHashCode() {
     final jsonString = (toJson()..remove('options')).toString();
     return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.COMMENT_LIST;
   }
 
   @override

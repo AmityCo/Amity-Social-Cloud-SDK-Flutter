@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/get_custom_rank_feed_request.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:dio/dio.dart';
 
@@ -25,7 +26,7 @@ class GlobalFeedApiInterfaceImpl extends GlobalFeedApiInterface {
   }
   
   @override
-  Future<CreatePostResponse> getCustomPostRanking(GetGlobalFeedRequest request) async {
+  Future<CreatePostResponse> getCustomPostRanking(GetCustomRankFeedRequest request) async {
     try {
       final data = await httpApiClient()
           .get(GLOBAL_FEED_V5_URL, queryParameters: request.toJson());

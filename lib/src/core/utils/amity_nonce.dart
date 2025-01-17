@@ -3,12 +3,14 @@ enum AmityNonce {
   CHANNEL_LIST,
   COMMUNITY_LIST,
   PINNED_POST_LIST,
+  GLOBAL_PINNED_POST_LIST,
   POST_LIST,
   GLOBAL_FEED,
   CUSTOM_RANKING_FEED,
   MESSAGE_LIST,
   USER_LIST,
   COMMENT_LIST,
+  REACTION_LIST,
 }
 
 extension AmityNonceExtension on AmityNonce {
@@ -26,13 +28,17 @@ extension AmityNonceExtension on AmityNonce {
       case AmityNonce.GLOBAL_FEED:
         return 5;
       case AmityNonce.CUSTOM_RANKING_FEED:
-        return 6;
+      return 6;
       case AmityNonce.MESSAGE_LIST:
         return 7;
       case AmityNonce.USER_LIST:
         return 8;
+      case AmityNonce.GLOBAL_PINNED_POST_LIST:
+        return 9;
       case AmityNonce.COMMENT_LIST:
         return 10;
+      case AmityNonce.REACTION_LIST:
+        return 11;
       default:
         return 0;
     }

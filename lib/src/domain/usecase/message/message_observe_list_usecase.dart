@@ -12,7 +12,6 @@ class MessageObserveListUseCase
   final MessageRepo messageRepo;
   final PagingIdRepo pagingIdRepo;
   final MessageComposerUsecase messageComposerUsecase;
-  final nonce = AmityNonce.MESSAGE_LIST.value;
 
   MessageObserveListUseCase(
       {required this.messageRepo,
@@ -23,6 +22,7 @@ class MessageObserveListUseCase
   StreamController<List<AmityMessage>> listen(
       RequestBuilder<MessageQueryRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityMessage>>();
     messageRepo.listenMessages(request).listen((event) async {
       _onChanges(streamController, request);
@@ -39,6 +39,7 @@ class MessageObserveListUseCase
     RequestBuilder<MessageQueryRequest> request,
   ) async {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     if (streamController.isClosed) {
       return;
     }

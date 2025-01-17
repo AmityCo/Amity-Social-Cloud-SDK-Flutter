@@ -12,7 +12,6 @@ class CommunityObserveListUseCase
   final CommunityRepo communityRepo;
   final PagingIdRepo pagingIdRepo;
   final CommunityComposerUsecase communityComposerUsecase;
-  final nonce = AmityNonce.COMMUNITY_LIST.value;
 
   CommunityObserveListUseCase(
       {required this.communityRepo,
@@ -23,6 +22,7 @@ class CommunityObserveListUseCase
   StreamController<List<AmityCommunity>> listen(
       RequestBuilder<GetCommunityRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityCommunity>>();
 
     _onChanges(streamController, request);
@@ -42,6 +42,7 @@ class CommunityObserveListUseCase
     RequestBuilder<GetCommunityRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     if (streamController.isClosed) {
       return;
     }

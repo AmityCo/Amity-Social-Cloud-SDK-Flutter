@@ -55,7 +55,7 @@ class CommentRepoImpl extends CommentRepo {
   @override
   Future<PageListData<List<AmityComment>, String>> queryComment(GetCommentRequest request) async {
     final hash = request.getHashCode();
-    final nonce = AmityNonce.COMMENT_LIST;
+    final nonce = request.getNonce();
     int nextIndex = 0;
     final data = await commentApiInterface.queryComment(request);
     final paging = data.paging;

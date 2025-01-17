@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
+
 import 'core/option_request.dart';
 
 GetCommunityRequest getCommunityRequestFromJson(String str) =>
@@ -59,5 +61,9 @@ class GetCommunityRequest {
   int getHashCode() {
     final jsonString = (toJson()..remove('options')).toString();
     return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.COMMUNITY_LIST;
   }
 }

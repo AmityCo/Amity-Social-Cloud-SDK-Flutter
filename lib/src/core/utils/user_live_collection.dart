@@ -13,7 +13,7 @@ class UserLiveCollection extends LiveCollection<AmityUser> {
 
   @override
   AmityNonce getNonce() {
-    return AmityNonce.USER_LIST;
+    return request().getNonce();
   }
 
   @override

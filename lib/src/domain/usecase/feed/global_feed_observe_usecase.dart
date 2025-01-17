@@ -14,8 +14,6 @@ class GlobalFeedObserveUseCase
   final PagingIdRepo pagingIdRepo;
   final PostComposerUsecase postComposerUsecase;
 
-  final nonce = AmityNonce.GLOBAL_FEED.value;
-
   GlobalFeedObserveUseCase({
     required this.globalFeedRepo,
     required this.postRepo,
@@ -27,6 +25,7 @@ class GlobalFeedObserveUseCase
   StreamController<List<AmityPost>> listen(
       RequestBuilder<GetGlobalFeedRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityPost>>();
     _onChanges(streamController, request);
     globalFeedRepo.listenPostsChanges(request).listen((event) async {
@@ -44,6 +43,7 @@ class GlobalFeedObserveUseCase
     RequestBuilder<GetGlobalFeedRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     if (streamController.isClosed) {
       return;
     }

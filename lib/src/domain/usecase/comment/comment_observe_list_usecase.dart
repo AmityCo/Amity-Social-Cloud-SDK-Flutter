@@ -12,7 +12,6 @@ class CommentObserveListUseCase
   final CommentRepo commentRepo;
   final PagingIdRepo pagingIdRepo;
   final CommentComposerUsecase commentComposerUsecase;
-  final nonce = AmityNonce.MESSAGE_LIST.value;
 
   CommentObserveListUseCase(
       {required this.commentRepo,
@@ -23,6 +22,7 @@ class CommentObserveListUseCase
   StreamController<List<AmityComment>> listen(
       RequestBuilder<GetCommentRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityComment>>();
     commentRepo.listenComments(request).listen((event) async {
       _onChanges(streamController, request);
@@ -39,6 +39,8 @@ class CommentObserveListUseCase
     RequestBuilder<GetCommentRequest> request,
   ) async {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
+
     if (streamController.isClosed) {
       return;
     }
@@ -51,12 +53,11 @@ class CommentObserveListUseCase
     } else {
       final commentIds = pagingIds.map((e) => e.id).toList();
       final comments = commentEntities
-        .where((comment) => commentIds.contains(comment.commentId))
-        .map((e) => e.convertToAmityComment())
-        .toList()
-        ..sort((a, b) => 
-          (b.createdAt ?? DateTime.now()).compareTo(a.createdAt ?? DateTime.now())
-        );
+          .where((comment) => commentIds.contains(comment.commentId))
+          .map((e) => e.convertToAmityComment())
+          .toList()
+        ..sort((a, b) => (b.createdAt ?? DateTime.now())
+            .compareTo(a.createdAt ?? DateTime.now()));
       await Stream.fromIterable(comments).forEach((element) async {
         element = await commentComposerUsecase.get(element);
       });

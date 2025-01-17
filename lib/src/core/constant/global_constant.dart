@@ -108,6 +108,7 @@ const VALIDATE_TEXT = "api/v3/blocklists/verify";
 // notifications
 const NOTIFICATION_SETTINGS = "api/v3/notification/setting";
 const PINNED_POST_QUERY = "api/v1/pinned-posts/communities/";
+const GLOBAL_PINNED_POST_QUERY = "api/v1/pinned-posts/global";
 
 const MESSAGE_FEED_V5 = "api/v5/message-feeds";
 

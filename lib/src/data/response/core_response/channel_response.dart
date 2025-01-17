@@ -69,10 +69,10 @@ class ChannelResponse {
   final String? displayName;
 
   /// Message Auth DeleteEnable
-  final bool messageAutoDeleteEnabled;
+  final bool? messageAutoDeleteEnabled;
 
   /// Auto Delete Message By Flag Limit
-  final int autoDeleteMessageByFlagLimit;
+  final int? autoDeleteMessageByFlagLimit;
 
   /// Member Count
   final int memberCount;

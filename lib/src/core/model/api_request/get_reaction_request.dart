@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
 GetReactionRequest getReactionRequestFromJson(String str) =>
     GetReactionRequest.fromJson(json.decode(str));
@@ -39,4 +40,13 @@ class GetReactionRequest {
         "reactionName": reactionName,
         "options": options?.toJson(),
       }..removeWhere((key, value) => value == null);
+
+  int getHashCode() {
+    final jsonString = (toJson()..remove('options')).toString();
+    return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.REACTION_LIST;
+  }
 }

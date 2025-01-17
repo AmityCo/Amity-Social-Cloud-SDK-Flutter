@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:amity_sdk/src/core/model/api_request/query_global_pinned_post_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/query_pinned_post_request.dart';
 import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/data/converter/pin_hive_entity_extension_converter.dart';
 import 'package:amity_sdk/src/data/converter/pinned_post_query_response_extension_converter.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/data_source/remote/api_interface/pin_api_interface.dart';
-import 'package:amity_sdk/src/domain/model/amity_pinned_post.dart';
 import 'package:amity_sdk/src/domain/repo/pin_repo.dart';
 import 'package:collection/collection.dart';
 
@@ -27,7 +27,7 @@ class PinRepoImpl extends PinRepo {
         : await pinApiInterface.queryPinnedPostWithPlacement(request);
     await data.saveToDb(dbAdapterRepo);
     final hash = request.getHashCode();
-    final nonce = AmityNonce.PINNED_POST_LIST;
+    final nonce = request.getNonce();
     int nextIndex = 0;
     final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
     await pagingIdDbAdapter.deletePagingIdByHash(nonce.value, hash);
@@ -48,13 +48,53 @@ class PinRepoImpl extends PinRepo {
   @override
   Stream<List<AmityPinnedPost>> listenPinnedPosts(
       RequestBuilder<QueryPinnedPostRequest> request) {
-    final pinnedPosts = dbAdapterRepo.pinDbAdapter.listenPinnedPostEntities(request);
-    return pinnedPosts.map((event) => event.map((e) => e.convertToAmityPinnedPost()).toList());
+    final pinnedPosts =
+        dbAdapterRepo.pinDbAdapter.listenPinnedPostEntities(request);
+    return pinnedPosts.map(
+        (event) => event.map((e) => e.convertToAmityPinnedPost()).toList());
   }
 
   @override
   List<PinHiveEntity> getPinnedPostEntities(
       RequestBuilder<QueryPinnedPostRequest> request) {
-    return  dbAdapterRepo.pinDbAdapter.getPinnedPostEntities(request);
+    return dbAdapterRepo.pinDbAdapter.getPinnedPostEntities(request);
+  }
+
+  @override
+  List<PinHiveEntity> getGlobalPinnedPostEntities(
+      RequestBuilder<QueryGlobalPinnedPostRequest> request) {
+    return dbAdapterRepo.pinDbAdapter.getGlobalPinnedPostEntities(request);
+  }
+
+  @override
+  Stream<List<AmityPinnedPost>> listenGlobalPinnedPosts(
+      RequestBuilder<QueryGlobalPinnedPostRequest> request) {
+    final pinnedPosts =
+        dbAdapterRepo.pinDbAdapter.listenGlobalPinnedPostEntities(request);
+    return pinnedPosts.map(
+        (event) => event.map((e) => e.convertToAmityPinnedPost()).toList());
+  }
+
+  @override
+  Future queryGlobalPinnedPost(QueryGlobalPinnedPostRequest request) async {
+    final data = await pinApiInterface.queryGlobalPinnedPost(request);
+    await data.saveToDb(dbAdapterRepo);
+    final hash = request.getHashCode();
+    final nonce = AmityNonce.GLOBAL_PINNED_POST_LIST;
+    int nextIndex = 0;
+    final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
+    await pagingIdDbAdapter.deletePagingIdByHash(nonce.value, hash);
+    final target = data.getTartget();
+    if (target != null) {
+      data.pins.forEachIndexed((index, element) async {
+        final pagingId = PagingIdHiveEntity(
+          id: element.getId(target),
+          hash: hash,
+          nonce: nonce.value,
+          position: nextIndex + index,
+        );
+        await pagingIdDbAdapter.savePagingIdEntity(pagingId);
+      });
+    }
   }
 }

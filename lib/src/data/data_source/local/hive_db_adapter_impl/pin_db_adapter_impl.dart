@@ -1,7 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:amity_sdk/src/core/model/api_request/query_global_pinned_post_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/query_pinned_post_request.dart';
 import 'package:amity_sdk/src/data/data.dart';
-import 'package:amity_sdk/src/data/data_source/local/db_adapter/pin_db_adapter.dart';
 import 'package:hive/hive.dart';
 
 class PinDbAdapterImpl extends PinDbAdapter {
@@ -33,5 +33,17 @@ class PinDbAdapterImpl extends PinDbAdapter {
     return box.values
         .where((pin) => pin.isMatchingFilter(request.call()))
         .toList();
+  }
+
+  @override
+  List<PinHiveEntity> getGlobalPinnedPostEntities(
+      RequestBuilder<QueryGlobalPinnedPostRequest> request) {
+    return box.values.toList();
+  }
+
+  @override
+  Stream<List<PinHiveEntity>> listenGlobalPinnedPostEntities(
+      RequestBuilder<QueryGlobalPinnedPostRequest> request) {
+    return box.watch().map((event) => box.values.toList());
   }
 }

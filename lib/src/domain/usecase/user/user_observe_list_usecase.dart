@@ -13,7 +13,6 @@ class UserObserveListUseCase
   final UserRepo userRepo;
   final PagingIdRepo pagingIdRepo;
   final UserComposerUsecase userComposerUsecase;
-  final nonce = AmityNonce.USER_LIST.value;
 
   UserObserveListUseCase(
       {required this.userRepo,
@@ -24,6 +23,7 @@ class UserObserveListUseCase
   StreamController<List<AmityUser>> listen(
       RequestBuilder<UsersRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityUser>>();
     userRepo.listenUserChanges(request).distinct().listen((event) async {
       _onChanges(streamController, request);
@@ -40,6 +40,7 @@ class UserObserveListUseCase
     RequestBuilder<UsersRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     if (streamController.isClosed) {
       return;
     }
@@ -59,11 +60,12 @@ class UserObserveListUseCase
           userEntitiesSorted.add(user);
         }
       }
-      final users = userEntitiesSorted.map((e) => e.convertToAmityUser()).toList();
+      final users =
+          userEntitiesSorted.map((e) => e.convertToAmityUser()).toList();
       Stream.fromIterable(users).forEach((element) async {
         element = await userComposerUsecase.get(element);
       });
-      
+
       if (!streamController.isClosed) {
         streamController.add(users);
       }

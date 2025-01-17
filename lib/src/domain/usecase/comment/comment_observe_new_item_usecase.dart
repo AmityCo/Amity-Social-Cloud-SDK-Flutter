@@ -14,21 +14,21 @@ class CommentObserveNewItemUseCase
   /// Comment Repo
   final CommentRepo commentRepo;
   final PagingIdRepo pagingIdRepo;
-  final nonce = AmityNonce.MESSAGE_LIST.value;
   HashMap<String, bool> commentIdMap = HashMap();
 
   CommentObserveNewItemUseCase(
       {required this.commentRepo, required this.pagingIdRepo});
 
   @override
-  StreamController<PagingIdHiveEntity> listen(RequestBuilder<GetCommentRequest> params) {
+  StreamController<PagingIdHiveEntity> listen(RequestBuilder<GetCommentRequest> request) {
     final streamController = StreamController<PagingIdHiveEntity>();
-    final hash = params().getHashCode();
+    final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     pagingIdRepo.listenPagingIdEntities(nonce,hash).listen((event) async {
-      _onChanges(streamController, params);
+      _onChanges(streamController, request);
     });
-    commentRepo.listenComments(params).listen((event) async {
-      _onChanges(streamController, params);
+    commentRepo.listenComments(request).listen((event) async {
+      _onChanges(streamController, request);
     });
     return streamController;
   }
@@ -38,6 +38,7 @@ class CommentObserveNewItemUseCase
     RequestBuilder<GetCommentRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     var firstPosition = 0;
     if (streamController.isClosed) {
       return;

@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
 MessageQueryRequest messageQueryRequestFromJson(String str) =>
     MessageQueryRequest.fromJson(json.decode(str));
@@ -89,5 +90,9 @@ class MessageQueryRequest {
   int getHashCode() {
     final jsonString = (toJson()..remove('options')).toString();
     return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.MESSAGE_LIST;
   }
 }

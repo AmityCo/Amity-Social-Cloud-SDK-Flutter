@@ -74,6 +74,7 @@ import 'package:amity_sdk/src/domain/usecase/comment/comment_observe_usecase.dar
 import 'package:amity_sdk/src/domain/usecase/community/category/community_get_category_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_fetch_list_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_observe_list_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/community/community_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/community_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/community/member/community_member_get_optional_usercase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/custom_ranking_observe_usecase.dart';
@@ -88,10 +89,13 @@ import 'package:amity_sdk/src/domain/usecase/message/message_observe_new_item_us
 import 'package:amity_sdk/src/domain/usecase/network/validate_text_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/network/validate_urls_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/paging/paging_id_insert_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/pin/global_pinned_post_observe_query_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/pin/global_pinned_post_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/pin/pinned_post_observe_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/pin/pinned_post_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/post/post_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/post/post_query_usecase.dart';
+import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_new_item_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/reaction/reaction_query_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/story/delete_story_by_id_usecase.dart';
@@ -251,7 +255,7 @@ class SdkServiceLocator {
         adDbAdapter: serviceLocator(),
         pagingIdDbAdapter: serviceLocator(),
         pinDbAdapter: serviceLocator(),
-      subChannelDbAdapter: serviceLocator(),
+        subChannelDbAdapter: serviceLocator(),
       ),
     );
 
@@ -268,9 +272,8 @@ class SdkServiceLocator {
             amityCoreClientOption: configServiceLocator()));
     serviceLocator.registerLazySingleton<UserApiInterface>(
         () => UserApiInterfaceImpl(httpApiClient: serviceLocator()));
-    serviceLocator.registerLazySingleton<UserNotificationApiInterface>(
-        () => UserNotificationApiInterfaceImpl(
-            httpApiClient: serviceLocator()));
+    serviceLocator.registerLazySingleton<UserNotificationApiInterface>(() =>
+        UserNotificationApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<AnalyticsApiInterface>(
         () => AnalyticsApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<FollowApiInterface>(
@@ -296,9 +299,8 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<CommunityNotificationApiInterface>(
         () => CommunityNotificationApiInterfaceImpl(
             httpApiClient: serviceLocator()));
-    serviceLocator.registerLazySingleton<ChannelNotificationApiInterface>(
-        () => ChannelNotificationApiInterfaceImpl(
-            httpApiClient: serviceLocator()));
+    serviceLocator.registerLazySingleton<ChannelNotificationApiInterface>(() =>
+        ChannelNotificationApiInterfaceImpl(httpApiClient: serviceLocator()));
     serviceLocator.registerLazySingleton<NotificationApiInterface>(() =>
         NotificationApiInterfaceImpl(
             httpApiClient: serviceLocator(),
@@ -375,6 +377,7 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<ReactionRepo>(() => ReactionRepoImpl(
           reactionApiInterface: serviceLocator(),
           dbAdapterRepo: serviceLocator(),
+          pagingIdRepo: serviceLocator(),
         ));
     serviceLocator.registerLazySingleton<CommunityRepo>(
       () => CommunityRepoImpl(
@@ -520,13 +523,14 @@ class SdkServiceLocator {
     );
 
     serviceLocator.registerLazySingleton<SubChannelRepo>(
-      () => SubChannelRepoImpl( dbAdapterRepo: serviceLocator(), subChannelApiInterface: serviceLocator()),
+      () => SubChannelRepoImpl(
+          dbAdapterRepo: serviceLocator(),
+          subChannelApiInterface: serviceLocator()),
     );
 
     //-UserCase
-    serviceLocator.registerLazySingleton<PagingIdInsertUsecase>(() =>
-        PagingIdInsertUsecase(
-            pagingIdDbAdapter: serviceLocator()));
+    serviceLocator.registerLazySingleton<PagingIdInsertUsecase>(
+        () => PagingIdInsertUsecase(pagingIdDbAdapter: serviceLocator()));
     serviceLocator.registerLazySingleton<GetPostByIdUseCase>(() =>
         GetPostByIdUseCase(
             postRepo: serviceLocator(), postComposerUsecase: serviceLocator()));
@@ -790,14 +794,12 @@ class SdkServiceLocator {
         CommentQueryUseCase(
             commentRepo: serviceLocator(),
             commentComposerUsecase: serviceLocator()));
-    serviceLocator.registerLazySingleton<CommentFetchUseCase>(() =>
-        CommentFetchUseCase(
-            commentRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<CommentFetchUseCase>(
+        () => CommentFetchUseCase(commentRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<CommentObserveNewItemUseCase>(() =>
         CommentObserveNewItemUseCase(
-            commentRepo: serviceLocator(),
-            pagingIdRepo: serviceLocator()));
-            
+            commentRepo: serviceLocator(), pagingIdRepo: serviceLocator()));
+
     serviceLocator.registerLazySingleton<PostFlagUsecase>(
         () => PostFlagUsecase(postRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<PostUnflagUsecase>(
@@ -889,6 +891,12 @@ class SdkServiceLocator {
             pagingIdRepo: serviceLocator(),
             communityComposerUsecase: serviceLocator()));
 
+    serviceLocator.registerLazySingleton<CommunityObserveNewItemUsecase>(() =>
+        CommunityObserveNewItemUsecase(
+            communityRepo: serviceLocator(),
+            pagingIdRepo: serviceLocator(),
+            communityComposerUsecase: serviceLocator()));
+
     serviceLocator.registerLazySingleton<CommunityObserveUseCase>(() =>
         CommunityObserveUseCase(
             communityRepo: serviceLocator(),
@@ -925,9 +933,8 @@ class SdkServiceLocator {
         MessageQueryUseCase(
             messageRepo: serviceLocator(),
             messageComposerUsecase: serviceLocator()));
-    serviceLocator.registerLazySingleton<MessageFetchUseCase>(() =>
-        MessageFetchUseCase(
-            messageRepo: serviceLocator()));
+    serviceLocator.registerLazySingleton<MessageFetchUseCase>(
+        () => MessageFetchUseCase(messageRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<MessageObserveListUseCase>(() =>
         MessageObserveListUseCase(
             messageRepo: serviceLocator(),
@@ -935,8 +942,7 @@ class SdkServiceLocator {
             messageComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<MessageObserveNewItemUseCase>(() =>
         MessageObserveNewItemUseCase(
-            messageRepo: serviceLocator(),
-            pagingIdRepo: serviceLocator()));
+            messageRepo: serviceLocator(), pagingIdRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<StreamQueryUseCase>(() =>
         StreamQueryUseCase(
             streamRepo: serviceLocator(),
@@ -993,7 +999,11 @@ class SdkServiceLocator {
         () => ReactionObserveUseCase(
               reactionRepo: serviceLocator(),
               reactionComposerUsecase: serviceLocator(),
+              pagingIdRepo: serviceLocator(),
             ));
+    serviceLocator.registerLazySingleton<ReactionObserveNewItemUseCase>(() =>
+        ReactionObserveNewItemUseCase(
+            reactionRepo: serviceLocator(), pagingIdRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<StreamHasLocalUseCase>(
         () => StreamHasLocalUseCase(streamRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<StreamGetLocalUseCase>(
@@ -1037,8 +1047,8 @@ class SdkServiceLocator {
         ChannelMemberGetUsecase(
             channelMemberRepo: serviceLocator(),
             channelMemberComposerUsecase: serviceLocator()));
-    serviceLocator.registerLazySingleton<ChannelGetMembersFromCacheUsecase>(() =>
-        ChannelGetMembersFromCacheUsecase(
+    serviceLocator.registerLazySingleton<ChannelGetMembersFromCacheUsecase>(
+        () => ChannelGetMembersFromCacheUsecase(
             channelMemberRepo: serviceLocator(),
             channelMemberComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<ChannelMemberQueryUsecase>(() =>
@@ -1078,11 +1088,10 @@ class SdkServiceLocator {
     serviceLocator.registerLazySingleton<ChannelUpdateUseCase>(() =>
         ChannelUpdateUseCase(
             channelRepo: serviceLocator(),
-            channelComposerUsecase: serviceLocator()));  
+            channelComposerUsecase: serviceLocator()));
     serviceLocator.registerLazySingleton<ChannelObserveNewItemUseCase>(() =>
         ChannelObserveNewItemUseCase(
-            channelRepo: serviceLocator(),
-            pagingIdRepo: serviceLocator()));
+            channelRepo: serviceLocator(), pagingIdRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<TopicSubscriptionUseCase>(
         () => TopicSubscriptionUseCase(topicRepo: serviceLocator()));
     serviceLocator.registerLazySingleton<TopicUnsubscriptionUseCase>(
@@ -1140,8 +1149,21 @@ class SdkServiceLocator {
         pinRepo: serviceLocator(),
       ),
     );
+    serviceLocator.registerLazySingleton<GlobalPinnedPostQueryUseCase>(
+      () => GlobalPinnedPostQueryUseCase(
+        pinRepo: serviceLocator(),
+      ),
+    );
     serviceLocator.registerLazySingleton<PinnedPostObserveQueryUseCase>(
       () => PinnedPostObserveQueryUseCase(
+        pinRepo: serviceLocator(),
+        postRepo: serviceLocator(),
+        pagingIdRepo: serviceLocator(),
+        pinnedPostComposerUsecase: serviceLocator(),
+      ),
+    );
+    serviceLocator.registerLazySingleton<GlobalPinnedPostObserveQueryUseCase>(
+      () => GlobalPinnedPostObserveQueryUseCase(
         pinRepo: serviceLocator(),
         postRepo: serviceLocator(),
         pagingIdRepo: serviceLocator(),
@@ -1216,11 +1238,10 @@ class SdkServiceLocator {
         () => SubChannelUpdateUseCase(subChannelRepo: serviceLocator()));
 
     serviceLocator.registerLazySingleton<SubChannelHasLocalUseCase>(
-        () => SubChannelHasLocalUseCase(  subChannelRepo: serviceLocator()));
+        () => SubChannelHasLocalUseCase(subChannelRepo: serviceLocator()));
 
     serviceLocator.registerLazySingleton<SubChannelObserverUseCase>(
-        () => SubChannelObserverUseCase(  subChannelRepo: serviceLocator()));
-
+        () => SubChannelObserverUseCase(subChannelRepo: serviceLocator()));
 
     //-data_source/remote/
     serviceLocator

@@ -237,7 +237,7 @@ class CommunityRepoImpl extends CommunityRepo {
   Future<PageListData<List<AmityCommunity>, String>> queryCommunities(
       GetCommunityRequest request) async {
     final hash = request.getHashCode();
-    final nonce = AmityNonce.COMMUNITY_LIST;
+    final nonce = request.getNonce();
     int nextIndex = 0;
     final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
     final data = await communityApiInterface.getCommunityQuery(request);
