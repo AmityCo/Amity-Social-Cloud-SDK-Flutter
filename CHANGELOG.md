@@ -1,3 +1,7 @@
+## 0.55.1
+* Fix: Address invalid exception when logging in offline
+* Fix: Resolve issue with broken emoji messages received via MQTT
+
 ## 0.55.0
 * Feat: Introduce Global featured posts
 * Fix: Improve stability on MQTT reconnection

@@ -17,8 +17,11 @@ class AuthenticationApiInterfaceImpl extends AuthenticationApiInterface {
               headers: {'X-API-Key': amityCoreClientOption.apiKey}));
       return SessionResponse.fromJson(data.data);
     } on dio.DioException catch (error) {
-      final amityError = AmityErrorResponse.fromJson(error.response!.data);
-      return Future.error(amityError.amityException());
+      final errorResponse = error.response;
+      final amityError = (errorResponse != null) 
+        ? AmityErrorResponse.fromJson(errorResponse.data).amityException()
+        : error.toAmityExcetion();
+      return Future.error(amityError);
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/session/event_bus/app_event_bus.dart';
@@ -44,11 +46,17 @@ class LoginQueryBuilder {
 
   /// Submit the Login Request
   Future<AmityUser> submit() async {
+    // Create Authentication Request
+    AuthenticationRequest params = AuthenticationRequest(userId: _userId);
+
     // Check if the user is already logged in
     if (serviceLocator.isRegistered<AccountHiveEntity>()) {
+
+      // Get the active account
+      final AccountHiveEntity? activeAccount = serviceLocator<AccountHiveEntity>();
       
       // Get the active user id
-      final activeUserId = serviceLocator<AccountHiveEntity>().userId;
+      final activeUserId = activeAccount?.userId;
 
       if (activeUserId != null && activeUserId != _userId) {
         
@@ -63,6 +71,9 @@ class LoginQueryBuilder {
         _appEventBus!.publish(AppEvent.LoggingIn);
 
       } else {
+        // If the user is already logged in, use the existing device id
+        params.deviceId = activeAccount?.deviceId;
+
         onSessionEstablished(_sessionLifeCycleEventBus!);
         _appEventBus!.publish(AppEvent.LoginSuccess);
       }
@@ -74,7 +85,6 @@ class LoginQueryBuilder {
 
     }
 
-    AuthenticationRequest params = AuthenticationRequest(userId: _userId);
     if (_displayName != null) {
       params.displayName = _displayName;
     }
@@ -83,15 +93,21 @@ class LoginQueryBuilder {
       params.authToken = _authToken;
     }
 
-    // Generating unique id for each login session
-    params.deviceId = const Uuid().v1();
+    // Generating unique id if existing device id is not available
+    if (params.deviceId == null) {
+      log('Device id is not exists, generating new device id');
+      params.deviceId = const Uuid().v1();
+    }
 
-    var amityUser = await _useCase.get(params);
-
+    AmityUser? amityUser;
+    try {
+      amityUser = await _useCase.get(params);
+    } catch (e) {
+      _appEventBus!.publish(AppEvent.LoginFail);
+      rethrow;
+    }
     onSessionEstablished(_sessionLifeCycleEventBus!);
     _appEventBus!.publish(AppEvent.LoginSuccess);
-
-    ///
 
     return amityUser;
   }

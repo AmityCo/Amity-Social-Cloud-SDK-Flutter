@@ -71,7 +71,6 @@ class AmityMQTT {
           amityCoreClientOption.mqttEndpoint.endpoint, clientIdentifier);
 
       activeClient?.autoReconnect = true;
-      // activeClient?.instantiationCorrect = true;
       activeClient?.setProtocolV311();
       activeClient?.keepAlivePeriod = 60;
       activeClient?.disconnectOnNoResponsePeriod = 30;
@@ -186,7 +185,7 @@ class AmityMQTT {
   }
 
   final _completerPool = <String, Completer<bool>>{};
-//todo change parameter to AmityTopic
+
   Future subscribe(AmityTopic topic) async {
     ///Create a completer to add to the pool
     final completer = Completer<bool>();
@@ -223,7 +222,6 @@ class AmityMQTT {
     return completer.future;
   }
 
-//todo change parameter to AmityTopic
   Future unsubscribe(AmityTopic topic) async {
     ///Create a completer to add to the pool
     final completer = Completer<bool>();
@@ -308,9 +306,9 @@ class AmityMQTT {
       activeClient?.updates
           ?.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
         final recMess = c?[0].payload as MqttPublishMessage;
-        final pt =
-            MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
+        //TODO: Upgrade mqtt_client to 10.6.1 or later when flutter 3.28.x is in stable channel
+        final pt = utf8.decoder.convert(recMess.payload.message);
         final payload = MqttPayloadResponse.fromJson(jsonDecode(pt));
 
         logger(

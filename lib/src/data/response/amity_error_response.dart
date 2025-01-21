@@ -31,6 +31,13 @@ class AmityErrorResponse {
       );
   }
 
+  factory AmityErrorResponse.unknown() { 
+    return AmityErrorResponse(
+        message: "Unknown error",
+        code: 800000,
+      );
+  }
+
   Map<String, dynamic> toJson() => {
         "status": status,
         "message": message,
