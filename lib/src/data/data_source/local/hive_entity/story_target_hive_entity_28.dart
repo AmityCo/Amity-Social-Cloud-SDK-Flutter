@@ -1,10 +1,11 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
 part 'story_target_hive_entity_28.g.dart';
 
-@HiveType(typeId: 28)
+@HiveType(typeId: AmityHiveType.storyTarget)
 class StoryTargetHiveEntity  extends EkoObject {
 
   String? uniqueId;

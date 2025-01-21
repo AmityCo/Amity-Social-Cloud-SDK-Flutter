@@ -1,10 +1,11 @@
 import 'package:amity_sdk/src/core/enum/enum.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'poll_answer_hive_entity_17.g.dart';
 
 /// Poll post Answers Hive Entity
-@HiveType(typeId: 17)
+@HiveType(typeId: AmityHiveType.pollAnswer)
 class PollAnswerHiveEntity {
   /// Answer Id
   String? id;

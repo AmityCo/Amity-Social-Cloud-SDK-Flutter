@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'community_role_hive_entity_12.dart';
+part of 'community_role_hive_entity_26.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -9,7 +9,7 @@ part of 'community_role_hive_entity_12.dart';
 class CommunityRoleHiveEntityAdapter
     extends TypeAdapter<CommunityRoleHiveEntity> {
   @override
-  final int typeId = 12;
+  final int typeId = 26;
 
   @override
   CommunityRoleHiveEntity read(BinaryReader reader) {

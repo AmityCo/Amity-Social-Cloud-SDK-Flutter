@@ -1,5 +1,6 @@
-class QueryPinnedPostRequest {
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
+class QueryPinnedPostRequest {
   final String targetId;
   final String targetType;
   final String? placement;
@@ -28,6 +29,10 @@ class QueryPinnedPostRequest {
   int getHashCode() {
     final jsonString = (toJson()..remove('options')).toString();
     return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.PINNED_POST_LIST;
   }
 
 }

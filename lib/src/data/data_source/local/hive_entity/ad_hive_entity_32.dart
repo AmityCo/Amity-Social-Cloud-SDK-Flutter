@@ -1,9 +1,10 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
 part 'ad_hive_entity_32.g.dart';
 
-@HiveType(typeId: 32)
+@HiveType(typeId: AmityHiveType.ad)
 class AdHiveEntity extends EkoObject {
   String? adId;
   String? advertiserId;

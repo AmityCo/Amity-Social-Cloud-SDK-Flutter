@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:amity_sdk/src/core/model/api_request/get_custom_rank_feed_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/get_global_feed_request.dart';
 import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 import 'package:amity_sdk/src/core/utils/page_list_data.dart';
@@ -97,7 +98,7 @@ class GlobalFeedRepoImpl extends GlobalFeedRepo {
 
   @override
   Future<PageListData<List<AmityPost>, String>> getCustomPostRanking(
-      GetGlobalFeedRequest request) async {
+      GetCustomRankFeedRequest request) async {
     final data = await feedApiInterface.getCustomPostRanking(request);
 
     //Save the feed sequence in to feed db
@@ -127,20 +128,65 @@ class GlobalFeedRepoImpl extends GlobalFeedRepo {
 
   @override
   Future<PageListData<List<AmityPost>, String>> queryGlobalFeed(
-    GetGlobalFeedRequest request,
-    bool isCustomRanking,
-  ) async {
-    final nonce = isCustomRanking
-        ? AmityNonce.CUSTOM_RANKING_FEED
-        : AmityNonce.GLOBAL_FEED;
+    GetGlobalFeedRequest request  ) async {
+    final nonce = request.getNonce();
     final hash = request.getHashCode();
     final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
     int nextIndex = 0;
     final isFirstPage = request.token == null && (request.limit ?? 0) > 0;
     //TODO: request.options.token is gone after call data.saveToDb, might cause further issue in the future
-    final data = isCustomRanking
-        ? await feedApiInterface.getCustomPostRanking(request)
-        : await feedApiInterface.getGlobalFeed(request);
+    final data = await feedApiInterface.getGlobalFeed(request);
+    await data.saveToDb(dbAdapterRepo);
+    if (isFirstPage) {
+      await pagingIdDbAdapter.deletePagingIdByHash(nonce.value, hash);
+    } else {
+      nextIndex = (pagingIdRepo
+              .getPagingIdEntities(nonce.value, hash)
+              .map((e) => (e.position ?? 0))
+              .toList()
+              .reduce(max)) +
+          1;
+    }
+    data.posts.forEachIndexed((index, element) async {
+      final pagingId = PagingIdHiveEntity(
+        id: element.postId,
+        hash: hash,
+        nonce: nonce.value,
+        position: nextIndex + index,
+      );
+      await pagingIdDbAdapter.savePagingIdEntity(pagingId);
+    });
+
+    // Return token for the next page only
+    // the live collection will get the result through the observe usecase
+    return PageListData([], data.paging?.next ?? '');
+  }
+
+  @override
+  List<PostHiveEntity> getCustomRankFeedPostEntities(
+      RequestBuilder<GetCustomRankFeedRequest> request) {
+    return dbAdapterRepo.postDbAdapter.getAllPostEntities();
+  }
+
+  @override
+  Stream<List<AmityPost>> listenCustomRankPostsChanges(
+      RequestBuilder<GetCustomRankFeedRequest> request) {
+    final entities = dbAdapterRepo.postDbAdapter.listenAllPostEntities();
+
+    // For notify changes from post db only
+    return entities.map((event) => []);
+  }
+
+  @override
+  Future<PageListData<List<AmityPost>, String>> queryCustomRankFeed(
+      GetCustomRankFeedRequest request) async {
+        final nonce =request.getNonce();
+    final hash = request.getHashCode();
+    final pagingIdDbAdapter = dbAdapterRepo.pagingIdDbAdapter;
+    int nextIndex = 0;
+    final isFirstPage = request.token == null && (request.limit ?? 0) > 0;
+    //TODO: request.options.token is gone after call data.saveToDb, might cause further issue in the future
+    final data = await feedApiInterface.getCustomPostRanking(request);
     await data.saveToDb(dbAdapterRepo);
     if (isFirstPage) {
       await pagingIdDbAdapter.deletePagingIdByHash(nonce.value, hash);

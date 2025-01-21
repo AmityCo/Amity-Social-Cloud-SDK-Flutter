@@ -30,13 +30,10 @@ class ReactionDbAdapterImpl extends ReactionDbAdapter {
 
   @override
   Stream<List<ReactionHiveEntity>> listenReactionEntities(
-      RequestBuilder<GetReactionRequest> request
-  ){
-    return box.watch().map((event) =>
-      box.values
+      RequestBuilder<GetReactionRequest> request) {
+    return box.watch().map((event) => box.values
         .where((reaction) => reaction.isMatchingFilter(request.call()))
-        .toList()
-    );
+        .toList());
   }
 
   @override
@@ -45,7 +42,15 @@ class ReactionDbAdapterImpl extends ReactionDbAdapter {
         .where((reaction) => reaction.isMatchingFilter(request))
         .toList()
         .forEach((element) {
-           box.delete(element.reactionId);
-        });
+      box.delete(element.reactionId);
+    });
+  }
+
+  @override
+  List<ReactionHiveEntity> getReactionEntities(
+      RequestBuilder<GetReactionRequest> request) {
+    return box.values
+        .where((reactions) => reactions.isMatchingFilter(request.call()))
+        .toList();
   }
 }

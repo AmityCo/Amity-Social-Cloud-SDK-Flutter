@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:amity_sdk/src/core/model/api_request/core/option_request.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
 GetPostRequest getPostRequestFromJson(String str) =>
     GetPostRequest.fromJson(json.decode(str));
@@ -67,5 +68,9 @@ class GetPostRequest {
   int getHashCode() {
     final jsonString = (toJson()..remove('options')).toString();
     return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.POST_LIST;
   }
 }

@@ -14,21 +14,21 @@ class MessageObserveNewItemUseCase
   /// Message Repo
   final MessageRepo messageRepo;
   final PagingIdRepo pagingIdRepo;
-  final nonce = AmityNonce.MESSAGE_LIST.value;
   HashMap<String, bool> uniqueIdMap = HashMap();
 
   MessageObserveNewItemUseCase(
       {required this.messageRepo, required this.pagingIdRepo});
 
   @override
-  StreamController<PagingIdHiveEntity> listen(RequestBuilder<MessageQueryRequest> params) {
+  StreamController<PagingIdHiveEntity> listen(RequestBuilder<MessageQueryRequest> request) {
     final streamController = StreamController<PagingIdHiveEntity>();
-    final hash = params().getHashCode();
+    final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     pagingIdRepo.listenPagingIdEntities(nonce,hash).listen((event) async {
-      _onChanges(streamController, params);
+      _onChanges(streamController, request);
     });
-    messageRepo.listenMessages(params).listen((event) async {
-      _onChanges(streamController, params);
+    messageRepo.listenMessages(request).listen((event) async {
+      _onChanges(streamController, request);
     });
     return streamController;
   }
@@ -38,6 +38,7 @@ class MessageObserveNewItemUseCase
     RequestBuilder<MessageQueryRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     var firstPosition = 0;
     if (streamController.isClosed) {
       return;

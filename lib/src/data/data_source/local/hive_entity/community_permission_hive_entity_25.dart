@@ -1,11 +1,12 @@
 // ignore_for_file: hash_and_equals
 
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data_source/local/interface/permission_object.dart';
 import 'package:hive/hive.dart';
 
-part 'community_permission_hive_entity_13.g.dart';
+part 'community_permission_hive_entity_25.g.dart';
 
-@HiveType(typeId: 25)
+@HiveType(typeId: AmityHiveType.communityPermission)
 class CommunityPermissionHiveEntity extends HiveObject
     implements PermissionObject {
 

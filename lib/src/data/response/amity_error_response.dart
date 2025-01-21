@@ -21,12 +21,22 @@ class AmityErrorResponse {
   final int code;
   dynamic data;
 
-  factory AmityErrorResponse.fromJson(Map<String, dynamic> json) => AmityErrorResponse(
+  factory AmityErrorResponse.fromJson(Map<String, dynamic> json) { 
+    
+    return AmityErrorResponse(
         status: json["status"],
-        message: json["message"],
-        code: json["code"],
+        message: json["message"] ?? "Unknown error",
+        code: json["code"] ?? 800000,
         data: json["data"],
       );
+  }
+
+  factory AmityErrorResponse.unknown() { 
+    return AmityErrorResponse(
+        message: "Unknown error",
+        code: 800000,
+      );
+  }
 
   Map<String, dynamic> toJson() => {
         "status": status,

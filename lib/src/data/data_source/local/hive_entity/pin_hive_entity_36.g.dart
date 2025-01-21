@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'pin_hive_entity_35.dart';
+part of 'pin_hive_entity_36.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
@@ -8,7 +8,7 @@ part of 'pin_hive_entity_35.dart';
 
 class PinHiveEntityAdapter extends TypeAdapter<PinHiveEntity> {
   @override
-  final int typeId = 35;
+  final int typeId = 36;
 
   @override
   PinHiveEntity read(BinaryReader reader) {

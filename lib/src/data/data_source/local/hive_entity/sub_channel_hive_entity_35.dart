@@ -1,9 +1,10 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data_source/data_source.dart';
 import 'package:hive/hive.dart';
 
 part 'sub_channel_hive_entity_35.g.dart';
 
-@HiveType(typeId: 35)
+@HiveType(typeId: AmityHiveType.subChannel)
 class SubChannelHiveEntity extends EkoObject {
   // @HiveField(0)
   String? subChannelId;

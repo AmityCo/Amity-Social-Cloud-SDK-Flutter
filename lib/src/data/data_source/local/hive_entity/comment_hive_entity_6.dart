@@ -1,10 +1,11 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
 part 'comment_hive_entity_6.g.dart';
 
 /// Comment Hive Entity
-@HiveType(typeId: 6)
+@HiveType(typeId: AmityHiveType.comment)
 class CommentHiveEntity extends EkoObject {
   /// Comment doc id
   String? id;

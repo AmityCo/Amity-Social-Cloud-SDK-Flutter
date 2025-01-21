@@ -1,8 +1,9 @@
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/get_custom_rank_feed_request.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
 
 class GetCustomRankingUseCase extends UseCase<
-    PageListData<List<AmityPost>, String>, GetGlobalFeedRequest> {
+    PageListData<List<AmityPost>, String>, GetCustomRankFeedRequest> {
   final GlobalFeedRepo _feedRepo;
   final PostComposerUsecase _postComposerUsecase;
 
@@ -10,7 +11,7 @@ class GetCustomRankingUseCase extends UseCase<
 
   @override
   Future<PageListData<List<AmityPost>, String>> get (
-      GetGlobalFeedRequest params) async  {
+      GetCustomRankFeedRequest params) async  {
     final amityPost = await _feedRepo.getCustomPostRanking(params);
     final amityComposedPost = await Stream.fromIterable(amityPost.data)
         .asyncMap((event) => _postComposerUsecase.get(event))

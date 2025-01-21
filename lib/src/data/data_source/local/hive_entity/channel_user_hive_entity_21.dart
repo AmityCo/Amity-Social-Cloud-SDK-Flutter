@@ -1,9 +1,10 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'channel_user_hive_entity_21.g.dart';
 
 /// Data Field for Channel
-@HiveType(typeId: 21)
+@HiveType(typeId: AmityHiveType.channelUser)
 class ChannelUserHiveEntity extends HiveObject {
   /// Channel User Id
   @HiveField(0)

@@ -1,10 +1,11 @@
 import 'package:amity_sdk/src/core/model/api_request/query_pinned_post_request.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:hive/hive.dart';
 
-part 'pin_hive_entity_35.g.dart';
+part 'pin_hive_entity_36.g.dart';
 
-@HiveType(typeId: 35)
+@HiveType(typeId: AmityHiveType.pin)
 class PinHiveEntity extends EkoObject {
 
   @HiveField(0)

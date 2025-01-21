@@ -29,7 +29,7 @@ class MessageRepoImpl extends MessageRepo {
   @override
   Future<PageListData<List<AmityMessage>, String>> queryMesssage(MessageQueryRequest request) async {
     final hash = request.getHashCode();
-    final nonce = AmityNonce.MESSAGE_LIST;
+    final nonce = request.getNonce();
     int nextIndex = 0;
     final data = await messageApiInterface.messageQuery(request);
     final paging = data.paging;

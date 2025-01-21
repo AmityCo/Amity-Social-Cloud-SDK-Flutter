@@ -1,8 +1,9 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'account_hive_entity_0.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: AmityHiveType.account)
 class AccountHiveEntity extends HiveObject {
   @HiveField(0)
   String? id;

@@ -76,7 +76,7 @@ class ChannelRepoImpl extends ChannelRepo {
   Future<PageListData<List<AmityChannel>, String>> getChannelQuery(
       GetChannelRequest request) async {
     final hash = request.getHashCode();
-    final nonce = AmityNonce.CHANNEL_LIST;
+    final nonce = request.getNonce();
     int nextIndex = 0;
     final isFirstPage = request.options?.token == null && (request.options?.limit ?? 0) > 0;
     final data = await channelApiInterface.getChannelQuery(request);

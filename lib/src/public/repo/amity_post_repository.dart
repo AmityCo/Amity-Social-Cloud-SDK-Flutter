@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/query_global_pinned_post_request.dart';
 import 'package:amity_sdk/src/core/model/api_request/query_pinned_post_request.dart';
+import 'package:amity_sdk/src/core/utils/global_pinned_post_live_collection.dart';
 import 'package:amity_sdk/src/core/utils/pinned_post_live_collection.dart';
 import 'package:amity_sdk/src/domain/domain.dart';
-import 'package:amity_sdk/src/domain/model/amity_pinned_post.dart';
 import 'package:amity_sdk/src/public/public.dart';
 import 'package:amity_sdk/src/public/query_builder/post/post_get_live_object.dart';
 
@@ -94,5 +95,10 @@ class PostRepository {
     request() => QueryPinnedPostRequest(
         targetId: communityId, targetType: "community", placement: placement);
     return PinnedPostLiveCollection(request: request);
+  }
+
+  GlobalPinnedPostLiveCollection getGlobalPinnedPosts() {
+    request() => QueryGlobalPinnedPostRequest();
+    return GlobalPinnedPostLiveCollection(request: request);
   }
 }

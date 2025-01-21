@@ -1,10 +1,11 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/src.dart';
 import 'package:hive/hive.dart';
 
 part 'user_hive_entity_1.g.dart';
 
 /// User Hive Entity
-@HiveType(typeId: 1)
+@HiveType(typeId: AmityHiveType.user)
 class UserHiveEntity extends EkoObject {
   /// User doc Id
   @HiveField(0)

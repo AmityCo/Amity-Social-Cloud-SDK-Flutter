@@ -1,3 +1,4 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/data_source/local/hive_entity/mentionee_hive_entity_30.dart';
 import 'package:hive/hive.dart';
@@ -5,7 +6,7 @@ import 'package:hive/hive.dart';
 part 'post_hive_entity_5.g.dart';
 
 /// Post Hive entity
-@HiveType(typeId: 5)
+@HiveType(typeId: AmityHiveType.post)
 class PostHiveEntity extends EkoObject {
   /// doc Id
   @HiveField(0)

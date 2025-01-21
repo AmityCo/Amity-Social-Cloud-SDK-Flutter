@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/get_custom_rank_feed_request.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/custom_ranking_observe_usecase.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/custom_ranking_query_usecase.dart';
 
 class CustomRankingLiveCollection extends LiveCollection<AmityPost> {
-  RequestBuilder<GetGlobalFeedRequest> request;
+  RequestBuilder<GetCustomRankFeedRequest> request;
 
   CustomRankingLiveCollection({required this.request});
 

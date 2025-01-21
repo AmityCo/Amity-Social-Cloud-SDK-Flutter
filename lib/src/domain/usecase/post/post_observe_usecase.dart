@@ -13,8 +13,6 @@ class PostObserveUseCase
   final PagingIdRepo pagingIdRepo;
   final PostComposerUsecase postComposerUsecase;
 
-  final nonce = AmityNonce.POST_LIST.value;
-
   PostObserveUseCase({
     required this.postRepo,
     required this.postComposerUsecase,
@@ -25,6 +23,7 @@ class PostObserveUseCase
   StreamController<List<AmityPost>> listen(
       RequestBuilder<GetPostRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityPost>>();
     _onChanges(streamController, request);
     postRepo.listenPosts(request).listen((event) async {
@@ -42,6 +41,7 @@ class PostObserveUseCase
     RequestBuilder<GetPostRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     if (streamController.isClosed) {
       return;
     }

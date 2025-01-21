@@ -1,8 +1,9 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'community_member_paging_hive_entity_15.g.dart';
 
-@HiveType(typeId: 15)
+@HiveType(typeId: AmityHiveType.communityMemberPaging)
 class CommunityMemberPagingHiveEntity {
   @HiveField(0)
   String? id;

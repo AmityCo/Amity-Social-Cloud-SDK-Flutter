@@ -8,4 +8,7 @@ abstract class ReactionDbAdapter {
   Stream<List<ReactionHiveEntity>> listenReactionEntities(
     RequestBuilder<GetReactionRequest> request);
   Future clearOldReactions(GetReactionRequest request);
+
+  List<ReactionHiveEntity> getReactionEntities(
+      RequestBuilder<GetReactionRequest> request);
 }

@@ -1,12 +1,9 @@
-// ignore_for_file: hash_and_equals
-
-import 'package:amity_sdk/src/core/extension/extension.dart';
-import 'package:amity_sdk/src/core/model/api_request/paginated_api_request.dart';
+import 'package:amity_sdk/src/core/core.dart';
 import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
-class GetGlobalFeedRequest extends PaginatedApiRequest {
+class GetCustomRankFeedRequest extends PaginatedApiRequest {
   List<String>? dataTypes;
-  GetGlobalFeedRequest({String? token, this.dataTypes, int limit = 10})
+  GetCustomRankFeedRequest({String? token, this.dataTypes, int limit = 10})
       : super(token, limit);
 
   Map<String, dynamic> toJson() => {
@@ -25,7 +22,6 @@ class GetGlobalFeedRequest extends PaginatedApiRequest {
   }
 
   AmityNonce getNonce() {
-    return AmityNonce.GLOBAL_FEED;
+    return AmityNonce.CUSTOM_RANKING_FEED;
   }
-
 }

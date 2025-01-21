@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/model/api_request/get_custom_rank_feed_request.dart';
 import 'package:amity_sdk/src/domain/usecase/feed/get_custom_ranking_usecase.dart';
 
 class AmityCustomRankingGlobalFeedQuery{
@@ -9,7 +10,7 @@ class AmityCustomRankingGlobalFeedQuery{
 
   Future<PageListData<List<AmityPost>, String>> getPagingData(
       {String? token, int? limit}) async {
-    GetGlobalFeedRequest request = GetGlobalFeedRequest();
+    GetCustomRankFeedRequest request = GetCustomRankFeedRequest();
 
     if (token != null) {
       request.token = token;
@@ -24,7 +25,7 @@ class AmityCustomRankingGlobalFeedQuery{
   }
 
   CustomRankingLiveCollection getLiveCollection() {
-    return CustomRankingLiveCollection(request: () => GetGlobalFeedRequest());
+    return CustomRankingLiveCollection(request: () => GetCustomRankFeedRequest());
   }
 
 

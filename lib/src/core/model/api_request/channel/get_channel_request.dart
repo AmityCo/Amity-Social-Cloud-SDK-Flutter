@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:amity_sdk/src/core/core.dart';
+import 'package:amity_sdk/src/core/utils/amity_nonce.dart';
 
 GetChannelRequest getChannelRequestFromJson(String str) =>
     GetChannelRequest.fromJson(json.decode(str));
@@ -87,5 +88,9 @@ class GetChannelRequest {
   int getHashCode() {
     final jsonString = (toJson()..remove('options')).toString();
     return jsonString.hashCode;
+  }
+
+  AmityNonce getNonce() {
+    return AmityNonce.CHANNEL_LIST;
   }
 }

@@ -1,11 +1,12 @@
 // ignore_for_file: hash_and_equals
 
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data_source/local/interface/role_object.dart';
 import 'package:hive/hive.dart';
 
-part 'community_role_hive_entity_12.g.dart';
+part 'community_role_hive_entity_26.g.dart';
 
-@HiveType(typeId: 12)
+@HiveType(typeId: AmityHiveType.communityRole)
 class CommunityRoleHiveEntity extends HiveObject implements RoleObject {
   @HiveField(0)
   String? communityId;

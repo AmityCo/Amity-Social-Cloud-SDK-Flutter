@@ -1,3 +1,23 @@
+## 0.55.1
+* Fix: Address invalid exception when logging in offline
+* Fix: Resolve issue with broken emoji messages received via MQTT
+
+## 0.55.0
+* Feat: Introduce Global featured posts
+* Fix: Improve stability on MQTT reconnection
+* Fix: Fix fail to fetch channels
+
+## 0.54.5
+* Feat: Update Reaction Live Collection to support RTE
+* Fix: Handle null event name on reactor response
+
+## 0.54.4
+* Feat: Introduce SubChannel Repository in ChatClient
+
+## 0.54.3
+* Fix: Fix Comment Live Collection doesn't emit data when client doesn't specify isDeleted on query builder
+* Fix: Fix Pinned post Live Collection doesn't emit data
+
 ## 0.54.2
 * Feat: Update Comment Live Collection to use Query Stream
 * Fix: Fix null channel.defaultSubChannelId

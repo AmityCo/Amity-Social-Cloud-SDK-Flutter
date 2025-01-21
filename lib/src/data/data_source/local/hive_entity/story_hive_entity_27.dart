@@ -1,4 +1,5 @@
 import 'package:amity_sdk/src/core/enum/amity_story_state.dart';
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/data/data.dart';
 import 'package:amity_sdk/src/data/response/core_response/story_data_response.dart';
 import 'package:amity_sdk/src/domain/model/amity_story_item.dart';
@@ -6,7 +7,7 @@ import 'package:hive/hive.dart';
 
 part 'story_hive_entity_27.g.dart';
 
-@HiveType(typeId: 27)
+@HiveType(typeId: AmityHiveType.story)
 class StoryHiveEntity extends EkoObject {
   String? storyId;
   String? path;

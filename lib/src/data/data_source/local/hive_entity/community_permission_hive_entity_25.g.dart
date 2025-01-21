@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'community_permission_hive_entity_13.dart';
+part of 'community_permission_hive_entity_25.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

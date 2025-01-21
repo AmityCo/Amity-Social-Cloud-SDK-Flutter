@@ -15,6 +15,6 @@ class GlobalFeedQueryUsecase
   @override
   Future<PageListData<List<AmityPost>, String>> get(
       GetGlobalFeedRequest params) async {
-    return await globalFeedRepo.queryGlobalFeed(params, false);
+    return await globalFeedRepo.queryGlobalFeed(params);
   }
 }

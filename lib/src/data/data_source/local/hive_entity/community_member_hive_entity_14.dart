@@ -1,9 +1,10 @@
 
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:hive/hive.dart';
 
 part 'community_member_hive_entity_14.g.dart';
 
-@HiveType(typeId: 14)
+@HiveType(typeId: AmityHiveType.communityMember)
 class CommunityMemberHiveEntity extends HiveObject {
   @HiveField(0)
   String? id;

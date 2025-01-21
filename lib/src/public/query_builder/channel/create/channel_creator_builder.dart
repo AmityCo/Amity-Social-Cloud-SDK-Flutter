@@ -17,6 +17,7 @@ class ChannelCreatorBuilder {
   /// init [ChannelCreatorBuilder]
   ChannelCreatorBuilder(this.usecase, this._type);
 
+  @Deprecated("custom channelId will be removed in future release, channel will be created with random channelId instead")
   ChannelCreatorBuilder channelId(String channelId) {
     _channelId = channelId;
     return this;

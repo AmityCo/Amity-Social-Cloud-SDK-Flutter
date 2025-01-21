@@ -1,9 +1,10 @@
+import 'package:amity_sdk/src/core/utils/amity_hive_type.dart';
 import 'package:amity_sdk/src/src.dart';
 import 'package:hive/hive.dart';
 
 part 'file_hive_entity_4.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: AmityHiveType.file)
 
 /// [FileHiveEntity]
 class FileHiveEntity  extends EkoObject{

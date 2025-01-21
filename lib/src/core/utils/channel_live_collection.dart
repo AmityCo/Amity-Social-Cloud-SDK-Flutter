@@ -15,7 +15,7 @@ class ChannelLiveCollection extends LiveCollection<AmityChannel> {
 
   @override
   AmityNonce getNonce() {
-    return AmityNonce.CHANNEL_LIST;
+    return request().getNonce();
   }
 
   @override

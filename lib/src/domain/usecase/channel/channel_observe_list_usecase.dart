@@ -12,7 +12,6 @@ class ChannelObserveListUseCase
   final ChannelRepo channelRepo;
   final PagingIdRepo pagingIdRepo;
   final ChannelComposerUsecase channelComposerUsecase;
-  final nonce = AmityNonce.CHANNEL_LIST.value;
 
   ChannelObserveListUseCase(
       {required this.channelRepo,
@@ -23,6 +22,7 @@ class ChannelObserveListUseCase
   StreamController<List<AmityChannel>> listen(
       RequestBuilder<GetChannelRequest> request) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     final streamController = StreamController<List<AmityChannel>>();
     channelRepo.listenChannels(request).listen((event) async {
       _onChanges(streamController, request);
@@ -39,6 +39,7 @@ class ChannelObserveListUseCase
     RequestBuilder<GetChannelRequest> request,
   ) {
     final hash = request().getHashCode();
+    final nonce = request().getNonce().value;
     if (streamController.isClosed) {
       return;
     }
