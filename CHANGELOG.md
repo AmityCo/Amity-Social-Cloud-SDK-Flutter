@@ -1,3 +1,8 @@
+## 0.55.2
+* Feat: Change login api to session v5
+* Feat: Introduce ability to renew access token automatically
+* Feat: Accept session handler when login to handle access token renewal with auth token
+
 ## 0.55.1
 * Fix: Address invalid exception when logging in offline
 * Fix: Resolve issue with broken emoji messages received via MQTT
