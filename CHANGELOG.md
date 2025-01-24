@@ -1,3 +1,6 @@
+## 0.55.3
+* Chore: Protected internal function inside Live Collection
+
 ## 0.55.2
 * Feat: Change login api to session v5
 * Feat: Introduce ability to renew access token automatically
