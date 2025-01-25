@@ -1,3 +1,7 @@
+## 0.55.4
+* Fix: Activate token watcher to do access token renewal automatically
+* Fix: Fix race condition inside login api business logic
+
 ## 0.55.3
 * Chore: Protected internal function inside Live Collection
 
